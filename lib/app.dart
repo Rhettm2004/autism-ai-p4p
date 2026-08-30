@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/screening_page.dart';
+import 'state/screening_controller.dart';
 
 class AppColors {
   static const navy = Color(0xFF0B1D51);
@@ -13,7 +14,9 @@ class AppColors {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, this.controller});
+
+  final ScreeningController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +114,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const ScreeningPage(),
+      home: ScreeningPage(controller: controller),
     );
   }
 }

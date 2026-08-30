@@ -1,10 +1,16 @@
 import 'package:autism_ai/app.dart';
+import 'package:autism_ai/state/screening_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/memory_screening_session_store.dart';
+
 void main() {
   testWidgets('welcome and persistent mock chat are available', (tester) async {
-    await tester.pumpWidget(const MyApp());
+    final controller = ScreeningController();
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(MyApp(controller: controller));
+    await tester.pumpAndSettle();
 
     expect(find.text('Autism AI Assistant'), findsOneWidget);
     expect(find.byKey(const Key('chat-input')), findsOneWidget);
@@ -22,12 +28,16 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Can you explain this question?'), findsOneWidget);
+    await controller.flushPersistence();
   });
 
-  testWidgets('screening uses one shell while the current stage changes', (
+  testWidgets('persistent chatbot shell remains visible across stages', (
     tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    final controller = ScreeningController();
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(MyApp(controller: controller));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(const Key('start-screening')));
     await tester.pumpAndSettle();
@@ -46,6 +56,44 @@ void main() {
 
     expect(find.text('Respondent details'), findsWidgets);
     expect(find.byKey(const Key('age-field')), findsOneWidget);
+    expect(find.byKey(const Key('chat-input')), findsOneWidget);
+  });
+
+  testWidgets('no restore prompt appears without a saved session', (
+    tester,
+  ) async {
+    final store = MemoryScreeningSessionStore();
+    final controller = ScreeningController(sessionStore: store);
+    addTearDown(controller.dispose);
+
+    await tester.pumpWidget(MyApp(controller: controller));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Continue where you left off?'), findsNothing);
+    expect(find.text('Autism AI Assistant'), findsOneWidget);
+  });
+
+  testWidgets('Continue restores the saved stage from the startup prompt', (
+    tester,
+  ) async {
+    final store = MemoryScreeningSessionStore();
+    final source = ScreeningController(sessionStore: store);
+    await source.initializeSession();
+    source.startScreening();
+    source.chooseToddlerPath(false);
+    await source.flushPersistence();
+    source.dispose();
+
+    final restored = ScreeningController(sessionStore: store);
+    addTearDown(restored.dispose);
+    await tester.pumpWidget(MyApp(controller: restored));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Continue where you left off?'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('continue-saved-session')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Respondent details'), findsWidgets);
     expect(find.byKey(const Key('chat-input')), findsOneWidget);
   });
 }

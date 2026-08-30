@@ -1,21 +1,34 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import '../data/question_banks.dart';
 import '../models/screening_models.dart';
+import '../models/screening_session.dart';
 import '../services/mock_services.dart';
+import '../services/screening_session_store.dart';
 
 class ScreeningController extends ChangeNotifier {
   ScreeningController({
     ChatService? chatService,
     ScreeningPredictionService? predictionService,
+    ScreeningSessionStore? sessionStore,
   }) : _chatService = chatService ?? MockChatService(),
        _predictionService =
-           predictionService ?? MockScreeningPredictionService() {
+           predictionService ?? MockScreeningPredictionService(),
+       _sessionStore = sessionStore ?? const NoopScreeningSessionStore() {
     _addWelcomeMessage();
   }
 
   final ChatService _chatService;
   final ScreeningPredictionService _predictionService;
+  final ScreeningSessionStore _sessionStore;
+
+  Timer? _saveTimer;
+  Future<void> _writeQueue = Future.value();
+  ScreeningSession? _pendingSession;
+  bool _persistenceReady = false;
+  int _persistenceGeneration = 0;
 
   ScreeningStage stage = ScreeningStage.welcome;
   RespondentDetails respondent = RespondentDetails();
@@ -26,10 +39,13 @@ class ScreeningController extends ChangeNotifier {
   int currentQuestionIndex = 0;
   bool editingFromReview = false;
   bool isSendingChat = false;
+  bool isSessionLoading = false;
   String? errorMessage;
 
   final Map<String, String> behaviouralAnswers = {};
   final List<ChatMessage> chatMessages = [];
+
+  bool get hasRestorableSession => _pendingSession != null;
 
   List<ScreeningQuestion> get questions =>
       questionnaireType == null ? const [] : questionBanks[questionnaireType]!;
@@ -79,6 +95,33 @@ class ScreeningController extends ChangeNotifier {
 
   bool get chatEnabled => stage != ScreeningStage.disclaimer;
 
+  Future<void> initializeSession() async {
+    if (_persistenceReady || isSessionLoading) return;
+
+    isSessionLoading = true;
+    _notify(persist: false);
+    try {
+      _pendingSession = await _sessionStore.load();
+    } catch (error) {
+      debugPrint('Unable to load the local screening session: $error');
+      _pendingSession = null;
+    }
+    _persistenceReady = true;
+    isSessionLoading = false;
+    _notify(persist: false);
+  }
+
+  void continueSavedSession() {
+    final savedSession = _pendingSession;
+    if (savedSession == null) return;
+
+    _pendingSession = null;
+    _applySession(savedSession);
+    _notify(persist: false);
+  }
+
+  Future<void> restartSavedSession() => restart();
+
   void startScreening() {
     _goTo(ScreeningStage.toddlerCheck);
   }
@@ -104,6 +147,21 @@ class ScreeningController extends ChangeNotifier {
     _goTo(ScreeningStage.respondentDetails);
   }
 
+  void setRespondentGender(String gender) {
+    respondent.gender = gender;
+    _clearErrorAndNotify();
+  }
+
+  void setRespondentEthnicity(String? ethnicity) {
+    respondent.ethnicity = ethnicity;
+    _clearErrorAndNotify();
+  }
+
+  void setRespondentAge(int? age) {
+    respondent.age = age;
+    _clearErrorAndNotify();
+  }
+
   bool submitRespondentDetails({
     required String? gender,
     required String? ethnicity,
@@ -123,23 +181,18 @@ class ScreeningController extends ChangeNotifier {
     if (respondent.isToddler == true) {
       if (age < 18 || age >= 36) {
         return _fail(
-          'The toddler pathway currently supports ages 18 to 35 months.',
+          'Enter an age from 18 to under 36 months for the toddler pathway.',
         );
       }
       questionnaireType = QuestionnaireType.qchat10;
     } else {
-      if (age == 3) {
+      if (age < 3 || age > 80) {
         return _fail(
-          'Age routing for 3-year-old respondents is pending confirmation.',
-        );
-      }
-      if (age < 4) {
-        return _fail(
-          'For respondents under 3 years old, use the toddler pathway and enter age in months.',
+          'Enter an age from 3 to 80 years for the non-toddler pathway.',
         );
       }
       questionnaireType = switch (age) {
-        >= 4 && <= 11 => QuestionnaireType.aq10Child,
+        >= 3 && <= 11 => QuestionnaireType.aq10Child,
         >= 12 && <= 15 => QuestionnaireType.aq10Adolescent,
         _ => QuestionnaireType.aq10Adult,
       };
@@ -205,7 +258,7 @@ class ScreeningController extends ChangeNotifier {
     } else {
       currentQuestionIndex += 1;
       errorMessage = null;
-      notifyListeners();
+      _notify();
     }
     return true;
   }
@@ -217,7 +270,7 @@ class ScreeningController extends ChangeNotifier {
     } else if (currentQuestionIndex > 0) {
       currentQuestionIndex -= 1;
       errorMessage = null;
-      notifyListeners();
+      _notify();
     } else {
       _goTo(ScreeningStage.backgroundQuestions);
     }
@@ -253,11 +306,15 @@ class ScreeningController extends ChangeNotifier {
 
   void setAssessmentStatus(String status) {
     validation.assessmentStatus = status;
-    if (status == assessmentStatuses.first) {
+    if (!requiresDiagnosticTechnique) {
       validation.diagnosticTechnique = null;
     }
     _clearErrorAndNotify();
   }
+
+  bool get requiresDiagnosticTechnique =>
+      validation.assessmentStatus != null &&
+      validation.assessmentStatus != assessmentStatuses.first;
 
   void setDiagnosticTechnique(String? technique) {
     validation.diagnosticTechnique = technique;
@@ -269,8 +326,7 @@ class ScreeningController extends ChangeNotifier {
     if (status == null) {
       return _fail('Select an assessment status to continue.');
     }
-    if (status != assessmentStatuses.first &&
-        validation.diagnosticTechnique == null) {
+    if (requiresDiagnosticTechnique && validation.diagnosticTechnique == null) {
       return _fail('Select the diagnostic technique used.');
     }
     _goTo(ScreeningStage.report);
@@ -285,17 +341,21 @@ class ScreeningController extends ChangeNotifier {
       ChatMessage(text: trimmed, isUser: true, timestamp: DateTime.now()),
     );
     isSendingChat = true;
-    notifyListeners();
+    _notify();
 
     final response = await _chatService.sendMessage(trimmed, context);
     chatMessages.add(
       ChatMessage(text: response, isUser: false, timestamp: DateTime.now()),
     );
     isSendingChat = false;
-    notifyListeners();
+    _notify();
   }
 
-  void restart() {
+  Future<void> restart() async {
+    _saveTimer?.cancel();
+    _saveTimer = null;
+    _persistenceGeneration += 1;
+    _pendingSession = null;
     stage = ScreeningStage.welcome;
     respondent = RespondentDetails();
     background = BackgroundDetails();
@@ -309,7 +369,22 @@ class ScreeningController extends ChangeNotifier {
     behaviouralAnswers.clear();
     chatMessages.clear();
     _addWelcomeMessage();
-    notifyListeners();
+    _notify(persist: false);
+
+    await _writeQueue;
+    await _sessionStore.clear();
+  }
+
+  Future<void> flushPersistence() async {
+    _saveTimer?.cancel();
+    _saveTimer = null;
+    if (!_canPersist) {
+      await _writeQueue;
+      return;
+    }
+
+    _queueSessionSave(_createSession(), _persistenceGeneration);
+    await _writeQueue;
   }
 
   void _addWelcomeMessage() {
@@ -325,33 +400,132 @@ class ScreeningController extends ChangeNotifier {
   void _goTo(ScreeningStage nextStage) {
     stage = nextStage;
     errorMessage = null;
-    notifyListeners();
+    _notify();
   }
 
   bool _fail(String message) {
     errorMessage = message;
-    notifyListeners();
+    _notify(persist: false);
     return false;
   }
 
   void _clearErrorAndNotify() {
     errorMessage = null;
+    _notify();
+  }
+
+  bool get _canPersist =>
+      _persistenceReady &&
+      !hasRestorableSession &&
+      (stage != ScreeningStage.welcome ||
+          chatMessages.any((message) => message.isUser));
+
+  void _notify({bool persist = true}) {
     notifyListeners();
+    if (persist) _scheduleSessionSave();
+  }
+
+  void _scheduleSessionSave() {
+    if (!_canPersist) return;
+    _saveTimer?.cancel();
+    final generation = _persistenceGeneration;
+    _saveTimer = Timer(const Duration(milliseconds: 120), () {
+      if (!_canPersist || generation != _persistenceGeneration) return;
+      _queueSessionSave(_createSession(), generation);
+    });
+  }
+
+  void _queueSessionSave(ScreeningSession session, int generation) {
+    _writeQueue = _writeQueue.then(
+      (_) => _writeSessionSafely(session, generation),
+    );
+  }
+
+  Future<void> _writeSessionSafely(
+    ScreeningSession session,
+    int generation,
+  ) async {
+    if (generation != _persistenceGeneration) return;
+    try {
+      await _sessionStore.save(session);
+    } catch (error) {
+      debugPrint('Unable to save the local screening session: $error');
+    }
+  }
+
+  ScreeningSession _createSession() {
+    return ScreeningSession(
+      stage: stage,
+      isToddler: respondent.isToddler,
+      age: respondent.age,
+      ageUnit: respondent.ageUnit,
+      gender: respondent.gender,
+      ethnicity: respondent.ethnicity,
+      jaundice: background.jaundice,
+      familyAutismHistory: background.familyAutismHistory,
+      completedBy: background.completedBy,
+      questionnaireType: questionnaireType,
+      currentQuestionIndex: currentQuestionIndex,
+      editingFromReview: editingFromReview,
+      behaviouralAnswers: Map.unmodifiable(behaviouralAnswers),
+      chatMessages: List.unmodifiable(chatMessages),
+      result: result,
+      assessmentStatus: validation.assessmentStatus,
+      diagnosticTechnique: validation.diagnosticTechnique,
+    );
+  }
+
+  void _applySession(ScreeningSession session) {
+    respondent = RespondentDetails()
+      ..isToddler = session.isToddler
+      ..age = session.age
+      ..gender = session.gender
+      ..ethnicity = session.ethnicity;
+    background = BackgroundDetails()
+      ..jaundice = session.jaundice
+      ..familyAutismHistory = session.familyAutismHistory
+      ..completedBy = session.completedBy;
+    validation = ValidationDetails()
+      ..assessmentStatus = session.assessmentStatus
+      ..diagnosticTechnique = session.diagnosticTechnique;
+    questionnaireType = session.questionnaireType;
+    behaviouralAnswers
+      ..clear()
+      ..addAll(session.behaviouralAnswers);
+    chatMessages
+      ..clear()
+      ..addAll(session.chatMessages);
+    if (chatMessages.isEmpty) _addWelcomeMessage();
+    result = session.result;
+    editingFromReview = session.editingFromReview;
+    isSendingChat = false;
+    errorMessage = null;
+
+    currentQuestionIndex = questions.isEmpty
+        ? 0
+        : session.currentQuestionIndex.clamp(0, questions.length - 1);
+    stage = session.stage;
+  }
+
+  @override
+  void dispose() {
+    _saveTimer?.cancel();
+    super.dispose();
   }
 }
 
 const List<String> assessmentStatuses = [
-  'No, never formally assessed',
-  'Assessed, but autism was not diagnosed',
-  'Assessed and autism was diagnosed',
+  'No, the respondent has never been formally assessed',
+  'Yes, the respondent has been assessed BUT autism was not diagnosed',
+  'Yes, the respondent has been assessed AND autism was diagnosed',
 ];
 
 const List<String> diagnosticTechniques = [
-  'ADI-R',
-  'ADOS-G',
-  'ADOS-2',
-  '3DI',
-  'CARS',
+  'Autism Diagnostic Interview-Revised (ADI-R)',
+  'Autism Diagnostic Observation Schedule-Generic (ADOS-G)',
+  'Autism Diagnostic Observation Schedule (second edition) ADOS-2',
+  'Developmental, Dimensional and Diagnostic Interview (3DI)',
+  'Childhood Autism Rating Scale (CARS)',
   "I don't know",
-  'Other',
+  'Others',
 ];

@@ -5,14 +5,25 @@ import '../app.dart';
 import '../models/screening_models.dart';
 import '../state/screening_controller.dart';
 
-const List<String> temporaryEthnicities = [
+const List<String> ethnicityOptions = [
+  'Aboriginal',
   'Asian',
-  'European',
-  'African',
+  'Black',
+  'Hispanic',
+  'Latino',
+  'Maori',
   'Middle Eastern',
-  'Pacific',
-  'Other',
+  'Mixed',
+  'Native Indian',
+  'Pacifica',
+  'South Asian',
+  'White European',
+  'Others',
 ];
+
+// TODO(ethnicity): "Test Ethnicity" appeared in the reference implementation,
+// but its meaning must be confirmed before any production inclusion. It is
+// deliberately not shown in this UI.
 
 class StageCardFrame extends StatelessWidget {
   const StageCardFrame({
@@ -95,11 +106,6 @@ class WelcomeCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const _NoticeBox(
-            icon: Icons.shield_outlined,
-            text: 'This prototype keeps screening responses in memory for the current session only.',
-          ),
-          const SizedBox(height: 18),
           FilledButton.icon(
             key: const Key('start-screening'),
             onPressed: onStart,
@@ -140,7 +146,6 @@ class _ToddlerCheckCardState extends State<ToddlerCheckCard> {
   Widget build(BuildContext context) {
     return StageCardFrame(
       title: 'Choose the age pathway',
-      subtitle: 'This determines whether age is entered in months or years.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -240,7 +245,10 @@ class _RespondentDetailsCardState extends State<RespondentDetailsCard> {
                 child: _OptionTile(
                   label: 'Male',
                   selected: _gender == 'Male',
-                  onTap: () => setState(() => _gender = 'Male'),
+                  onTap: () {
+                    setState(() => _gender = 'Male');
+                    widget.controller.setRespondentGender('Male');
+                  },
                   compact: true,
                 ),
               ),
@@ -249,7 +257,10 @@ class _RespondentDetailsCardState extends State<RespondentDetailsCard> {
                 child: _OptionTile(
                   label: 'Female',
                   selected: _gender == 'Female',
-                  onTap: () => setState(() => _gender = 'Female'),
+                  onTap: () {
+                    setState(() => _gender = 'Female');
+                    widget.controller.setRespondentGender('Female');
+                  },
                   compact: true,
                 ),
               ),
@@ -263,21 +274,42 @@ class _RespondentDetailsCardState extends State<RespondentDetailsCard> {
             initialValue: _ethnicity,
             isExpanded: true,
             hint: const Text('Select ethnicity'),
-            items: temporaryEthnicities
+            items: ethnicityOptions
                 .map(
                   (value) => DropdownMenuItem(value: value, child: Text(value)),
                 )
                 .toList(),
-            onChanged: (value) => setState(() => _ethnicity = value),
+            onChanged: (value) {
+              setState(() => _ethnicity = value);
+              widget.controller.setRespondentEthnicity(value);
+            },
           ),
           const SizedBox(height: 18),
-          _FieldLabel('Age (${isToddler ? 'months' : 'years'})'),
+          Row(
+            children: [
+              _FieldLabel('Age (${isToddler ? 'months' : 'years'})'),
+              const SizedBox(width: 4),
+              IconButton(
+                key: const Key('age-help'),
+                onPressed: () => _showAgeHelp(context, isToddler),
+                tooltip: 'Age help',
+                visualDensity: VisualDensity.compact,
+                icon: const Icon(
+                  Icons.info_outline_rounded,
+                  size: 20,
+                  color: AppColors.blue,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 8),
           TextField(
             key: const Key('age-field'),
             controller: _ageController,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            onChanged: (value) =>
+                widget.controller.setRespondentAge(int.tryParse(value)),
             decoration: InputDecoration(
               hintText: isToddler ? 'e.g. 24' : 'e.g. 16',
               suffixText: isToddler ? 'Months' : 'Years',
@@ -295,6 +327,26 @@ class _RespondentDetailsCardState extends State<RespondentDetailsCard> {
               ethnicity: _ethnicity,
               ageText: _ageController.text,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAgeHelp(BuildContext context, bool isToddler) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Age guidance'),
+        content: Text(
+          isToddler
+              ? 'Enter the toddler’s age in completed months. Valid ages are 18 to under 36 months.'
+              : 'Enter the respondent’s age in completed years. Valid ages are 3 to 80 years.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
           ),
         ],
       ),
@@ -324,8 +376,6 @@ class BackgroundQuestionsCard extends StatelessWidget {
 
     return StageCardFrame(
       title: 'Background questions',
-      subtitle:
-          'These responses are stored locally for this prototype session.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -385,7 +435,6 @@ class ScreeningQuestionCard extends StatelessWidget {
     return StageCardFrame(
       title:
           'Question ${controller.currentQuestionIndex + 1} of ${controller.questions.length}',
-      subtitle: controller.questionnaireType!.label,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -605,7 +654,13 @@ class DisclaimerOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned.fill(
+    // Leave the 58px header and 4px progress bar available so its contextual
+    // info action still works while the disclaimer blocks the workspace.
+    return Positioned(
+      top: 62,
+      left: 0,
+      right: 0,
+      bottom: 0,
       child: ColoredBox(
         color: const Color(0x990B1633),
         child: Center(
@@ -764,15 +819,16 @@ class ValidationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final assessed =
-        controller.validation.assessmentStatus != null &&
-        controller.validation.assessmentStatus != assessmentStatuses.first;
     return StageCardFrame(
       title: 'Research validation',
-      subtitle: 'These responses are stored in memory for this prototype only.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          const _NoticeBox(
+            icon: Icons.info_outline_rounded,
+            text: 'These answers are for research validation only and do not change the screening result already shown.',
+          ),
+          const SizedBox(height: 16),
           Text(
             'Has the respondent been formally assessed or diagnosed for autism by licensed health professionals?',
             style: Theme.of(context).textTheme.titleMedium,
@@ -786,7 +842,7 @@ class ValidationCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
           ],
-          if (assessed) ...[
+          if (controller.requiresDiagnosticTechnique) ...[
             const SizedBox(height: 12),
             const _FieldLabel(
               'What was the formal diagnostic technique used to assess the respondent?',

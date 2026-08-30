@@ -32,33 +32,55 @@ void main() {
   });
 
   group('age routing', () {
-    test('routes the supported age bands', () {
-      expect(_routeToddler(24), QuestionnaireType.qchat10);
-      expect(_routeYears(4), QuestionnaireType.aq10Child);
+    test('routes age 3 to AQ-10 Child', () {
+      expect(_routeYears(3), QuestionnaireType.aq10Child);
+    });
+
+    test('routes the age 11 and 12 boundary', () {
       expect(_routeYears(11), QuestionnaireType.aq10Child);
       expect(_routeYears(12), QuestionnaireType.aq10Adolescent);
+    });
+
+    test('routes the age 15 and 16 boundary', () {
       expect(_routeYears(15), QuestionnaireType.aq10Adolescent);
       expect(_routeYears(16), QuestionnaireType.aq10Adult);
-      expect(_routeYears(42), QuestionnaireType.aq10Adult);
     });
 
-    test('does not guess age-three routing', () {
-      final controller = ScreeningController();
-      controller.chooseToddlerPath(false);
+    test('validates toddler month boundaries', () {
+      final belowRange = _submitAge(age: 17, isToddler: true);
+      final lowerBoundary = _submitAge(age: 18, isToddler: true);
+      final upperBoundary = _submitAge(age: 35, isToddler: true);
+      final aboveRange = _submitAge(age: 36, isToddler: true);
 
-      final accepted = controller.submitRespondentDetails(
-        gender: 'Female',
-        ethnicity: 'Pacific',
-        ageText: '3',
-      );
-
-      expect(accepted, isFalse);
-      expect(
-        controller.errorMessage,
-        'Age routing for 3-year-old respondents is pending confirmation.',
-      );
-      expect(controller.questionnaireType, isNull);
+      expect(belowRange.questionnaireType, isNull);
+      expect(lowerBoundary.questionnaireType, QuestionnaireType.qchat10);
+      expect(upperBoundary.questionnaireType, QuestionnaireType.qchat10);
+      expect(aboveRange.questionnaireType, isNull);
+      expect(belowRange.errorMessage, contains('18 to under 36 months'));
+      expect(aboveRange.errorMessage, contains('18 to under 36 months'));
     });
+
+    test('limits the adult pathway to age 80', () {
+      expect(_routeYears(80), QuestionnaireType.aq10Adult);
+      expect(_routeYears(81), isNull);
+    });
+  });
+
+  test('formal assessment controls the diagnostic-technique follow-up', () {
+    final notAssessed = ScreeningController()
+      ..setAssessmentStatus(assessmentStatuses.first);
+    expect(notAssessed.requiresDiagnosticTechnique, isFalse);
+    expect(notAssessed.submitValidation(), isTrue);
+
+    for (final assessedStatus in assessmentStatuses.skip(1)) {
+      final assessed = ScreeningController()
+        ..setAssessmentStatus(assessedStatus);
+      expect(assessed.requiresDiagnosticTechnique, isTrue);
+      expect(assessed.submitValidation(), isFalse);
+
+      assessed.setDiagnosticTechnique(diagnosticTechniques.first);
+      expect(assessed.submitValidation(), isTrue);
+    }
   });
 
   test('restart clears screening and chat state', () async {
@@ -78,7 +100,7 @@ void main() {
       contains('connected in a later phase'),
     );
 
-    controller.restart();
+    await controller.restart();
 
     expect(controller.stage, ScreeningStage.welcome);
     expect(controller.questionnaireType, isNull);
@@ -93,7 +115,7 @@ void main() {
     expect(
       controller.submitRespondentDetails(
         gender: 'Female',
-        ethnicity: 'Pacific',
+        ethnicity: 'Pacifica',
         ageText: '16',
       ),
       isTrue,
@@ -124,24 +146,17 @@ void main() {
   });
 }
 
-QuestionnaireType? _routeToddler(int months) {
-  final controller = ScreeningController();
-  controller.chooseToddlerPath(true);
-  controller.submitRespondentDetails(
-    gender: 'Male',
-    ethnicity: 'Other',
-    ageText: '$months',
-  );
-  return controller.questionnaireType;
+QuestionnaireType? _routeYears(int years) {
+  return _submitAge(age: years, isToddler: false).questionnaireType;
 }
 
-QuestionnaireType? _routeYears(int years) {
+ScreeningController _submitAge({required int age, required bool isToddler}) {
   final controller = ScreeningController();
-  controller.chooseToddlerPath(false);
+  controller.chooseToddlerPath(isToddler);
   controller.submitRespondentDetails(
     gender: 'Female',
-    ethnicity: 'European',
-    ageText: '$years',
+    ethnicity: 'White European',
+    ageText: '$age',
   );
-  return controller.questionnaireType;
+  return controller;
 }

@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../app.dart';
 import '../models/screening_models.dart';
+import '../services/screening_session_store.dart';
 import '../state/screening_controller.dart';
 import '../widgets/app_header.dart';
 import '../widgets/persistent_chat_panel.dart';
@@ -25,7 +28,12 @@ class _ScreeningPageState extends State<ScreeningPage> {
   void initState() {
     super.initState();
     _ownsController = widget.controller == null;
-    _controller = widget.controller ?? ScreeningController();
+    _controller =
+        widget.controller ??
+        ScreeningController(
+          sessionStore: SharedPreferencesScreeningSessionStore(),
+        );
+    unawaited(_controller.initializeSession());
   }
 
   @override
@@ -117,6 +125,18 @@ class _ScreeningPageState extends State<ScreeningPage> {
                       DisclaimerOverlay(
                         onContinue: _controller.acknowledgeDisclaimer,
                       ),
+                    if (_controller.isSessionLoading)
+                      const Positioned.fill(
+                        child: ColoredBox(
+                          color: AppColors.background,
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                      )
+                    else if (_controller.hasRestorableSession)
+                      _RestoreSessionPrompt(
+                        onContinue: _controller.continueSavedSession,
+                        onRestart: _controller.restartSavedSession,
+                      ),
                   ],
                 );
               },
@@ -189,10 +209,13 @@ class _ScreeningPageState extends State<ScreeningPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Autism AI', style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                'About this prototype',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const SizedBox(height: 8),
               const Text(
-                'Flutter shell prototype. Screening responses and chat remain in memory only.',
+                'This prototype demonstrates the screening flow and persistent assistant interface. Chat responses and screening results are mocked.',
               ),
               if (_controller.stage != ScreeningStage.welcome) ...[
                 const SizedBox(height: 18),
@@ -213,13 +236,12 @@ class _ScreeningPageState extends State<ScreeningPage> {
   }
 
   void _showInfo() {
+    final info = _stageInfo;
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('About this prototype'),
-        content: const Text(
-          'This phase demonstrates the local screening flow and persistent assistant interface. The chatbot and screening result are mocked. No model API, CNN backend, RAG system, or production storage is connected.',
-        ),
+        title: Text(info.title),
+        content: Text(info.message),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -229,6 +251,50 @@ class _ScreeningPageState extends State<ScreeningPage> {
       ),
     );
   }
+
+  ({String title, String message}) get _stageInfo =>
+      switch (_controller.stage) {
+        ScreeningStage.welcome => (
+          title: 'Welcome',
+          message: 'Start when you are ready. The assistant will remain available throughout the screening.',
+        ),
+        ScreeningStage.toddlerCheck => (
+          title: 'Age pathway',
+          message: 'Select Yes for a toddler aged 18 to under 36 months. Otherwise, select No.',
+        ),
+        ScreeningStage.respondentDetails => (
+          title: 'Respondent details',
+          message: 'Age selects the appropriate questionnaire. Enter the respondent’s current details as accurately as you can.',
+        ),
+        ScreeningStage.backgroundQuestions => (
+          title: 'Background questions',
+          message: 'These questions provide background context and are separate from the behavioural questionnaire.',
+        ),
+        ScreeningStage.behaviouralQuestions => (
+          title: 'Behavioural questions',
+          message: 'Choose the response that best reflects typical behaviour. The assistant can clarify wording but cannot answer for you.',
+        ),
+        ScreeningStage.review => (
+          title: 'Review answers',
+          message: 'Check all ten responses before submitting. Use an edit button to change an answer.',
+        ),
+        ScreeningStage.disclaimer => (
+          title: 'Disclaimer',
+          message: 'The screening is not a diagnosis. Read and acknowledge the disclaimer before viewing the result.',
+        ),
+        ScreeningStage.result => (
+          title: 'Screening result',
+          message: 'This prototype result is mocked and is not a clinical diagnosis. Discuss concerns with a health professional.',
+        ),
+        ScreeningStage.validation => (
+          title: 'Validation',
+          message: 'Formal-assessment details support later research validation and do not change the screening result already shown.',
+        ),
+        ScreeningStage.report => (
+          title: 'Report and completion',
+          message: 'Review the local summary, continue the conversation, or clear this session and start a new screening.',
+        ),
+      };
 
   void _showAnswers() {
     showModalBottomSheet<void>(
@@ -328,6 +394,85 @@ class _ScreeningPageState extends State<ScreeningPage> {
             child: const Text('Start New'),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _RestoreSessionPrompt extends StatelessWidget {
+  const _RestoreSessionPrompt({
+    required this.onContinue,
+    required this.onRestart,
+  });
+
+  final VoidCallback onContinue;
+  final Future<void> Function() onRestart;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned.fill(
+      child: ColoredBox(
+        color: const Color(0xB30B1633),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Material(
+              color: Colors.white,
+              elevation: 12,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 440),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.restore_rounded,
+                        color: AppColors.blue,
+                        size: 42,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Continue where you left off?',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'A screening session was saved locally on this device.',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              key: const Key('restart-saved-session'),
+                              onPressed: onRestart,
+                              child: const Text('Restart'),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: FilledButton(
+                              key: const Key('continue-saved-session'),
+                              onPressed: onContinue,
+                              child: const Text('Continue'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
