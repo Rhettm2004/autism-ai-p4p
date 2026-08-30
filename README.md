@@ -1,17 +1,31 @@
-# autism_ai
+# Autism AI Flutter Shell
 
-A new Flutter project.
+A local Flutter prototype of the Autism AI screening flow. The app uses one
+persistent workspace: the current screening card changes above an in-memory
+chat history and a fixed chat input.
 
-## Getting Started
+## Included
 
-This project is a starting point for a Flutter application.
+- Age-based routing for Q-CHAT-10, AQ-10 Child, AQ-10 Adolescent, and AQ-10 Adult
+- The official wording and answer options for all four 10-item questionnaires
+- Respondent and background setup, answer review/editing, and disclaimer
+- Deterministic mock screening result, research validation, and report summary
+- Persistent local mock chat and complete screening reset
+- Local validation and responsive, accessible Material UI
 
-A few resources to get you started if this is your first Flutter project:
+Age routing for 3-year-old respondents is intentionally left unassigned pending
+confirmation.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Not connected in this phase
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+No LLM, RAG, agent routing, CNN/backend, vector database, external API, PDF
+generation, analytics, or production data storage is implemented. Chat replies
+and the screening result are clearly marked mock data.
+
+## Run and verify
+
+```sh
+flutter run
+flutter analyze
+flutter test
+```
