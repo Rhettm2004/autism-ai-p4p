@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../app.dart';
 import '../models/screening_models.dart';
+import '../services/report_download.dart';
+import '../services/report_service.dart';
 import '../services/screening_session_store.dart';
 import '../state/screening_controller.dart';
 import '../widgets/app_header.dart';
@@ -23,6 +25,7 @@ class _ScreeningPageState extends State<ScreeningPage> {
   late final ScreeningController _controller;
   late final bool _ownsController;
   final FocusNode _chatFocusNode = FocusNode();
+  bool _isDownloadingReport = false;
 
   @override
   void initState() {
@@ -188,7 +191,8 @@ class _ScreeningPageState extends State<ScreeningPage> {
       ScreeningStage.validation => ValidationCard(controller: _controller),
       ScreeningStage.report => ReportCard(
         controller: _controller,
-        onDownload: _showDownloadPlaceholder,
+        onDownload: _downloadReport,
+        isDownloading: _isDownloadingReport,
         onContinueConversation: _focusChat,
       ),
     };
@@ -356,21 +360,40 @@ class _ScreeningPageState extends State<ScreeningPage> {
     );
   }
 
-  void _showDownloadPlaceholder() {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        icon: const Icon(Icons.picture_as_pdf_outlined, color: AppColors.blue),
-        title: const Text('Report download'),
-        content: const Text('PDF generation will be added in a later phase.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+  Future<void> _downloadReport() async {
+    if (_isDownloadingReport) return;
+    setState(() => _isDownloadingReport = true);
+
+    try {
+      await _controller.flushPersistence();
+      final reportData = ScreeningReportData.fromSession(
+        _controller.sessionSnapshot,
+      );
+      final bytes = await const ReportService().generatePdf(reportData);
+      await downloadReportPdf(bytes: bytes, filename: reportData.filename);
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(content: Text('${reportData.filename} downloaded.')),
+        );
+    } catch (error, stackTrace) {
+      debugPrint('Unable to generate or download the PDF report: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text(
+              'The PDF report could not be downloaded. Please try again.',
+            ),
           ),
-        ],
-      ),
-    );
+        );
+    } finally {
+      if (mounted) setState(() => _isDownloadingReport = false);
+    }
   }
 
   void _confirmRestart() {

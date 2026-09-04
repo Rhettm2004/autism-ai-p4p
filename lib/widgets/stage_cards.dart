@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../app.dart';
 import '../models/screening_models.dart';
+import '../services/questionnaire_scoring_service.dart';
 import '../state/screening_controller.dart';
 
 const List<String> ethnicityOptions = [
@@ -733,11 +734,11 @@ class ResultCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final result = controller.result!;
     final traitsText = result.traitsDetected
-        ? 'Autistic traits were identified by the mock screening model.'
-        : 'No autistic traits were identified by the mock screening model.';
+        ? 'The prototype AI screening flag was raised for these responses.'
+        : 'The prototype AI screening flag was not raised for these responses.';
 
     return StageCardFrame(
-      title: 'Screening result',
+      title: 'AI screening result',
       subtitle: 'Prototype output for interface testing only.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -881,11 +882,13 @@ class ReportCard extends StatelessWidget {
     super.key,
     required this.controller,
     required this.onDownload,
+    required this.isDownloading,
     required this.onContinueConversation,
   });
 
   final ScreeningController controller;
-  final VoidCallback onDownload;
+  final Future<void> Function() onDownload;
+  final bool isDownloading;
   final VoidCallback onContinueConversation;
 
   @override
@@ -894,10 +897,14 @@ class ReportCard extends StatelessWidget {
     final background = controller.background;
     final validation = controller.validation;
     final result = controller.result!;
+    final classicalResult = const QuestionnaireScoringService().calculate(
+      questionnaireType: controller.questionnaireType!,
+      answers: controller.behaviouralAnswers,
+    );
 
     return StageCardFrame(
       title: 'Screening report',
-      subtitle: 'Mock local summary — not a clinical report or diagnosis.',
+      subtitle: 'Local screening summary - not a clinical report or diagnosis.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -939,14 +946,28 @@ class ReportCard extends StatelessWidget {
                   '—',
             ),
           const SizedBox(height: 16),
-          const _SectionTitle('Mock result'),
+          const _SectionTitle('AI Screening Result'),
           _SummaryRow(
-            label: 'Traits detected',
-            value: result.traitsDetected ? 'Yes' : 'No',
+            label: 'Prototype AI flag',
+            value: result.traitsDetected ? 'Raised' : 'Not raised',
           ),
           _SummaryRow(
             label: 'Mock similarity',
             value: '${result.similarityPercentage.toStringAsFixed(0)}%',
+          ),
+          const SizedBox(height: 16),
+          const _SectionTitle('Classical Screening Result'),
+          _SummaryRow(
+            label: '${classicalResult.questionnaireName} score',
+            value: '${classicalResult.score} / 10',
+          ),
+          _SummaryRow(
+            label: 'Referral threshold',
+            value: '${classicalResult.referralThreshold}',
+          ),
+          _SummaryRow(
+            label: 'Threshold outcome',
+            value: classicalResult.thresholdStatement,
           ),
           const SizedBox(height: 16),
           const _SectionTitle('Research validation'),
@@ -970,9 +991,17 @@ class ReportCard extends StatelessWidget {
             runSpacing: 10,
             children: [
               OutlinedButton.icon(
-                onPressed: onDownload,
-                icon: const Icon(Icons.download_outlined),
-                label: const Text('Download Report'),
+                key: const Key('download-report'),
+                onPressed: isDownloading ? null : onDownload,
+                icon: isDownloading
+                    ? const SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.download_outlined),
+                label: Text(
+                  isDownloading ? 'Generating PDF...' : 'Download Report',
+                ),
               ),
               OutlinedButton.icon(
                 onPressed: onContinueConversation,

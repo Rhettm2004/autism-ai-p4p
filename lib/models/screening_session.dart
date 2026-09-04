@@ -2,6 +2,8 @@ import 'screening_models.dart';
 
 class ScreeningSession {
   const ScreeningSession({
+    required this.sessionId,
+    required this.startedAt,
     required this.stage,
     required this.isToddler,
     required this.age,
@@ -23,6 +25,8 @@ class ScreeningSession {
 
   static const int currentVersion = 1;
 
+  final String sessionId;
+  final DateTime startedAt;
   final ScreeningStage stage;
   final bool? isToddler;
   final int? age;
@@ -44,6 +48,8 @@ class ScreeningSession {
   Map<String, dynamic> toJson() {
     return {
       'version': currentVersion,
+      'sessionId': sessionId,
+      'startedAt': startedAt.toIso8601String(),
       'stage': stage.name,
       'respondent': {
         'isToddler': isToddler,
@@ -97,6 +103,10 @@ class ScreeningSession {
     final rawResult = json['result'];
 
     return ScreeningSession(
+      sessionId: json['sessionId'] as String? ?? _newSessionId(),
+      startedAt:
+          DateTime.tryParse(json['startedAt'] as String? ?? '') ??
+          DateTime.now(),
       stage: _enumByName(ScreeningStage.values, json['stage'], 'stage'),
       isToddler: respondent['isToddler'] as bool?,
       age: (respondent['age'] as num?)?.toInt(),
@@ -140,6 +150,9 @@ class ScreeningSession {
     );
   }
 }
+
+String _newSessionId() =>
+    DateTime.now().microsecondsSinceEpoch.toRadixString(36).toUpperCase();
 
 Map<String, dynamic> _jsonMap(Object? value) {
   if (value is! Map) return const {};

@@ -13,7 +13,9 @@ class ScreeningController extends ChangeNotifier {
     ChatService? chatService,
     ScreeningPredictionService? predictionService,
     ScreeningSessionStore? sessionStore,
-  }) : _chatService = chatService ?? MockChatService(),
+  }) : sessionId = _newSessionId(),
+       sessionStartedAt = DateTime.now(),
+       _chatService = chatService ?? MockChatService(),
        _predictionService =
            predictionService ?? MockScreeningPredictionService(),
        _sessionStore = sessionStore ?? const NoopScreeningSessionStore() {
@@ -30,6 +32,8 @@ class ScreeningController extends ChangeNotifier {
   bool _persistenceReady = false;
   int _persistenceGeneration = 0;
 
+  String sessionId;
+  DateTime sessionStartedAt;
   ScreeningStage stage = ScreeningStage.welcome;
   RespondentDetails respondent = RespondentDetails();
   BackgroundDetails background = BackgroundDetails();
@@ -46,6 +50,8 @@ class ScreeningController extends ChangeNotifier {
   final List<ChatMessage> chatMessages = [];
 
   bool get hasRestorableSession => _pendingSession != null;
+
+  ScreeningSession get sessionSnapshot => _createSession();
 
   List<ScreeningQuestion> get questions =>
       questionnaireType == null ? const [] : questionBanks[questionnaireType]!;
@@ -356,6 +362,8 @@ class ScreeningController extends ChangeNotifier {
     _saveTimer = null;
     _persistenceGeneration += 1;
     _pendingSession = null;
+    sessionId = _newSessionId();
+    sessionStartedAt = DateTime.now();
     stage = ScreeningStage.welcome;
     respondent = RespondentDetails();
     background = BackgroundDetails();
@@ -455,6 +463,8 @@ class ScreeningController extends ChangeNotifier {
 
   ScreeningSession _createSession() {
     return ScreeningSession(
+      sessionId: sessionId,
+      startedAt: sessionStartedAt,
       stage: stage,
       isToddler: respondent.isToddler,
       age: respondent.age,
@@ -476,6 +486,8 @@ class ScreeningController extends ChangeNotifier {
   }
 
   void _applySession(ScreeningSession session) {
+    sessionId = session.sessionId;
+    sessionStartedAt = session.startedAt;
     respondent = RespondentDetails()
       ..isToddler = session.isToddler
       ..age = session.age
@@ -513,6 +525,9 @@ class ScreeningController extends ChangeNotifier {
     super.dispose();
   }
 }
+
+String _newSessionId() =>
+    DateTime.now().microsecondsSinceEpoch.toRadixString(36).toUpperCase();
 
 const List<String> assessmentStatuses = [
   'No, the respondent has never been formally assessed',
