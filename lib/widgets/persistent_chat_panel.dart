@@ -10,6 +10,7 @@ class PersistentChatPanel extends StatefulWidget {
     required this.onSend,
     required this.enabled,
     required this.isSending,
+    required this.serviceLabel,
     required this.inputFocusNode,
   });
 
@@ -17,6 +18,7 @@ class PersistentChatPanel extends StatefulWidget {
   final Future<void> Function(String) onSend;
   final bool enabled;
   final bool isSending;
+  final String serviceLabel;
   final FocusNode inputFocusNode;
 
   @override
@@ -97,7 +99,7 @@ class _PersistentChatPanelState extends State<PersistentChatPanel> {
                 ),
                 const SizedBox(width: 5),
                 Text(
-                  'Mock',
+                  widget.serviceLabel,
                   style: Theme.of(context).textTheme.labelSmall
                       ?.copyWith(color: const Color(0xFF667085)),
                 ),

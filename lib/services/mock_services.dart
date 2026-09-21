@@ -1,12 +1,16 @@
 import '../models/screening_models.dart';
+import 'chat_service.dart';
 
-abstract class ChatService {
-  Future<String> sendMessage(String message, ScreeningContext context);
-}
-
-class MockChatService implements ChatService {
+class MockChatService extends ChatService {
   @override
-  Future<String> sendMessage(String message, ScreeningContext context) async {
+  String get displayName => 'Mock';
+
+  @override
+  Future<String> sendMessage({
+    required String message,
+    required List<ChatMessage> history,
+    required ScreeningContext context,
+  }) async {
     final normalized = message.toLowerCase();
 
     if (normalized.contains('question')) {

@@ -84,10 +84,12 @@ class ScreeningContext {
     this.questionnaireType,
     this.currentQuestionIndex,
     this.currentQuestionText,
+    this.result,
   });
 
   final ScreeningStage stage;
   final QuestionnaireType? questionnaireType;
   final int? currentQuestionIndex;
   final String? currentQuestionText;
+  final ScreeningResult? result;
 }

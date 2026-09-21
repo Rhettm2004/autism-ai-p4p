@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../app.dart';
 import '../models/screening_models.dart';
+import '../services/chat_service_factory.dart';
 import '../services/report_download.dart';
 import '../services/report_service.dart';
 import '../services/screening_session_store.dart';
@@ -34,6 +35,7 @@ class _ScreeningPageState extends State<ScreeningPage> {
     _controller =
         widget.controller ??
         ScreeningController(
+          chatService: createConfiguredChatService(),
           sessionStore: SharedPreferencesScreeningSessionStore(),
         );
     unawaited(_controller.initializeSession());
@@ -113,6 +115,8 @@ class _ScreeningPageState extends State<ScreeningPage> {
                                         onSend: _controller.sendChatMessage,
                                         enabled: _controller.chatEnabled,
                                         isSending: _controller.isSendingChat,
+                                        serviceLabel:
+                                            _controller.chatServiceLabel,
                                         inputFocusNode: _chatFocusNode,
                                       ),
                                     ),

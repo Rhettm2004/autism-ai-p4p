@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../data/question_banks.dart';
 import '../models/screening_models.dart';
 import '../models/screening_session.dart';
+import '../services/chat_service.dart';
 import '../services/mock_services.dart';
 import '../services/screening_session_store.dart';
 
@@ -31,6 +32,7 @@ class ScreeningController extends ChangeNotifier {
   ScreeningSession? _pendingSession;
   bool _persistenceReady = false;
   int _persistenceGeneration = 0;
+  bool _disposed = false;
 
   String sessionId;
   DateTime sessionStartedAt;
@@ -53,6 +55,8 @@ class ScreeningController extends ChangeNotifier {
 
   ScreeningSession get sessionSnapshot => _createSession();
 
+  String get chatServiceLabel => _chatService.displayName;
+
   List<ScreeningQuestion> get questions =>
       questionnaireType == null ? const [] : questionBanks[questionnaireType]!;
 
@@ -69,6 +73,7 @@ class ScreeningController extends ChangeNotifier {
     currentQuestionText: stage == ScreeningStage.behaviouralQuestions
         ? currentQuestion?.text
         : null,
+    result: result,
   );
 
   String get stageLabel => switch (stage) {
@@ -341,7 +346,7 @@ class ScreeningController extends ChangeNotifier {
 
   Future<void> sendChatMessage(String text) async {
     final trimmed = text.trim();
-    if (trimmed.isEmpty || !chatEnabled || isSendingChat) return;
+    if (_disposed || trimmed.isEmpty || !chatEnabled || isSendingChat) return;
 
     chatMessages.add(
       ChatMessage(text: trimmed, isUser: true, timestamp: DateTime.now()),
@@ -349,12 +354,41 @@ class ScreeningController extends ChangeNotifier {
     isSendingChat = true;
     _notify();
 
-    final response = await _chatService.sendMessage(trimmed, context);
-    chatMessages.add(
-      ChatMessage(text: response, isUser: false, timestamp: DateTime.now()),
-    );
-    isSendingChat = false;
-    _notify();
+    final requestContext = context;
+    final historySnapshot = List<ChatMessage>.unmodifiable(chatMessages);
+    try {
+      final response = await _chatService.sendMessage(
+        message: trimmed,
+        history: historySnapshot,
+        context: requestContext,
+      );
+      chatMessages.add(
+        ChatMessage(text: response, isUser: false, timestamp: DateTime.now()),
+      );
+    } on ChatServiceException catch (error, stackTrace) {
+      debugPrint('Local chat request failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      chatMessages.add(
+        ChatMessage(
+          text: error.userMessage,
+          isUser: false,
+          timestamp: DateTime.now(),
+        ),
+      );
+    } catch (error, stackTrace) {
+      debugPrint('Unexpected local chat error: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      chatMessages.add(
+        ChatMessage(
+          text: 'The assistant could not respond just now. Please try sending your message again.',
+          isUser: false,
+          timestamp: DateTime.now(),
+        ),
+      );
+    } finally {
+      isSendingChat = false;
+      _notify();
+    }
   }
 
   Future<void> restart() async {
@@ -429,6 +463,7 @@ class ScreeningController extends ChangeNotifier {
           chatMessages.any((message) => message.isUser));
 
   void _notify({bool persist = true}) {
+    if (_disposed) return;
     notifyListeners();
     if (persist) _scheduleSessionSave();
   }
@@ -521,7 +556,10 @@ class ScreeningController extends ChangeNotifier {
 
   @override
   void dispose() {
+    if (_disposed) return;
+    _disposed = true;
     _saveTimer?.cancel();
+    _chatService.dispose();
     super.dispose();
   }
 }
