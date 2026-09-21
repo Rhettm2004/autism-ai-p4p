@@ -12,6 +12,9 @@
 .swiftpm/
 migrate_working_dir/
 
+# Local LLM model weights (large files)
+*.gguf
+
 # IntelliJ related
 *.iml
 *.ipr

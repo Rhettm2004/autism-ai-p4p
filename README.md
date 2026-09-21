@@ -19,6 +19,27 @@ browser refresh.
 Supported routing is 18 to under 36 months for Q-CHAT-10, 3–11 years for
 AQ-10 Child, 12–15 years for AQ-10 Adolescent, and 16–80 years for AQ-10 Adult.
 
+## Local LLM Models
+
+The app currently talks to local llama.cpp servers. Each developer must download
+the expected GGUF model files separately and should store them in `~/Models/`:
+
+- `Mistral-7B-Instruct-v0.3-Q4_K_M.gguf`
+- `Meta-Llama-3-8B-Instruct-Q4_K_M.gguf`
+
+Start the local servers with:
+
+```sh
+llama-server -m ~/Models/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf --port 8080
+```
+
+```sh
+llama-server -m ~/Models/Meta-Llama-3-8B-Instruct-Q4_K_M.gguf --port 8081
+```
+
+Model weights are intentionally not stored in GitHub. Avoid committing `.gguf`
+files because they are several GB each; `.gitignore` excludes them.
+
 ## Local Mistral assistant
 
 Start the llama.cpp OpenAI-compatible server on `http://localhost:8080`, then
