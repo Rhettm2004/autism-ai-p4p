@@ -2,10 +2,11 @@ version: 1
 mode: explicit_exclusions
 accepted_on: 2026-09-23
 note: >-
-  The project owner explicitly accepted running the application without sources
-  that remained unavailable after Rayaan's documented refresh build. This is a
-  reduced application corpus and is not a reproduction of the full 61-source
-  research manifest.
+  The project owner supplied the corpus snapshot used with Rayaan's chat.py
+  implementation. Its SHA-256 is
+  c185a35adfef3ebe971ac64018d6550ee4ecd9513515c210ca3b48f1976db713.
+  It contains 51 of the 61 currently enabled manifest sources; exclusions below
+  make that difference explicit without changing the upstream manifest.
 excluded_sources:
   - id: atherapysolutions_addressing_picky_eating_in
     reason: HTTP 403 during documented refresh build
@@ -19,6 +20,8 @@ excluded_sources:
     reason: HTTP 403 during documented refresh build
   - id: raisingchildren_conditions_that_occur_with_a
     reason: HTTP 403 during documented refresh build
+  - id: raisingchildren_pecs
+    reason: Absent from the project-owner-supplied Rayaan corpus snapshot
   - id: raisingchildren_sleep_problems_children_with
     reason: HTTP 403 during documented refresh build
   - id: raisingchildren_speech_generating_devices

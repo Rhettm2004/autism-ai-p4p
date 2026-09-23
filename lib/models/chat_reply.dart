@@ -6,6 +6,7 @@ class ChatSource {
     required this.authority,
     required this.lowAuthority,
     required this.passageIds,
+    this.cited = false,
   });
 
   final int number;
@@ -14,6 +15,7 @@ class ChatSource {
   final String authority;
   final bool lowAuthority;
   final List<String> passageIds;
+  final bool cited;
 
   Uri? get link {
     final uri = Uri.tryParse(url);
@@ -39,6 +41,7 @@ class ChatSource {
       passageIds: List<String>.unmodifiable(
         (json['passage_ids'] as List).cast<String>(),
       ),
+      cited: json['cited'] as bool? ?? false,
     );
   }
 
@@ -49,6 +52,7 @@ class ChatSource {
     'authority': authority,
     'low_authority': lowAuthority,
     'passage_ids': passageIds,
+    'cited': cited,
   };
 }
 

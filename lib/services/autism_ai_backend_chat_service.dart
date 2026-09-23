@@ -27,6 +27,12 @@ class AutismAiBackendChatService extends ChatService {
   final bool _ownsClient;
   bool _disposed = false;
   int _sequence = 0;
+  Map<String, bool> _options = {
+    'router': true,
+    'rag': true,
+    'cite': true,
+    'concise': true,
+  };
   @override
   String get displayName =>
       model == 'llama' ? 'Autism AI · Llama' : 'Autism AI · Mistral';
@@ -56,6 +62,7 @@ class AutismAiBackendChatService extends ChatService {
       'session_id': context.sessionId,
       'message': message,
       'model': model,
+      'options': _options,
       'history': recent
           .map(
             (m) => {'role': m.isUser ? 'user' : 'assistant', 'content': m.text},
@@ -146,8 +153,21 @@ class AutismAiBackendChatService extends ChatService {
       final sources = (data['sources'] as List).map(
         (s) => ChatSource.fromJson(s as Map<String, dynamic>),
       );
+      final returnedOptions = data['options'];
+      if (returnedOptions is Map<String, dynamic>) {
+        _options = {
+          for (final key in const ['router', 'rag', 'cite', 'concise'])
+            key: returnedOptions[key] as bool,
+        };
+      }
+      final command = data['command'];
+      final executedQuestion = command is Map<String, dynamic>
+          ? command['executed_question'] as String?
+          : null;
       return ChatReply(
-        text.trim(),
+        executedQuestion == null
+            ? text.trim()
+            : 'Demo question: $executedQuestion\n\n${text.trim()}',
         route: route,
         model: model,
         sources: List.unmodifiable(sources),

@@ -22,11 +22,13 @@ can download it. `HF_HOME` can point to an existing university cache. No lexical
 fallback router is selected if MiniLM is unavailable.
 
 The application currently applies the explicit exclusions recorded in
-`config/corpus_policy.yaml`. Rayaan's 61-source manifest remains unchanged, but
-the app accepts a reduced 52-source corpus after the project owner chose to
-ignore nine URLs that still failed the documented refresh build. Readiness and
-health disclose this policy. Remove the exclusions and rebuild to restore the
-full-manifest requirement.
+`config/corpus_policy.yaml`. Rayaan's 61-source manifest remains unchanged. The
+active project-owner-supplied snapshot contains 1,670 passages from 51 sources;
+its ten exclusions and SHA-256 are recorded explicitly. This snapshot reproduces
+the five passages shown in the supplied `chat.py` `/prompt` transcript for
+"what is asd" when used with Rayaan's default neighbour expansion off. Readiness
+and health disclose the reduced scope. Remove the exclusions and rebuild to
+restore the full-manifest requirement.
 
 ### Prepare the real corpus
 
@@ -120,28 +122,52 @@ fields are transmitted automatically.
 
 Replies include text, route, model, sources and provenance hashes; `action` is always
 null. Flutter rejects non-null actions and mismatched correlation IDs. Source links
-only open HTTP(S) URLs. They identify retrieved supporting material, not verified
-sentence-level citations. Tier-5 sources are visibly labelled commercial/blog.
+only open HTTP(S) URLs. Valid inline markers are renumbered with Rayaan's original
+logic, and the source list distinguishes cited extracts from additional retrieved
+extracts. A marker records the model's selected extract; it is not an independent
+entailment check. Tier-5 sources are visibly labelled commercial/blog.
 
 Errors have `{error: {code, message, retryable, request_id}}`. Validation is 422,
 oversized input 413, unavailable/capacity 503, timeout 504, invalid model reply 502,
 and unexpected errors 500. Failed request bodies are not echoed. One inference runs
 at a time per backend worker; additional requests return busy. Use one worker for
-local development. History is bounded, but a sufficiently long prompt may still
-exceed a model's context; this returns an explicit upstream error rather than
-silently deleting safety instructions or retrieved evidence.
+local development. History is bounded in transport. Under the active
+`rayaan_chat_exact` profile, it is not forwarded to the model because Rayaan's
+demo evaluates every question independently. A sufficiently long retrieved
+prompt may still exceed a model's context; this returns an explicit upstream
+error rather than silently deleting safety instructions or retrieved evidence.
+
+### Rayaan's demo commands in Flutter
+
+The integrated provider reuses `src.chat.parse_command` and reads examples from
+the original `config/demo.yaml`. Type `/help` in the Flutter chat to see all
+commands. `/examples`, `/ex N`, `/prompt`, `/cite on|off`,
+`/concise on|off`, `/router on|off`, `/rag on|off`, `/quit`, and `/exit` are
+recognized. Settings are sent explicitly on every request and remain local to
+the running Flutter chat-service instance. Router, RAG, concise mode, and inline
+citations start on in the integrated app. `/quit` and `/exit`
+explain how to leave the web app because they cannot close a browser tab.
 
 ## Research fidelity
 
 Runtime uses the original `src.chat.prepare_turn`, rule-first `embeddings_word`
-router on `topic`/`extended`, and TF-IDF retrieval. Retrieval runs on every turn,
-including safety routes: five passages, neighbour expansion enabled, original soft
-per-source cap of two. No reranker, threshold, vector store or replacement router
-has been introduced. Expansion can exceed the per-source cap. Concise and inline
-citation instructions are off. Original few-shot/route prompt blocks are unchanged;
-`config/application_prompts.yaml` adds separately versioned application constraints.
-History/context are new app inputs. The original single-turn benchmark runner stays
-unchanged. Research no-RAG behaviour is tested, but live app mode requires RAG.
+router on `topic`/`extended`, and TF-IDF retrieval. Retrieval starts on for every
+turn, including safety routes: five passages, Rayaan's `chat.py` default of
+neighbour expansion off, and the original soft per-source cap of two. No
+reranker, threshold, vector store or replacement router
+has been introduced. Expansion can exceed the per-source cap. The active
+`rayaan_chat_exact` profile sends `prepare_turn().system_prompt` and the question
+to llama.cpp byte for byte, just as `scripts/chat.py` does. Each turn is independent.
+Read-only screening context and bounded history remain validated API inputs but do
+not alter the model prompt. `config/application_prompts.yaml` is retained as the
+inactive `app_context_v1` profile; it is not appended in exact mode. Concise mode
+and inline citations start on in the integrated app; commands can change both
+explicitly. Rayaan's citation renumbering and source ordering are applied to each
+cited answer. An answer with no valid citation, or a citation to a source number
+that was not supplied, is rejected explicitly rather than presented as grounded.
+Citation markers show which retrieved extract the model referenced; they do not
+independently verify that the extract entails the sentence. The original
+single-turn benchmark runner stays unchanged.
 
 Key differences from evaluated generation:
 
@@ -151,7 +177,7 @@ Key differences from evaluated generation:
 | Llama | HF ID is Llama **3.1** 8B | Local filename identifies Llama **3** 8B |
 | Inference | Transformers / BitsAndBytes | llama.cpp OpenAI-compatible HTTP |
 | Repetition | Completion-only custom logits processors | repeat penalty disabled; no claimed equivalent |
-| Prompt | Single-turn measured blocks | Those blocks plus app constraints, history and read-only context |
+| Prompt | `prepare_turn()` blocks + exact question | Same bytes under `rayaan_chat_exact` |
 | Corpus | Research snapshot | Locally prepared/supplied corpus with explicit fingerprint |
 
 The adapter fixes temperature 0.1, max tokens 512, top-k 50, top-p 1, min-p 0 and

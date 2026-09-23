@@ -146,7 +146,7 @@ class _PersistentChatPanelState extends State<PersistentChatPanel> {
                       onSubmitted: (_) => _submit(),
                       decoration: InputDecoration(
                         hintText: widget.enabled
-                            ? 'Ask a question…'
+                            ? 'Ask a question or type /help…'
                             : 'Chat paused for disclaimer',
                         isDense: true,
                         contentPadding: const EdgeInsets.symmetric(
@@ -210,7 +210,7 @@ class _ChatBubble extends StatelessWidget {
             if (message.sources.isNotEmpty) ...[
               const SizedBox(height: 8),
               const Text(
-                'Retrieved supporting sources',
+                'Sources for this answer',
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
               for (final source in message.sources)
@@ -249,9 +249,8 @@ class _ChatBubble extends StatelessWidget {
                         child: Text('${source.number}. ${source.title}'),
                       ),
                       Text(
-                        source.lowAuthority
-                            ? 'Commercial or blog source · tier ${source.authority}'
-                            : 'Source authority tier ${source.authority}',
+                        '${source.cited ? 'Cited in the answer' : 'Additional retrieved source'} · '
+                        '${source.lowAuthority ? 'commercial or blog source' : 'authority tier ${source.authority}'}',
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                     ],

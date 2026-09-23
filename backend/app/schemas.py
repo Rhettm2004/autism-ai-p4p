@@ -59,6 +59,12 @@ class ScreeningContext(StrictModel):
             raise ValueError('Result questionnaire does not match context')
         return self
 
+class ChatOptions(StrictModel):
+    router: bool = True
+    rag: bool = True
+    cite: bool = True
+    concise: bool = True
+
 class ChatRequest(StrictModel):
     api_version: Literal[1] = 1
     request_id: Identifier
@@ -66,6 +72,7 @@ class ChatRequest(StrictModel):
     message: Text
     history: list[HistoryMessage] = Field(default_factory=list, max_length=12)
     model: ModelAlias = 'mistral'
+    options: ChatOptions = Field(default_factory=ChatOptions)
     screening_context: ScreeningContext
 
 class Source(StrictModel):
@@ -75,18 +82,27 @@ class Source(StrictModel):
     authority: str
     low_authority: bool
     passage_ids: list[str]
+    cited: bool
 
 class ChatMetadata(StrictModel):
     runtime_profile: str
+    prompt_profile: str
     router_config: str
     route_decided_by: str
     rag_used: bool
     corpus_sha256: str
     prompts_sha256: str
     training_sha256: str
-    application_prompt_version: int
+    application_prompt_version: int | None = None
     model_identity: str
     finish_reason: str | None = None
+    invalid_citations: list[int] = Field(default_factory=list)
+    citation_repair_version: int | None = None
+
+class CommandResult(StrictModel):
+    name: str
+    arg: str | int | None = None
+    executed_question: str | None = None
 
 class ChatResponse(StrictModel):
     api_version: Literal[1] = 1
@@ -97,5 +113,7 @@ class ChatResponse(StrictModel):
     route: Route
     model: ModelAlias
     sources: list[Source]
+    options: ChatOptions
+    command: CommandResult | None = None
     action: None = None
     metadata: ChatMetadata

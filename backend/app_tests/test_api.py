@@ -33,12 +33,17 @@ class FixtureRouter:
 
 
 class FakeAdapter:
-    def __init__(self): self.calls = []; self.available = True; self.failure = None
+    def __init__(self):
+        self.calls = []
+        self.available = True
+        self.failure = None
+        self.text = 'Screening is not diagnosis. [1]'
+        self.texts = []
     async def ready(self, model): return self.available
     async def generate(self, messages, model):
         if self.failure: raise self.failure
         self.calls.append((messages, model))
-        return GenerationResult('Screening is not diagnosis.', 'stop')
+        return GenerationResult(self.texts.pop(0) if self.texts else self.text, 'stop')
     async def close(self): pass
 
 
@@ -57,6 +62,7 @@ class FixtureRuntime(ChatRuntime):
         self.turn_settings = DemoSettings(concise=False, cite=False, top_k=5, expand_neighbours=True)
         self.condition = load_condition_prompt('few_shot')
         self.application = yaml.safe_load((ROOT / 'config/application_prompts.yaml').read_text())
+        self.cfg = {'prompt_profile': 'rayaan_chat_exact'}
         self.components = dict(router='ready', corpus='ready', prompts='ready')
         self.corpus_hash = self.training_hash = self.prompt_hash = 'fixture-only'
 
@@ -78,13 +84,61 @@ def test_chat_routes_retrieves_constructs_prompt_and_sources(client_runtime):
     assert data['metadata']['rag_used'] is True
     assert any(s['low_authority'] for s in data['sources'])
     assert all(s['passage_ids'] for s in data['sources'])
+    assert data['response'].endswith('[1]')
+    assert data['sources'][0]['cited'] is True
     messages, alias = runtime.adapter.calls[0]
     assert alias == 'mistral'
     assert messages[0]['content'].startswith(runtime.condition)
     assert '--- SOURCES ---' in messages[0]['content']
-    assert 'Never choose, infer, or submit' in messages[0]['content']
-    assert 'screening_context' in messages[-1]['content']
+    assert 'Never choose, infer, or submit' not in messages[0]['content']
+    assert messages[1] == {'role': 'user', 'content': 'What does screening mean?'}
+    assert 'screening_context' not in messages[1]['content']
+    assert data['metadata']['prompt_profile'] == 'rayaan_chat_exact'
+    assert data['metadata']['application_prompt_version'] is None
     assert 'system_prompt' not in data and 'reasoning' not in data
+
+
+def test_citations_are_renumbered_and_sources_follow_first_use(client_runtime):
+    client, runtime = client_runtime
+    runtime.adapter.text = 'The blog says this [2]. The instrument adds this [1].'
+    response = client.post('/chat', json=payload())
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data['response'] == (
+        'The blog says this [1]. The instrument adds this [2].')
+    assert [source['title'] for source in data['sources'][:2]] == [
+        'Fixture blog', 'Fixture instrument documentation']
+    assert all(source['cited'] for source in data['sources'][:2])
+
+
+@pytest.mark.parametrize(('text', 'code'), [
+    ('An answer without a citation.', 'citations_missing'),
+    ('An answer with a made-up citation [99].', 'invalid_citations'),
+])
+def test_citation_failures_are_explicit(client_runtime, text, code):
+    client, runtime = client_runtime
+    runtime.adapter.text = text
+    response = client.post('/chat', json=payload())
+    assert response.status_code == 502
+    assert response.json()['error']['code'] == code
+
+
+def test_missing_citations_are_repaired_using_the_same_sources(client_runtime):
+    client, runtime = client_runtime
+    runtime.adapter.texts = [
+        'A draft without citations.',
+        'The instrument describes screening [1]. The blog adds advice [2].',
+    ]
+    response = client.post('/chat', json=payload())
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data['response'].endswith('advice [2].')
+    assert data['metadata']['citation_repair_version'] == 1
+    assert len(runtime.adapter.calls) == 2
+    repair_messages = runtime.adapter.calls[1][0]
+    assert repair_messages[-2] == {
+        'role': 'assistant', 'content': 'A draft without citations.'}
+    assert 'source numbers present' in repair_messages[-1]['content'].lower()
 
 
 @pytest.mark.parametrize('model', ['mistral', 'llama'])
@@ -94,11 +148,13 @@ def test_model_alias_history_and_context(client_runtime, model):
     response = client.post('/chat', json=payload(model=model, history=history))
     assert response.status_code == 200
     messages, alias = runtime.adapter.calls[0]
-    assert alias == model and messages[1:3] == history
+    assert alias == model
+    assert messages[1] == {'role': 'user', 'content': 'What does screening mean?'}
+    assert all(item['content'] not in str(messages) for item in history)
     assert sum('What does screening mean?' in m['content'] for m in messages) == 1
 
 
-def test_history_is_normalized_for_strict_mistral_template(client_runtime):
+def test_rayaan_exact_profile_ignores_app_history(client_runtime):
     client, runtime = client_runtime
     history = [
         {'role': 'assistant', 'content': 'Welcome message'},
@@ -109,9 +165,62 @@ def test_history_is_normalized_for_strict_mistral_template(client_runtime):
     assert response.status_code == 200
     messages, _ = runtime.adapter.calls[0]
     assert [message['role'] for message in messages] == ['system', 'user']
-    assert 'Welcome message' not in messages[1]['content']
-    assert 'A previous unanswered message' in messages[1]['content']
-    assert messages[1]['content'].count('What does screening mean?') == 1
+    assert messages[1]['content'] == 'What does screening mean?'
+    assert 'Welcome message' not in str(messages)
+    assert 'A previous unanswered message' not in str(messages)
+
+
+def test_rayaan_prompt_is_byte_exact_prepare_turn_output(client_runtime):
+    _, runtime = client_runtime
+    request = ChatRequest.model_validate(payload())
+    turn, messages = runtime._prepare(request)
+    assert messages == [
+        {'role': 'system', 'content': turn.system_prompt},
+        {'role': 'user', 'content': request.message},
+    ]
+
+
+def test_reuses_rayaan_commands_and_updates_explicit_options(client_runtime):
+    client, runtime = client_runtime
+
+    help_response = client.post('/chat', json=payload(message='/help'))
+    assert help_response.status_code == 200
+    assert '/examples' in help_response.json()['response']
+    assert help_response.json()['command']['name'] == 'help'
+    assert runtime.adapter.calls == []
+
+    toggle = client.post('/chat', json=payload(message='/rag off'))
+    assert toggle.status_code == 200
+    assert toggle.json()['options']['rag'] is False
+    assert toggle.json()['command'] == {
+        'name': 'rag', 'arg': 'off', 'executed_question': None,
+    }
+
+    invalid = client.post('/chat', json=payload(message='/rag maybe'))
+    assert invalid.status_code == 200
+    assert '/rag takes on or off' in invalid.json()['response']
+    assert runtime.adapter.calls == []
+
+
+def test_example_and_prompt_commands_use_original_demo_data(client_runtime):
+    client, runtime = client_runtime
+    examples = client.post('/chat', json=payload(message='/examples'))
+    assert examples.status_code == 200
+    assert 'What is autism spectrum disorder?' in examples.json()['response']
+
+    example = client.post('/chat', json=payload(message='/ex 1'))
+    assert example.status_code == 200
+    assert example.json()['command']['executed_question'] == 'What is autism spectrum disorder?'
+    assert runtime.router.calls[-1] == 'What is autism spectrum disorder?'
+
+    history = [
+        {'role': 'user', 'content': 'What does screening mean?'},
+        {'role': 'assistant', 'content': 'Earlier answer'},
+    ]
+    prompt = client.post('/chat', json=payload(message='/prompt', history=history))
+    assert prompt.status_code == 200
+    assert 'System prompt for the previous question:' in prompt.json()['response']
+    assert 'QUESTION\nWhat does screening mean?' in prompt.json()['response']
 
 
 def test_hard_safety_keeps_rag_and_global_prompt(client_runtime):

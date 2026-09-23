@@ -1,4 +1,5 @@
 profile: app_v1
+prompt_profile: rayaan_chat_exact
 condition: few_shot
 router_config: embeddings_word
 router_track: topic
@@ -6,12 +7,12 @@ router_dataset: extended
 retrieval:
   backend: tfidf
   top_k: 5
-  expand_neighbours: true
+  expand_neighbours: false
   max_per_source: 2
   corpus: data/corpus/corpus.csv
   readiness: data/corpus/readiness.json
-concise: false
-cite: false
+concise: true
+cite: true
 models:
   mistral:
     url: http://127.0.0.1:8080

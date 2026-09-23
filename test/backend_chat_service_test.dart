@@ -22,6 +22,8 @@ Map<String, dynamic> reply(Map<String, dynamic> request) => {
   'route': 'screening_guidance',
   'model': request['model'],
   'action': null,
+  'options': request['options'],
+  'command': null,
   'sources': [
     {
       'number': 1,
@@ -30,6 +32,7 @@ Map<String, dynamic> reply(Map<String, dynamic> request) => {
       'authority': '3',
       'low_authority': false,
       'passage_ids': ['instrument_c1'],
+      'cited': true,
     },
   ],
 };
@@ -80,6 +83,12 @@ void main() {
         isFalse,
       );
       expect(captured['model'], model);
+      expect(captured['options'], {
+        'router': true,
+        'rag': true,
+        'cite': true,
+        'concise': true,
+      });
       expect(
         captured['screening_context']['current_question']['id'],
         'qchat10_q4',
@@ -142,6 +151,48 @@ void main() {
       throwsA(isA<ChatServiceException>()),
     );
     expect(calls, 1);
+  });
+
+  test('command settings returned by backend apply to later turns', () async {
+    final requests = <Map<String, dynamic>>[];
+    final client = MockClient((request) async {
+      final body = jsonDecode(request.body) as Map<String, dynamic>;
+      requests.add(body);
+      final data = reply(body);
+      if (body['message'] == '/rag off') {
+        data['response'] = '/rag off';
+        data['options'] = {
+          'router': true,
+          'rag': false,
+          'cite': false,
+          'concise': true,
+        };
+        data['command'] = {
+          'name': 'rag',
+          'arg': 'off',
+          'executed_question': null,
+        };
+      }
+      return http.Response(jsonEncode(data), 200);
+    });
+    final service = AutismAiBackendChatService(
+      baseUrl: 'http://localhost:8000',
+      client: client,
+    );
+    addTearDown(client.close);
+
+    await service.sendMessage(
+      message: '/rag off',
+      history: [],
+      context: context,
+    );
+    await service.sendMessage(
+      message: 'Next question',
+      history: [],
+      context: context,
+    );
+
+    expect(requests[1]['options']['rag'], isFalse);
   });
 
   test(
@@ -281,9 +332,9 @@ void main() {
           ),
         ),
       );
-      expect(find.text('Retrieved supporting sources'), findsOneWidget);
+      expect(find.text('Sources for this answer'), findsOneWidget);
       expect(find.text('1. Source title'), findsOneWidget);
-      expect(find.textContaining('Commercial or blog source'), findsOneWidget);
+      expect(find.textContaining('commercial or blog source'), findsOneWidget);
     },
   );
 }
