@@ -21,6 +21,13 @@ The MiniLM router needs its original Hugging Face model cache; first initializat
 can download it. `HF_HOME` can point to an existing university cache. No lexical
 fallback router is selected if MiniLM is unavailable.
 
+The application currently applies the explicit exclusions recorded in
+`config/corpus_policy.yaml`. Rayaan's 61-source manifest remains unchanged, but
+the app accepts a reduced 52-source corpus after the project owner chose to
+ignore nine URLs that still failed the documented refresh build. Readiness and
+health disclose this policy. Remove the exclusions and rebuild to restore the
+full-manifest requirement.
+
 ### Prepare the real corpus
 
 From `backend/`:

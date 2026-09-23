@@ -30,7 +30,7 @@ Last verified: 23 September 2026 (Pacific/Auckland).
 
 - `flutter analyze`: clean.
 - `flutter test`: 45 passed.
-- New backend API/integration suite: 20 passed (one dependency deprecation warning).
+- New backend API/integration suite: 22 passed (one dependency deprecation warning).
 - Original research suites run successfully:
   - interactive chat: 21 passed;
   - retrieval expansion: 9 passed;
@@ -47,24 +47,36 @@ Last verified: 23 September 2026 (Pacific/Auckland).
   HTTP 200, alias `mistral`, visible response returned.
 - Live Llama 3 GGUF request through the same shape: HTTP 200, alias `llama`,
   visible response returned.
-- Real backend initialization: router ready, prompts ready, selected Mistral
-  server ready, corpus unavailable; `/health` returned 503 and `/chat` refused
-  inference with `runtime_unavailable`, as designed.
-- `git diff --check`: clean. Temporary model/backend processes were stopped.
+- Live reduced-corpus backend initialization: router, prompts, corpus, and
+  selected Mistral server ready. `/health` returned HTTP 200 and disclosed
+  `reduced_corpus_9_sources_excluded`.
+- Live end-to-end `/chat`: HTTP 200 through router A, five-passage TF-IDF RAG,
+  the FastAPI adapter, and Mistral. The response used the
+  `general_knowledge` route, included supporting-source metadata, and returned
+  `action: null`.
+- Live Flutter-shaped history check: HTTP 200 after normalizing the initial
+  assistant greeting and consecutive user turns for Mistral's strict
+  alternating-role chat template.
+- `git diff --check`: clean. The temporary backend process was stopped; the
+  pre-existing local Mistral server was left running.
 
 The API tests use explicit fixture passages and fake generation. They verify
 orchestration and failure behaviour but do not count as live corpus readiness or
 model-quality evaluation.
 
-## Unresolved blockers
+## Research-fidelity limitations
 
-### Corpus is incomplete
+### Corpus scope reduced by explicit project decision
 
 Rayaan's documented `build_corpus.py --list` and refresh build were rerun on
 23 September 2026. The builder completed with exit code 0 and produced 1,605
 passages from 52 enabled sources, but 9 of the 61 enabled sources were missing.
-The readiness validator therefore recorded `complete: false`; live integrated
-chat remains deliberately unavailable.
+The project owner subsequently chose to ignore those unavailable sources for
+the application. `config/corpus_policy.yaml` records the nine exclusions and
+their reasons without changing Rayaan's upstream manifest. The readiness
+validator accepts the remaining 52-source corpus and health reports the reduced
+scope. This enables integrated chat but does not reproduce the full 61-source
+research corpus.
 
 Missing source IDs:
 
@@ -78,7 +90,7 @@ Missing source IDs:
 - `raisingchildren_speech_generating_devices` — HTTP 403
 - `sunhealthcares_index` — HTTP 403
 
-Local partial-build fingerprints:
+Accepted reduced-corpus fingerprints:
 
 - manifest SHA-256:
   `9868aa4fd0ac1bcec54a9ee1343f2cfa514174a1ef3d036462eaabc917a615b7`
@@ -89,9 +101,10 @@ The corpus and readiness JSON remain ignored because source redistribution and
 generated-data rules in Rayaan's repository require that. Exact failures are in
 the ignored local `logs/corpus-build.log`.
 
-Required next step: obtain Rayaan's permitted original corpus snapshot and hash,
-or manually obtain the exact configured documents under their permitted terms
-and update `sources.yaml` to point at those local copies. Then run
+To restore full research scope, obtain Rayaan's permitted original corpus
+snapshot and hash, or manually obtain the exact configured documents under
+their permitted terms and update `sources.yaml` to point at those local copies.
+Then remove the explicit exclusions and run
 `python -m app.prepare_corpus --verify-existing`. No replacement documents or
 benchmark-answer corpus were invented.
 
@@ -103,6 +116,6 @@ benchmark-answer corpus were invented.
 - The app models differ from evaluated models: local Mistral v0.3 GGUF versus
   research HF Mistral v0.1, and local Llama 3 GGUF versus research HF Llama 3.1.
   Transport works, but research-equivalent generation has not been claimed.
-- No full Router + real RAG + real model response was generated because doing so
-  would require accepting the partial corpus. Model-quality and safety review of
-  integrated live answers therefore remains outstanding after corpus resolution.
+- The live Router + RAG + Mistral verification applies to the accepted
+  52-source application corpus, not the full manifest used to define the
+  intended research scope.

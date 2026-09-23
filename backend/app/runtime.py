@@ -68,6 +68,11 @@ class ChatRuntime:
             passages, self.corpus_hash = verify_corpus(root)
             self.retriever = Retriever().index(passages)
             self.components['corpus'] = 'ready'
+            readiness = json.loads((root / 'data/corpus/readiness.json').read_text())
+            excluded = readiness.get('excluded_sources') or []
+            if excluded:
+                self.component_details['corpus_policy'] = (
+                    f'reduced_corpus_{len(excluded)}_sources_excluded')
         except Exception as exc:
             log.warning('Corpus unavailable: %s', exc)
             self.components['corpus'] = 'corpus_unavailable'
@@ -75,6 +80,7 @@ class ChatRuntime:
             self.component_details['corpus'] = reason if reason in {
                 'corpus_not_prepared', 'corpus_incomplete',
                 'corpus_fingerprint_mismatch', 'corpus_source_mismatch',
+                'corpus_policy_invalid',
             } else 'corpus_unavailable'
 
     async def health(self):
@@ -84,6 +90,27 @@ class ChatRuntime:
             'runtime_profile': 'app_v1', 'model': self.settings.default_model,
             'components': {**self.components, 'model': 'ready' if model_ready else 'model_unavailable'},
             'details': self.component_details}
+
+    @staticmethod
+    def _conversation_messages(request, current_user):
+        history = [message.model_dump() for message in request.history]
+        if (history and history[-1]['role'] == 'user'
+                and history[-1]['content'] == request.message):
+            history.pop()
+
+        # Mistral's llama.cpp template requires the transcript after the
+        # system prompt to start with a user and strictly alternate roles.
+        while history and history[0]['role'] == 'assistant':
+            history.pop(0)
+        history.append({'role': 'user', 'content': current_user})
+
+        alternating = []
+        for message in history:
+            if alternating and alternating[-1]['role'] == message['role']:
+                alternating[-1]['content'] += '\n\n' + message['content']
+            else:
+                alternating.append(dict(message))
+        return alternating
 
     def _prepare(self, request):
         from src.chat import prepare_turn
@@ -96,10 +123,9 @@ class ChatRuntime:
         system = turn.system_prompt + '\n\n' + self.application['contract']
         context = json.dumps(request.screening_context.model_dump(), ensure_ascii=False)
         messages = [{'role': 'system', 'content': system}]
-        messages.extend(m.model_dump() for m in request.history)
-        messages.append({'role': 'user', 'content':
-            '<read_only_screening_context>\n' + context +
-            '\n</read_only_screening_context>\n\nUser message:\n' + request.message})
+        current_user = ('<read_only_screening_context>\n' + context +
+            '\n</read_only_screening_context>\n\nUser message:\n' + request.message)
+        messages.extend(self._conversation_messages(request, current_user))
         return turn, messages
 
     async def chat(self, request):

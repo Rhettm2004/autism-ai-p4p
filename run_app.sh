@@ -187,6 +187,7 @@ case "$MODE" in
 
     echo "Starting Flutter with the integrated backend."
     run_flutter \
+      --web-port 3000 \
       --dart-define=CHAT_PROVIDER=backend \
       --dart-define=AUTISM_AI_BACKEND_URL="$BACKEND_URL" \
       --dart-define=AUTISM_AI_MODEL=mistral

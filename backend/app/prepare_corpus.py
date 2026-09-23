@@ -8,14 +8,13 @@ import json
 import subprocess
 import sys
 from datetime import datetime, timezone
-import yaml
 from app.settings import ROOT
-from app.corpus import digest
+from app.corpus import corpus_scope, digest
 
 
 def inspect(root):
     manifest = root / 'data/corpus/sources.yaml'
-    expected = {s['id'] for s in yaml.safe_load(manifest.read_text())['sources'] if s.get('enabled', True)}
+    expected, excluded, policy_path = corpus_scope(root)
     corpus = root / 'data/corpus/corpus.csv'
     rows = []
     if corpus.exists():
@@ -28,6 +27,8 @@ def inspect(root):
             'missing_sources': missing, 'unexpected_sources': unexpected,
             'empty_passages': empty, 'passages': len(rows), 'source_count': len(actual),
             'manifest_sha256': digest(manifest),
+            'policy_sha256': digest(policy_path) if policy_path.is_file() else None,
+            'excluded_sources': sorted(excluded),
             'corpus_sha256': digest(corpus) if corpus.exists() else None,
             'prepared_at': datetime.now(timezone.utc).isoformat(),
             'provenance': 'local_build_or_supplied_snapshot_not_verified_as_research_snapshot'}
