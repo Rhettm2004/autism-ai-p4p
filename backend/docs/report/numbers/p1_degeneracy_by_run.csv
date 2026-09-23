@@ -1,0 +1,5 @@
+run,n,degenerate_strict,share_with_repeated_5gram,mean_repeated_token_fraction,mean_distinct_4,mean_tokens
+llama3-8b few_shot,44,1,0.3636,0.0454,0.9838,156.8
+llama3-8b zero_shot,44,1,0.3182,0.0527,0.9738,164.1
+mistral-7b few_shot,44,0,0.2955,0.0447,0.984,112.6
+mistral-7b zero_shot,44,0,0.2045,0.0163,0.9942,106.8

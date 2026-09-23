@@ -1,0 +1,17 @@
+torch>=2.2.0
+transformers>=4.40.0
+accelerate>=0.27.0
+bitsandbytes>=0.43.0
+bert-score>=0.3.13
+rouge-score>=0.1.2
+pandas>=2.2.0
+pyyaml>=6.0
+python-dotenv>=1.0.0
+numbers-parser>=4.15.0
+scikit-learn>=1.4.0
+scipy>=1.11.0
+
+# Phase 3 router: frozen sentence embeddings for the intent classifier.
+# CPU is sufficient; the model is ~80MB and does not compete with the
+# generation models for GPU memory.
+sentence-transformers>=2.2.0

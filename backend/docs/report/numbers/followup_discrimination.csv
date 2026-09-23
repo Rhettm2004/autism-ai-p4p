@@ -1,0 +1,2 @@
+metric,baseline_arm,contrast_arm,observed,ci_low,ci_high,n_prompts,n_resamples,seed
+discrimination_gap,baseline,rag,-0.2535714285714285,-0.4244714623438028,-0.0769230769230769,52,10000,20260826

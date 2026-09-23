@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../app.dart';
 import '../models/screening_models.dart';
@@ -202,7 +203,63 @@ class _ChatBubble extends StatelessWidget {
             bottomRight: Radius.circular(message.isUser ? 3 : 13),
           ),
         ),
-        child: Text(message.text, style: Theme.of(context).textTheme.bodySmall),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(message.text, style: Theme.of(context).textTheme.bodySmall),
+            if (message.sources.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              const Text(
+                'Retrieved supporting sources',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              for (final source in message.sources)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextButton(
+                        onPressed: source.link == null
+                            ? null
+                            : () async {
+                                try {
+                                  final opened = await launchUrl(source.link!);
+                                  if (!opened && context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Could not open this source.',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                } catch (_) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Could not open this source.',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                        child: Text('${source.number}. ${source.title}'),
+                      ),
+                      Text(
+                        source.lowAuthority
+                            ? 'Commercial or blog source · tier ${source.authority}'
+                            : 'Source authority tier ${source.authority}',
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ],
+        ),
       ),
     );
   }

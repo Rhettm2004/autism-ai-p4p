@@ -1,3 +1,5 @@
+import 'package:autism_ai/models/chat_reply.dart';
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -56,7 +58,7 @@ void main() {
         context: _contextWithResult(),
       );
 
-      expect(response, 'Be helpful.');
+      expect(response.text, 'Be helpful.');
       expect(requestCount, 2);
       expect(
         capturedRequest.url,
@@ -65,7 +67,7 @@ void main() {
       expect(capturedRequest.method, 'POST');
       expect(capturedRequest.headers['content-type'], 'application/json');
       expect(capturedRequest.headers['accept'], 'application/json');
-      expect(capturedBody['model'], 'mistral-7b-instruct');
+      expect(capturedBody['model'], 'mistral');
       expect(capturedBody['temperature'], 0.1);
       expect(capturedBody['max_tokens'], 300);
       expect(capturedBody['stream'], isFalse);
@@ -74,8 +76,6 @@ void main() {
           .cast<Map<String, dynamic>>();
       expect(messages.map((item) => item['role']), [
         'system',
-        'system',
-        'assistant',
         'user',
         'assistant',
         'user',
@@ -89,7 +89,7 @@ void main() {
         ),
       );
       expect(
-        messages[1]['content'],
+        messages.first['content'],
         allOf(
           contains('Screening stage: behaviouralQuestions'),
           contains('Questionnaire: Q-CHAT-10'),
@@ -133,8 +133,8 @@ void main() {
         context: const ScreeningContext(stage: ScreeningStage.welcome),
       );
 
-      expect(capturedMessages, hasLength(14));
-      expect(capturedMessages[2]['content'], 'message-3');
+      expect(capturedMessages, hasLength(12));
+      expect(capturedMessages[1]['content'], 'message-4');
       expect(capturedMessages.last['role'], 'user');
       expect(capturedMessages.last['content'], 'latest-message');
     });
@@ -291,7 +291,7 @@ void main() {
         expect(chatService.context.stage, ScreeningStage.toddlerCheck);
 
         await duplicateSend;
-        chatService.completer.complete('Mistral reply');
+        chatService.completer.complete(const ChatReply('Mistral reply'));
         await firstSend;
 
         expect(controller.isSendingChat, isFalse);
@@ -322,7 +322,7 @@ void main() {
   });
 }
 
-Future<String> _sendBasic(LocalLlmChatService service) {
+Future<ChatReply> _sendBasic(LocalLlmChatService service) {
   return service.sendMessage(
     message: 'Hello',
     history: [_message('Hello', isUser: true, minute: 0)],
@@ -391,7 +391,7 @@ class _CloseTrackingClient extends http.BaseClient {
 }
 
 class _ControlledChatService extends ChatService {
-  final Completer<String> completer = Completer<String>();
+  final Completer<ChatReply> completer = Completer<ChatReply>();
   int callCount = 0;
   int disposeCount = 0;
   late List<ChatMessage> history;
@@ -401,7 +401,7 @@ class _ControlledChatService extends ChatService {
   String get displayName => 'Controlled';
 
   @override
-  Future<String> sendMessage({
+  Future<ChatReply> sendMessage({
     required String message,
     required List<ChatMessage> history,
     required ScreeningContext context,
@@ -425,7 +425,7 @@ class _FailOnceChatService extends ChatService {
   String get displayName => 'Fail once';
 
   @override
-  Future<String> sendMessage({
+  Future<ChatReply> sendMessage({
     required String message,
     required List<ChatMessage> history,
     required ScreeningContext context,
@@ -434,6 +434,6 @@ class _FailOnceChatService extends ChatService {
     if (callCount == 1) {
       throw const ChatServiceException(ChatFailureType.timeout);
     }
-    return 'Recovered response';
+    return const ChatReply('Recovered response');
   }
 }

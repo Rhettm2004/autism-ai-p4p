@@ -1,9 +1,10 @@
+import '../models/chat_reply.dart';
 import '../models/screening_models.dart';
 
 abstract class ChatService {
   String get displayName;
 
-  Future<String> sendMessage({
+  Future<ChatReply> sendMessage({
     required String message,
     required List<ChatMessage> history,
     required ScreeningContext context,
@@ -21,12 +22,11 @@ class ChatServiceException implements Exception {
   final int? statusCode;
 
   String get userMessage => switch (type) {
-    ChatFailureType.timeout => 'Local Mistral took too long to respond. Please try sending your message again.',
-    ChatFailureType.connection => 'I could not reach the local Mistral server. Check that it is running, then try again.',
-    ChatFailureType.server =>
-      'Local Mistral returned an error. Please try sending your message again.',
+    ChatFailureType.timeout => 'The assistant took too long to respond. Please try sending your message again.',
+    ChatFailureType.connection => 'I could not reach the assistant service. Check that it is running, then try again.',
+    ChatFailureType.server => 'The assistant service returned an error. Please try sending your message again.',
     ChatFailureType.invalidResponse =>
-      'I could not read the response from local Mistral. Please try again.',
+      'I could not read the assistant response. Please try again.',
   };
 
   @override

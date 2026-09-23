@@ -1,0 +1,21 @@
+profile: app_v1
+condition: few_shot
+router_config: embeddings_word
+router_track: topic
+router_dataset: extended
+retrieval:
+  backend: tfidf
+  top_k: 5
+  expand_neighbours: true
+  max_per_source: 2
+  corpus: data/corpus/corpus.csv
+  readiness: data/corpus/readiness.json
+concise: false
+cite: false
+models:
+  mistral:
+    url: http://127.0.0.1:8080
+    identity: Mistral-7B-Instruct-v0.3-Q4_K_M
+  llama:
+    url: http://127.0.0.1:8081
+    identity: Meta-Llama-3-8B-Instruct-Q4_K_M

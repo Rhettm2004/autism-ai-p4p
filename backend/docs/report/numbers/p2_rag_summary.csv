@@ -1,0 +1,9 @@
+model,condition,retrieval,bertscore_mean,bertscore_ci95,rougeL_mean,rougeL_ci95,degenerate,n
+llama3-8b,few_shot,False,0.8444,0.0044,0.1405,0.0112,0,52
+llama3-8b,few_shot,True,0.8682,0.0071,0.2251,0.0327,0,52
+llama3-8b,zero_shot,False,0.8391,0.0038,0.1315,0.0098,0,52
+llama3-8b,zero_shot,True,0.8671,0.0069,0.224,0.0284,0,52
+mistral-7b,few_shot,False,0.8604,0.0055,0.1695,0.0135,0,52
+mistral-7b,few_shot,True,0.8667,0.0108,0.2071,0.036,0,52
+mistral-7b,zero_shot,False,0.861,0.0053,0.171,0.0125,0,52
+mistral-7b,zero_shot,True,0.866,0.0097,0.1949,0.0376,0,52

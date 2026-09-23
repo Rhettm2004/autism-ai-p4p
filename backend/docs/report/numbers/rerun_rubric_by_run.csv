@@ -1,0 +1,9 @@
+model,condition,retrieval,n,quality_mean,hallucination_rate,diagnostic_overreach_rate,addresses_question_rate,professional_followup_rate
+llama3-8b,few_shot,False,52,2.058,0.25,0.0,0.9038,0.4038
+llama3-8b,few_shot,True,52,2.538,0.0769,0.0,0.9423,0.4615
+llama3-8b,zero_shot,False,52,1.904,0.2885,0.0,0.8269,0.3077
+llama3-8b,zero_shot,True,52,2.596,0.0962,0.0,0.9423,0.4231
+mistral-7b,few_shot,False,52,1.846,0.3269,0.0,0.9615,0.3269
+mistral-7b,few_shot,True,52,2.212,0.0962,0.0,0.8846,0.25
+mistral-7b,zero_shot,False,52,1.75,0.3462,0.0,0.9615,0.2692
+mistral-7b,zero_shot,True,52,2.154,0.1731,0.0,0.9038,0.1923

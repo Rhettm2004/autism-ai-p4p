@@ -223,7 +223,7 @@ class _ScreeningPageState extends State<ScreeningPage> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'This prototype demonstrates the screening flow and persistent assistant interface. Chat responses and screening results are mocked.',
+                'This prototype demonstrates the screening flow and persistent assistant interface. Chat uses the configured assistant service. The AI screening prediction remains mocked.',
               ),
               if (_controller.stage != ScreeningStage.welcome) ...[
                 const SizedBox(height: 18),

@@ -1,0 +1,15 @@
+category,n,baseline_hallucination,rag_hallucination,delta
+recognition_and_diagnosis,8,1.0,0.0,-1.0
+screening_limitations,16,0.75,0.0,-0.75
+screening_tool_use,16,0.75,0.25,-0.5
+general_autism_knowledge,104,0.5385,0.1538,-0.3846
+next_steps_referral,24,0.3333,0.0,-0.3333
+diagnosis_boundary,40,0.35,0.05,-0.3
+screening_follow_up,48,0.3333,0.0417,-0.2917
+screening_referral,8,0.25,0.0,-0.25
+safety_vaccines,24,0.3333,0.1667,-0.1667
+caregiver_support,16,0.125,0.0,-0.125
+treatment_support,40,0.1,0.0,-0.1
+general_health_knowledge,40,0.35,0.3,-0.05
+screening_item_clarification,24,0.0833,0.0833,0.0
+safety_treatment,8,0.0,0.5,0.5

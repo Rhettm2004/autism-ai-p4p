@@ -1,0 +1,77 @@
+models:
+
+  mistral-7b:
+    id: mistral-7b
+    display_name: Mistral 7B Instruct v0.1
+    hf_model_id: mistralai/Mistral-7B-Instruct-v0.1
+    load_in_4bit: true
+    dtype: float16
+    device_map: auto
+    temperature: 0.1
+    max_new_tokens: 512
+    do_sample: true
+    # Repetition control. Phase 1 ran without these and 2 of 176 responses
+    # collapsed into repetition loops. Fixed across all models so the setting
+    # cannot become a confound in cross-model comparison.
+    repetition_penalty: 1.15
+    no_repeat_ngram_size: 6
+    # Scope of the two settings above. HuggingFace applies them to the whole
+    # sequence, prompt included, which under retrieval bans the continuation of
+    # any phrase quoted from a source: 89% of the responses graded as cut off
+    # mid-sentence in Phase 2 stopped on a token banned this way (F-P2-010).
+    # "completion" applies the same constraints to the generated text only.
+    # Set to "sequence" to reproduce the original Phase 1 and Phase 2 runs.
+    repetition_scope: completion
+
+  llama3-8b:
+    id: llama3-8b
+    display_name: Meta Llama 3 8B Instruct
+    hf_model_id: meta-llama/Meta-Llama-3.1-8B-Instruct
+    load_in_4bit: true
+    dtype: float16
+    device_map: auto
+    temperature: 0.1
+    max_new_tokens: 512
+    do_sample: true
+    # Repetition control. Phase 1 ran without these and 2 of 176 responses
+    # collapsed into repetition loops. Fixed across all models so the setting
+    # cannot become a confound in cross-model comparison.
+    repetition_penalty: 1.15
+    no_repeat_ngram_size: 6
+    # Scope of the two settings above. HuggingFace applies them to the whole
+    # sequence, prompt included, which under retrieval bans the continuation of
+    # any phrase quoted from a source: 89% of the responses graded as cut off
+    # mid-sentence in Phase 2 stopped on a token banned this way (F-P2-010).
+    # "completion" applies the same constraints to the generated text only.
+    # Set to "sequence" to reproduce the original Phase 1 and Phase 2 runs.
+    repetition_scope: completion
+
+# Uncomment to add more models. Copy any block above, change id/display_name/hf_model_id.
+# temperature, repetition_penalty and no_repeat_ngram_size are fixed across all
+# models to keep cross-model comparisons valid.
+
+#  biomistral-7b:
+#    id: biomistral-7b
+#    display_name: BioMistral 7B
+#    hf_model_id: BioMistral/BioMistral-7B
+#    load_in_4bit: true
+#    dtype: float16
+#    device_map: auto
+#    temperature: 0.1
+#    max_new_tokens: 512
+#    do_sample: true
+#    repetition_penalty: 1.15
+#    no_repeat_ngram_size: 6
+
+#  clinicalcamel:
+#    id: clinicalcamel
+#    display_name: ClinicalCamel (Llama 2 13B Chat)
+#    hf_model_id: meta-llama/Llama-2-13b-chat-hf
+#    load_in_4bit: true
+#    dtype: float16
+#    device_map: auto
+#    temperature: 0.1
+#    max_new_tokens: 512
+#    do_sample: true
+#    repetition_penalty: 1.15
+#    no_repeat_ngram_size: 6

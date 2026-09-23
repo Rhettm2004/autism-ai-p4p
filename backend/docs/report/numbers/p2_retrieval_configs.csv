@@ -1,0 +1,5 @@
+label,n_prompts,recall@5,coverage@5,mrr,note
+baseline,52,0.6346,0.684,0.6122,"corpus as built on 24 Aug 2026, nav boilerplate present"
+no_boilerplate,52,0.6346,0.6848,0.6026,nav lines stripped via sources.yaml boilerplate list
+neighbours,52,0.6346,0.7417,0.5946,"each hit expanded with adjacent chunks, same k budget"
+neighbours_no_boilerplate,52,0.6346,0.7413,0.5817,neighbour expansion plus boilerplate strip

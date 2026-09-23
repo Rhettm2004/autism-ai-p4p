@@ -1,3 +1,5 @@
+import '../models/chat_reply.dart';
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -37,7 +39,7 @@ class LocalLlmChatService extends ChatService {
   String get displayName => 'Local Mistral';
 
   @override
-  Future<String> sendMessage({
+  Future<ChatReply> sendMessage({
     required String message,
     required List<ChatMessage> history,
     required ScreeningContext context,
@@ -47,10 +49,12 @@ class LocalLlmChatService extends ChatService {
     }
 
     final requestBody = jsonEncode({
-      'model': 'mistral-7b-instruct',
+      'model': 'mistral',
       'messages': [
-        {'role': 'system', 'content': _assistantInstructions},
-        {'role': 'system', 'content': _contextMessage(context)},
+        {
+          'role': 'system',
+          'content': '$_assistantInstructions\n\n${_contextMessage(context)}',
+        },
         ..._recentTranscript(message: message, history: history),
       ],
       'temperature': 0.1,
@@ -106,7 +110,7 @@ class LocalLlmChatService extends ChatService {
       if (content is! String || content.trim().isEmpty) {
         throw const FormatException('Missing response content.');
       }
-      return content.trim();
+      return ChatReply(content.trim());
     } on FormatException {
       throw const ChatServiceException(ChatFailureType.invalidResponse);
     } on TypeError {
@@ -132,7 +136,7 @@ class LocalLlmChatService extends ChatService {
     final start = transcript.length > maxHistoryMessages
         ? transcript.length - maxHistoryMessages
         : 0;
-    return transcript
+    final messages = transcript
         .sublist(start)
         .map(
           (chatMessage) => {
@@ -140,7 +144,24 @@ class LocalLlmChatService extends ChatService {
             'content': chatMessage.text,
           },
         )
-        .toList(growable: false);
+        .toList(growable: true);
+
+    // Mistral's llama.cpp chat template requires the transcript after the
+    // optional system prompt to start with a user and strictly alternate.
+    while (messages.isNotEmpty && messages.first['role'] == 'assistant') {
+      messages.removeAt(0);
+    }
+
+    final alternating = <Map<String, String>>[];
+    for (final item in messages) {
+      if (alternating.isNotEmpty && alternating.last['role'] == item['role']) {
+        alternating.last['content'] =
+            '${alternating.last['content']}\n\n${item['content']}';
+      } else {
+        alternating.add(Map<String, String>.of(item));
+      }
+    }
+    return alternating;
   }
 
   String _contextMessage(ScreeningContext context) {

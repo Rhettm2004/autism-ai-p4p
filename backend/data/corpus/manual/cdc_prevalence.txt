@@ -1,0 +1,50 @@
+CDC Data and Statistics on Autism Spectrum Disorder
+
+Retrieved from https://www.cdc.gov/autism/data-research/index.html
+Last reviewed by CDC 27 May 2025. Content source: National Center on Birth
+Defects and Developmental Disabilities.
+
+Saved locally because cdc.gov returns HTTP 403 to scripted requests. Text is
+reproduced from the published page for research use.
+
+PREVALENCE OF AUTISM SPECTRUM DISORDER
+
+About 1 in 31 (3.2%) children aged 8 years has been identified with autism
+spectrum disorder according to estimates from CDC's Autism and Developmental
+Disabilities Monitoring (ADDM) Network. This is the current figure.
+
+ASD is reported to occur in all racial, ethnic and socioeconomic groups.
+
+ASD is over 3 times more common among boys than among girls.
+
+About 1 in 6 (17%) children aged 3 to 17 years were diagnosed with a
+developmental disability, as reported by parents, during 2009 to 2017. These
+included ASD, attention-deficit/hyperactivity disorder, blindness and cerebral
+palsy, among others.
+
+Prevalence is the number of people in a population that have a condition,
+relative to all the people in that population. It is usually shown as a
+percentage or a proportion.
+
+IDENTIFIED PREVALENCE OVER TIME, ADDM NETWORK
+
+Surveillance year 2022, birth year 2014, 16 sites: 32.2 per 1,000 children,
+which is about 1 in 31 children. This is the current figure.
+Surveillance year 2020, birth year 2012: 27.6 per 1,000, about 1 in 36.
+Surveillance year 2018, birth year 2010: 23.0 per 1,000, about 1 in 44.
+Surveillance year 2016, birth year 2008: 18.5 per 1,000, about 1 in 54.
+Surveillance year 2014, birth year 2006: 16.8 per 1,000, about 1 in 59.
+Surveillance year 2012, birth year 2004: 14.5 per 1,000, about 1 in 69.
+Surveillance year 2010, birth year 2002: 14.7 per 1,000, about 1 in 68.
+Surveillance year 2008, birth year 2000: 11.3 per 1,000, about 1 in 88.
+Surveillance year 2006, birth year 1998: 9.0 per 1,000, about 1 in 110.
+Surveillance year 2004, birth year 1996: 8.0 per 1,000, about 1 in 125.
+Surveillance year 2002, birth year 1994: 6.6 per 1,000, about 1 in 150.
+Surveillance year 2000, birth year 1992: 6.7 per 1,000, about 1 in 150.
+
+NOTE ON OUT OF DATE FIGURES
+
+The figure 1 in 44 corresponds to the 2018 surveillance year and is out of date.
+The figure 1 in 36 corresponds to 2020 and is also superseded. When asked how
+common autism is, the correct current answer is about 1 in 31 children aged 8
+years, based on the 2022 surveillance year.

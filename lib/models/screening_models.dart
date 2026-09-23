@@ -1,3 +1,5 @@
+import 'chat_reply.dart';
+
 enum ScreeningStage {
   welcome,
   toddlerCheck,
@@ -66,21 +68,47 @@ class ScreeningResult {
   final bool isMock;
 }
 
+class ChatClassicalResult {
+  const ChatClassicalResult({
+    required this.questionnaireType,
+    required this.score,
+    required this.referralThreshold,
+    required this.thresholdMet,
+  });
+
+  final QuestionnaireType questionnaireType;
+  final int score;
+  final int referralThreshold;
+  final bool thresholdMet;
+}
+
 class ChatMessage {
   const ChatMessage({
     required this.text,
     required this.isUser,
     required this.timestamp,
+    this.sources = const [],
+    this.route,
+    this.model,
+    this.isError = false,
   });
 
   final String text;
   final bool isUser;
   final DateTime timestamp;
+  final List<ChatSource> sources;
+  final String? route;
+  final String? model;
+  final bool isError;
 }
 
 class ScreeningContext {
   const ScreeningContext({
     required this.stage,
+    this.sessionId = 'local',
+    this.revision = 0,
+    this.currentQuestionId,
+    this.classicalResult,
     this.questionnaireType,
     this.currentQuestionIndex,
     this.currentQuestionText,
@@ -88,6 +116,10 @@ class ScreeningContext {
   });
 
   final ScreeningStage stage;
+  final String sessionId;
+  final int revision;
+  final String? currentQuestionId;
+  final ChatClassicalResult? classicalResult;
   final QuestionnaireType? questionnaireType;
   final int? currentQuestionIndex;
   final String? currentQuestionText;

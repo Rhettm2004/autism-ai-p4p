@@ -1,0 +1,41 @@
+==========================================================================
+THURSDAY RUN SUMMARY
+52 prompts, 416 responses across 8 runs
+==========================================================================
+
+1. MEANS WITH 95% CONFIDENCE INTERVALS
+Run                       BERTScore F1            ROUGE-L F1              Degen
+llama3-8b few_shot base   0.844 +/- 0.004       0.140 +/- 0.011       0
+llama3-8b few_shot RAG    0.868 +/- 0.007       0.225 +/- 0.033       0
+llama3-8b zero_shot base  0.839 +/- 0.004       0.132 +/- 0.010       0
+llama3-8b zero_shot RAG   0.867 +/- 0.007       0.224 +/- 0.028       0
+mistral-7b few_shot base  0.860 +/- 0.005       0.170 +/- 0.014       0
+mistral-7b few_shot RAG   0.867 +/- 0.011       0.207 +/- 0.036       0
+mistral-7b zero_shot base 0.861 +/- 0.005       0.171 +/- 0.012       0
+mistral-7b zero_shot RAG  0.866 +/- 0.010       0.195 +/- 0.038       0
+
+==========================================================================
+2. BASELINE vs RAG, PAIRED (same prompts)
+==========================================================================
+
+  mistral-7b zero_shot
+    BERTScore  0.861 -> 0.866  diff=+0.0049  t=+1.07  p=0.289  dz=+0.15  n.s.
+    ROUGE-L    0.171 -> 0.195  diff=+0.0239  t=+1.26  p=0.2138  dz=+0.17  n.s.
+
+  mistral-7b few_shot
+    BERTScore  0.860 -> 0.867  diff=+0.0063  t=+1.36  p=0.1813  dz=+0.19  n.s.
+    ROUGE-L    0.170 -> 0.207  diff=+0.0376  t=+2.17  p=0.03472  dz=+0.30  significant
+
+  llama3-8b zero_shot
+    BERTScore  0.839 -> 0.867  diff=+0.0280  t=+8.27  p=5.489e-11  dz=+1.15  significant
+    ROUGE-L    0.132 -> 0.224  diff=+0.0925  t=+6.48  p=3.623e-08  dz=+0.90  significant
+
+  llama3-8b few_shot
+    BERTScore  0.844 -> 0.868  diff=+0.0238  t=+6.10  p=1.41e-07  dz=+0.85  significant
+    ROUGE-L    0.140 -> 0.225  diff=+0.0846  t=+5.18  p=3.761e-06  dz=+0.72  significant
+
+==========================================================================
+3. RETRIEVAL USAGE (RAG runs)
+==========================================================================
+  retrieval fired on 208/208 RAG responses (100.0%)
+  mean retrieval latency: 1.7 ms

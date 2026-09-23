@@ -1,0 +1,27 @@
+grade_id,quality_score,hallucination_flag,diagnostic_overreach_flag,addresses_question_flag,note
+G0391,3,0,0,1,Reproduces the WHO answer accurately and adds sound caregiver guidance.
+G0392,1,0,0,1,"Correct on the AAP schedule as far as it goes, then cut off mid-sentence on '18- and 24-month well-child'."
+G0393,1,0,0,0,Refuses the question and redirects to screening. Nothing false and nothing answered.
+G0394,2,0,0,1,"Accurate but very compressed; the school team route and the specific communication difficulties the source names are absent."
+G0395,2,0,0,1,"Answers no correctly, but describes the M-CHAT as screening for 'other developmental disorders that may be related to ASD', which softens the source's point that it does not identify all developmental issues."
+G0396,2,0,0,1,"Accurate account of the diagnostic process, but never mentions that caregivers and teachers usually notice first, which is the source's opening point."
+G0397,2,0,0,1,"Correct answer, and the only response in this family to capture the source's practical point, that vaccination reduces the risk of illnesses which could trigger problems. 'Some studies have found' attributes that to research it does not name."
+G0398,2,0,0,1,"'1 in 44 adults' is 2.27% against the CDC's 2.21%, close enough not to score as false. The description of the study is wrong: it covers adults 18 and over and was modelled, not built from self-report plus medical records."
+G0399,2,0,0,1,"Practical and well aligned with the WHO answer on autonomy and participation, but cut off mid-sentence on 'recharge and refocus'."
+G0400,3,0,0,1,"Accurate: no training needed, parents may self-administer, link intact."
+G0401,1,1,0,1,"Opens by stating there is no direct relationship between autism and encephalopathy. The source says some children with ASD have had a regressive encephalopathy. Fifth response to deny this."
+G0402,3,0,0,1,"Correct: does not adjust for prematurity, with the sensitivity reason and the elevated-prevalence explanation."
+G0403,1,1,0,1,"States 'about 30-40% of people with ASD have average to above-average intelligence'. The source puts intellectual disability at around 50%, implying roughly half do not have one. The figure is invented and understates it."
+G0404,1,1,0,1,"Says the Q-CHAT-10 and M-CHAT-R/F are 'designed to screen for autism in children but can also be used in adults'. Both are toddler screens and neither is validated for adults."
+G0405,2,0,0,1,"Accurate and mostly inside the restricted-and-repetitive domain, though 'avoiding eye contact' is listed under body posture and belongs to social communication."
+G0406,3,0,0,1,"Accurate, plain-language, and correctly separates mitochondrial disease from autism while noting the overlapping symptoms."
+G0407,3,0,0,1,"Accurate on the limits of a negative screen, and correctly tells the caregiver their own observations still count."
+G0408,3,0,0,1,Accurate with the Wakefield attribution correct.
+G0409,2,0,0,1,"Reproduces the source's advice and both routes accurately, then cut off mid-URL on the second link."
+G0410,2,0,0,1,"Says the sources give no clear answer and then states the answer, including the 50% figure. The content is right; the framing contradicts it."
+G0411,3,0,0,1,"Accurate and well pitched, and correctly rejects the bad-parenting myth."
+G0412,1,1,0,1,"States there is no relationship between autism and encephalopathy. Sixth instance of this denial against a source that says some children with ASD have had a regressive encephalopathy."
+G0413,3,0,0,1,Accurate and closely matched to the NICHD answer including the red-flag framing and next step.
+G0414,3,0,0,1,"Correct on the FDA approvals for irritability associated with ASD, the off-label caveat and the age limits. Second correct answer in this category, after G0340."
+G0415,2,0,0,1,"Correct that waiting is not advised and points to prompt follow-up, but omits the source's reason about lost intervention time."
+G0416,1,0,0,1,"Answers no without the substance the source gives, that sensitivity holds while false positives rise. Also renders the instrument as 'M-CHAT-10', conflating two different tools."

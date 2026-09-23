@@ -1,0 +1,72 @@
+Screening Instrument Quick Reference
+
+Compiled for the RAG corpus from the published instrument documentation cited
+under each entry. This file exists because several of these facts are stated
+only obliquely on the live pages, for example inside a paper title rather than
+in body text, and so are not reliably retrievable from the fetched HTML.
+
+Every statement below is traceable to the cited source. Nothing here is inferred.
+
+Q-CHAT (QUANTITATIVE CHECKLIST FOR AUTISM IN TODDLERS)
+
+Intended age range: 18 to 24 months. The Q-CHAT is designed for toddlers. It is
+not designed for preschool or school age children. For a child older than about
+24 months, a different instrument is appropriate and a clinician should advise
+which.
+
+Source: Allison C, Baron-Cohen S, Wheelwright S, Charman T, Richler J, Pasco G,
+Brayne C (2008). The Q-CHAT (Quantitative Checklist for Autism in Toddlers): A
+Normally Distributed Quantitative Measure of Autistic Traits at 18-24 Months of
+Age. Journal of Autism and Developmental Disorders.
+https://www.autismresearchcentre.com/tests/quantitative-checklist-for-autism-in-toddlers-q-chat/
+
+Q-CHAT-10
+
+A shortened 10 item form derived from the Q-CHAT, intended for the same toddler
+age band of approximately 18 to 24 months. A higher total indicates more autistic
+traits and a greater likelihood that further assessment is warranted. A score is
+a screening signal only and never a diagnosis.
+
+Source: Allison C, Auyeung B, Baron-Cohen S (2012). Toward Brief Red Flags for
+Autism Screening: The Short Autism Spectrum Quotient and the Short Quantitative
+Checklist in 1,000 Cases and 3,000 Controls. Journal of the American Academy of
+Child and Adolescent Psychiatry.
+
+M-CHAT-R/F (MODIFIED CHECKLIST FOR AUTISM IN TODDLERS, REVISED WITH FOLLOW-UP)
+
+Intended age range: 16 to 30 months. The M-CHAT-R/F is a toddler instrument. It
+is not intended for a child of three and a half years, who is above the upper
+bound of the validated range. For a child older than 30 months, the caregiver
+should be directed to their doctor to identify an age appropriate instrument
+rather than being told to use the M-CHAT.
+
+Number of items: the M-CHAT-R has 20 items.
+
+Scoring bands, total number of elevated likelihood responses:
+  0 to 2  LOW likelihood. No follow-up needed. Rescreen at 24 months if the
+          child is younger than 2 years.
+  3 to 7  MODERATE likelihood. Administer the Follow-Up items corresponding to
+          the elevated responses. If 2 or more still indicate elevated
+          likelihood, the result is a positive screen; refer immediately for
+          early intervention and diagnostic evaluation.
+  8 to 20 HIGH likelihood. Screened positive. Bypass Follow-Up and refer
+          immediately for early intervention and diagnostic evaluation.
+
+Failing or missing a number of items therefore maps onto these bands. Five
+elevated responses falls in the 3 to 7 moderate band and calls for the Follow-Up
+interview, not for reassurance and not for a diagnosis.
+
+Items 2, 5 and 12 are reverse scored: for those, YES indicates elevated
+likelihood.
+
+Source: M-CHAT (Diana L. Robins, Ph.D.),
+https://www.mchatscreen.com/mchat-rf/scoring/ and
+https://www.mchatscreen.com/mchat-rf/
+
+BOUNDARY STATEMENT COMMON TO BOTH INSTRUMENTS
+
+Both the Q-CHAT and the M-CHAT-R/F are screening instruments. Neither
+establishes a diagnosis. A positive or elevated screen indicates that a child
+should be referred for diagnostic evaluation by a qualified clinician. A
+negative or low screen does not rule autism out, and a caregiver with ongoing
+concerns should still speak to their doctor.

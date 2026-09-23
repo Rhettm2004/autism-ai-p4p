@@ -1,0 +1,5 @@
+run,retrieval,n,ended_mid_quotation,continuation_banned,mean_completion_tokens
+mistral-7b_few_shot,False,52,0.0577,0.0577,161.0
+mistral-7b_few_shot_rag5,True,52,0.3269,0.3269,64.4
+mistral-7b_zero_shot,False,52,0.0769,0.0769,143.2
+mistral-7b_zero_shot_rag5,True,52,0.3462,0.3462,64.9

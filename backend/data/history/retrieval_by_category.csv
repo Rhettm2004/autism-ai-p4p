@@ -1,0 +1,15 @@
+category,n,recall@1,recall@3,mrr
+general_autism_knowledge,13,0.3076923076923077,0.3076923076923077,0.3803392434614154
+screening_follow_up,6,0.3333333333333333,0.3333333333333333,0.38217610210175046
+diagnosis_boundary,5,1.0,1.0,1.0
+general_health_knowledge,5,0.4,0.8,0.6058823529411764
+treatment_support,5,0.4,0.4,0.52
+safety_vaccines,3,0.3333333333333333,0.3333333333333333,0.4261904761904762
+next_steps_referral,3,0.6666666666666666,0.6666666666666666,0.6781609195402298
+screening_item_clarification,3,1.0,1.0,1.0
+caregiver_support,2,0.5,1.0,0.75
+screening_limitations,2,1.0,1.0,1.0
+screening_tool_use,2,0.5,1.0,0.75
+screening_referral,1,1.0,1.0,1.0
+safety_treatment,1,0.0,0.0,0.2
+recognition_and_diagnosis,1,0.0,0.0,0.012345679012345678

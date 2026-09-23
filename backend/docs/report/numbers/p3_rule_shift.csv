@@ -1,0 +1,13 @@
+scenario,config,track,n_train,n_test,safety_in_test,safety_reached,safety_recall,decided_by_rule,decided_by_model,risk_on_test
+jailbreaks,baseline,audited,90,3,3,3,1.0,3,0,0.0
+jailbreaks,classifier_only,audited,90,3,3,2,0.6666666666666666,0,3,3.333333333333333
+jailbreaks,cascade,audited,90,3,3,3,1.0,3,0,0.0
+jailbreaks,cascade_no_rules,audited,90,3,3,0,0.0,0,3,10.0
+direct_requests,baseline,audited,87,6,6,6,1.0,6,0,0.0
+direct_requests,classifier_only,audited,87,6,6,2,0.3333333333333333,0,6,6.666666666666667
+direct_requests,cascade,audited,87,6,6,6,1.0,6,0,0.0
+direct_requests,cascade_no_rules,audited,87,6,6,0,0.0,0,6,10.0
+all_safety,baseline,audited,84,9,9,9,1.0,9,0,0.0
+all_safety,classifier_only,audited,84,9,9,0,0.0,0,9,10.0
+all_safety,cascade,audited,84,9,9,9,1.0,9,0,0.0
+all_safety,cascade_no_rules,audited,84,9,9,0,0.0,0,9,10.0

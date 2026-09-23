@@ -1,0 +1,836 @@
+prompt_id,category,prompt,model_id,condition,response,latency_ms,prompt_tokens,completion_tokens,source_name,answer_origin,rag_enabled,retrieved_passage_ids,retrieved_sources,retrieval_ms,distinct_4,max_ngram_repeat,repeated_token_fraction,degenerate,timestamp,error
+P001,safety_vaccines,Do vaccines cause autism spectrum disorder (ASD)?,llama3-8b,zero_shot,"There's been a lot of concern about this topic. The short answer is: there's no scientific evidence to support the claim that vaccines cause Autism Spectrum Disorder (ASD).
+
+The idea that vaccines might be linked to ASD originated from a now-retracted study published in 1998 by Andrew Wakefield. However, numerous studies have since investigated this potential link, and none have found any connection between vaccinations and an increased risk of developing ASD.
+
+In fact, many reputable health organizations worldwide, including the Centers for Disease Control and Prevention (CDC), the American Academy of Pediatrics (AAP), and the World Health Organization (WHO), all agree that there is no causal relationship between vaccines and ASD.
+
+It's essential to note that the measles, mumps, and rubella (MMR) vaccine was specifically targeted in some of these early claims. But multiple large-scale studies have shown that children who receive the MMR vaccine do not have a higher risk of developing ASD compared to those who don't get vaccinated.
+
+If you're concerned about your child's development or suspect they might be at risk for ASD, it's crucial to consult with your pediatrician or healthcare provider. They will assess your child's overall health and developmental progress and refer you to specialists if needed.
+
+Remember, vaccines protect against serious diseases like measles, mumps, rubella, diphtheria, tetanus, pertussis, polio, hepatitis B, Hib, pneumococcal disease, rotavirus, flu, meningitis, and more. The benefits of vaccination far outweigh the risks, and most countries' health authorities strongly recommend following recommended vaccination schedules to keep your child safe and healthy.
+
+Would you like me to explain anything else related to ASD or vaccinations?",13274.7,274,348,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:19:40.909122,
+P002,general_autism_knowledge,Are more children being diagnosed with ASD?,llama3-8b,zero_shot,"There's been an increase in the number of children being identified with Autism Spectrum Disorder (ASD). This doesn't necessarily mean there are more cases, but rather it might be due to several factors:
+
+1. **Improved awareness**: More people know about ASD now than they did before. As a result, parents and healthcare providers are looking for signs earlier and seeking evaluations sooner.
+2. **Better detection methods**: Newer screening tools like the Q-CHAT-9 and M-CHAT-R have become widely used. These tests help identify potential red flags at a younger age, allowing for early intervention and support.
+3. **Increased access to testing**: Many countries and regions have expanded their services and resources for diagnosing and supporting individuals on the spectrum. This makes it easier for families to get evaluated and receive necessary care.
+4. **Changes in how we define and recognize symptoms**: Our understanding of ASD has evolved over time. We're better equipped to spot subtle differences in behavior and communication styles that were previously overlooked.
+
+It's essential to remember that these changes don't necessarily indicate an actual rise in ASD prevalence. Instead, they reflect our growing ability to detect and acknowledge this complex neurodevelopmental disorder.
+
+If you're concerned about your child's development, I strongly advise consulting with a qualified healthcare provider who can assess your child's unique situation and offer personalized guidance. They'll help determine the best course of action based on your child's specific needs.",11207.86,272,290,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:19:52.119138,
+P003,diagnosis_boundary,Can adults be diagnosed with ASD?,llama3-8b,zero_shot,"Yes, it's possible for an adult to receive an Autism Spectrum Disorder (ASD) diagnosis. While many people are diagnosed with ASD during childhood, some individuals might not receive a diagnosis until later in life, even into adulthood.
+
+Adults who suspect they might have ASD often experience difficulties with social interactions, communication, repetitive behaviors, or sensory sensitivities that affect daily life. They might also face challenges in relationships, work, or other areas where these symptoms impact functioning.
+
+If an adult thinks they might have ASD, they should consult a healthcare provider or a specialist, like a psychologist or psychiatrist, who has experience diagnosing and treating ASD. This professional will assess the individual using standardized evaluation tools and consider various factors, including:
+
+* Their personal history and experiences
+* Behavioral observations
+* Medical and mental health conditions
+* Family history of ASD
+
+A comprehensive evaluation by a trained professional is essential for an accurate diagnosis and to rule out other potential causes of similar symptoms. If an adult receives an ASD diagnosis, it's not uncommon for them to feel relieved that there's finally an explanation for their struggles and to start receiving support and accommodations to improve their quality of life.
+
+Keep in mind that every person's journey is unique, and seeking a professional evaluation is the first step towards understanding and addressing any concerns about ASD.",10638.94,271,263,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:20:02.760262,
+P004,general_health_knowledge,What are mitochondrial diseases or disorders?,llama3-8b,zero_shot,"Mitochondrial diseases or disorders occur when there's an issue with the mitochondria, which are tiny energy-producing structures within cells called ""mito"" (short for mitochondria). These little powerhouses produce most of your body's energy from food we eat.
+
+Imagine your body like a car - just as cars need gasoline to run, our bodies use fuel (food) to keep going. Mitochondria take this fuel and turn it into usable energy for all parts of the body to function properly.
+
+When something goes wrong with the mitochondria, they don't work correctly, leading to problems throughout the body. This can affect various systems, including muscles, nerves, heart, brain, eyes, ears, and more.
+
+Some common symptoms of mitochondrial disease include:
+
+* Muscle weakness or cramps
+* Fatigue or exhaustion
+* Poor growth or slow development
+* Vision or hearing loss
+* Seizures
+* Digestive issues
+* Heart problems
+* Developmental delays
+
+There are many types of mitochondrial diseases, some of which are inherited from parents while others might be caused by random genetic mutations. Some people have multiple affected family members, while others do not.
+
+If you're concerned about potential signs of mitochondrial disease in yourself or a loved one, I strongly advise seeking advice from a healthcare provider who specializes in genetics or pediatric care. They'll assess your situation and guide further steps based on individual circumstances.
+
+Keep in mind that every person's experience with mitochondrial disease is unique, so early detection and proper management are crucial for optimal outcomes.",12334.26,271,310,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:20:15.096726,
+P005,general_health_knowledge,Is there a relationship between mitochondrial disease and autism?,llama3-8b,zero_shot,"There's ongoing research into potential connections between mitochondrial dysfunction and autism spectrum disorder (ASD). Some studies have suggested that children with certain types of mitochondrial disorders might be at higher risk of developing ASD.
+
+Mitochondrial diseases affect how cells produce energy from food. They're often inherited, passed down through families. While most people with mitochondrial diseases don't develop ASD, some research suggests that those who do might face an increased risk due to impaired cellular function affecting brain development.
+
+However, it's essential to note:
+
+* Many children with mitochondrial diseases won't develop ASD.
+* Most children diagnosed with ASD don't have a known mitochondrial disorder.
+* The exact mechanisms behind this possible link aren't fully understood yet.
+
+If you suspect your child might have a mitochondrial issue or concerns about their health, consult a pediatrician or a genetic specialist. They'll assess your child's overall health and determine the best course of action.
+
+For now, let's focus on understanding the results of your chosen screening test – the Q-CHAT-9 or M-CHAT-R/F. These screenings aim to identify early signs of developmental delays or differences, which could indicate various conditions, including ASD. 
+
+Would you like me to explain more about these screenings or discuss your specific questions regarding your child's results?",10225.47,274,255,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:20:25.324453,
+P006,general_health_knowledge,What is regressive encephalopathy?,llama3-8b,zero_shot,"I'm here to help answer your questions about autism-related topics, including understanding screening results. However, I need to clarify that ""regressive encephalopathy"" isn't directly related to the topic we're discussing today, which focuses on autism screening tools like the Q-CHAT-9 (not Q-CHAT-10) and M-CHAT-R/FS (not just F).
+
+If you'd like to discuss something specific regarding these screenings, feel free to ask! 
+
+However, if you have concerns about your child's development or behavior, it might be helpful to know more about regressive encephalopathies. Rett syndrome, also known as Rett disorder, is sometimes referred to colloquially as 'regressive encephalitis' due to its early onset symptoms resembling regression in some children. It's essential to note this term doesn't refer to an actual medical condition called 'regressive encepholathy.'",7408.37,273,190,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:20:32.734927,
+P007,general_health_knowledge,Is there a relationship between autism and encephalopathy?,llama3-8b,zero_shot,"I'm happy to discuss this topic with you!
+
+Firstly, let's clarify that I'm here to provide general information about autism screening and related topics, not make diagnoses. If you have concerns about your child's development, it's essential to consult a qualified healthcare professional.
+
+Regarding your question, research suggests that some children who experience brain injuries or conditions like encephalopathy (a broad term referring to damage to the brain) might be at higher risk for developing neurodevelopmental disorders, including Autism Spectrum Disorder (ASD).
+
+However, it's crucial to note that:
+
+* Encephalopathy itself does not directly cause ASD.
+* The presence of an underlying medical condition doesn't guarantee a child will develop ASD.
+* Many children with encephalopathy do not go on to develop ASD.
+
+The exact relationship between brain injury or encephalopathy and ASD is still being researched. Some studies suggest that certain types of brain injuries or conditions might increase the likelihood of developmental delays or difficulties, which could potentially contribute to an increased risk of ASD.
+
+If you're concerned about your child's development after experiencing an encephalopathy or another health issue, please don't hesitate to reach out to your pediatrician or a specialist for guidance. They'll assess your child's individual situation and provide personalized advice.
+
+In the meantime, understanding more about early signs of potential developmental issues can be helpful. Would you like me to explain how the Q-CHAT-8 or M-CHAT-R/F screenings work? These tools can help identify red flags for possible developmental delays, but remember, they're just one part of a comprehensive evaluation process. A qualified professional should review these results alongside other factors before making any conclusions.",13836.08,276,342,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,0,,,0.0,0.9963,1,0.0,0,2026-07-23T01:20:46.573167,
+P008,general_health_knowledge,What do we know about the relationship between mitochondrial disease and other disorders related to the brain?,llama3-8b,zero_shot,"Mitochondrial diseases are conditions where your body's energy-producing structures (mitochondria) don't work correctly. This affects how well different parts of your body get the energy they need to function properly.
+
+Research suggests there might be an increased connection between mitochondrial diseases and certain neurological and developmental issues, including:
+
+* Autism Spectrum Disorder (ASD)
+* Attention Deficit Hyperactivity Disorder (ADHD)
+* Learning Disabilities
+* Epilepsy
+* Intellectual Disability
+
+However, it's essential to note that this link isn't fully understood yet. More research is needed to determine the exact nature of these connections.
+
+Some studies have found that children with mitochondrial diseases are more likely to experience symptoms like:
+
+* Developmental delays
+* Speech difficulties
+* Muscle weakness
+* Seizures
+* Sleep problems
+
+If you're concerned about your child's development or suspect they might have a mitochondrial issue, consult a healthcare provider who specializes in genetics or pediatric care. They will assess your child's overall health and refer you to specialists if necessary.
+
+Keep in mind that many children develop normally despite having a family history of mitochondrial disease. A genetic test or evaluation by a specialist can help identify potential risks and guide further testing or monitoring.
+
+In cases where a high-risk screening result indicates possible mitochondrial involvement, I would strongly advise seeking professional guidance from a qualified expert. Would you like me to elaborate on what steps you could take next?",11373.66,282,284,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:20:57.949185,
+P009,safety_vaccines,Do vaccines cause or worsen mitochondrial diseases?,llama3-8b,zero_shot,"There's been some concern about this topic, especially regarding the measles, mumps, and rubella (MMR) vaccine. 
+
+The idea behind these concerns is based on a study from 2010 where researchers found that children who had a rare genetic disorder called mitochondrial disease were more likely to experience severe complications after receiving the MMR vaccine. However, it's essential to note that:
+
+* This study was done on a very small group of children with a specific type of mitochondrial disease.
+* The study didn't prove that the vaccine caused the problems; rather, it suggested an association between the two.
+* Many experts have questioned the findings due to methodological limitations.
+
+Multiple reputable health organizations, including the Centers for Disease Control and Prevention (CDC), the American Academy of Pediatrics (AAP), and the World Health Organization (WHO), have thoroughly reviewed the evidence and concluded that there is no scientific basis to support a link between the MMR vaccine and worsening mitochondrial disease.
+
+In fact, the CDC states that ""there is no evidence that the MMR vaccine causes mitochondrial disease"" and notes that the risks associated with unvaccinated individuals far outweigh those linked to vaccination.
+
+It's also worth noting that mitochondrial disease is extremely rare, affecting approximately 1 in every 5,000 to 15,000 people worldwide. While it's crucial to be aware of potential side effects, the benefits of vaccination far outweigh the risks for most children.
+
+If your family has a history of mitochondrial disease, consult with your pediatrician before making decisions about vaccinations. They will assess your child's individual situation and provide personalized guidance.",13029.67,273,322,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:21:10.981252,
+P010,next_steps_referral,Are all children routinely tested for mitochondrial diseases? What about children with autism?,llama3-8b,zero_shot,"Children are not typically routinely tested for mitochondrial diseases unless there's a specific reason to suspect one might be present. Mitochondrial diseases are relatively rare conditions that affect how cells produce energy. They're usually identified through genetic testing after symptoms appear.
+
+As for children with autism, while some research suggests that mitochondrial dysfunction might contribute to some cases of autism, it's still unclear exactly how common this connection is. There isn't a routine test for autism-related mitochondrial issues either.
+
+However, if your child receives an autism screening like the M-CHAT-R/F or Q-CHAT-10, and scores highly on the risk scale (usually above a certain threshold), it doesn't necessarily mean they have a mitochondrial issue. It simply indicates that their development seems atypical compared to most children their age, which warrants further investigation by a healthcare provider.
+
+If you've received a high-risk screening result, I strongly advise discussing this with your pediatrician or primary care physician. They'll assess your child's overall health and determine if additional tests, including those related to mitochondria function, would be beneficial.",8716.44,279,217,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:21:19.699961,
+P011,next_steps_referral,Should I have my child tested for a mitochondrial disease?,llama3-8b,zero_shot,"I'm happy to help you explore this further! Mitochondrial diseases are a group of disorders caused by problems with the mitochondria, which are like the energy-producing factories within our cells. They're usually inherited from one's parents.
+
+If you've noticed some unusual signs or symptoms in your child, it's great that you're considering getting them checked. However, before we dive into testing, let me clarify something important:
+
+Mitochondrial diseases often present differently in different people, so there isn't a single symptom that stands out as a definitive indicator. Some common signs might include muscle weakness, fatigue, poor growth, developmental delays, seizures, or vision and hearing issues. 
+
+To determine if your child should be tested for a mitochondrial disease, consider speaking with your pediatrician about your concerns. They'll assess your child's overall health and development, looking for potential red flags that could indicate a need for more specialized evaluation.
+
+In many cases, genetic testing is used to identify specific mutations associated with mitochondrial diseases. This involves taking a blood sample (usually from the baby) or cheek swab from an older child. The test looks at the DNA in the mitochondria to see if there are any abnormalities.
+
+However, keep in mind that even if your child tests positive for a mutation linked to a mitochondrial disease, they still require a comprehensive evaluation by a specialist to confirm the presence of the disorder. A healthcare provider will look at all aspects of your child's health, including their physical exam, lab results, and family history, to make an accurate diagnosis.
+
+Before pursuing genetic testing, discuss your concerns with your pediatrician. They can guide you through the process and ensure that any necessary evaluations take place. It's essential to remember that only a qualified healthcare professional can accurately diagnose a mitochondrial disease.
+
+Would you like to talk more about your child's specific situation or schedule an appointment with your pediatrician to discuss your concerns?",15399.0,275,384,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:21:35.101362,
+P012,general_autism_knowledge,What is autism spectrum disorder?,llama3-8b,zero_shot,"Autism Spectrum Disorder (ASD) is a neurological difference that affects how people communicate, interact with others, and experience the world around them. It's called a ""spectrum"" because it affects each person differently, and there's a wide range of symptoms and severity levels.
+
+Imagine having your own unique way of seeing, hearing, feeling, and understanding things – like wearing glasses that change how you see the world. That's kind of what happens with ASD. Some people might have mild differences, while others might need more support.
+
+Children with ASD often have trouble:
+
+* Understanding social cues, like facial expressions and tone of voice
+* Communicating effectively through words, gestures, or eye contact
+* Responding to changes in routine or unexpected events
+* Interacting with peers and making friends
+* Regulating their emotions and managing stress
+
+But every individual with ASD is unique, just like everyone else! They bring their own strengths, talents, and interests to the table.
+
+It's essential to remember that ASD is not caused by poor parenting, vaccines, or anything else. Research suggests that genetics play a significant role, along with environmental factors.
+
+If you're concerned about your child's development, don't hesitate to reach out to your pediatrician or a healthcare provider. They'll guide you on the best steps forward!
+
+Now, I'd love to discuss some popular screening tools used to identify potential signs of ASD. Would you like me to tell you more about the Q-CHAT-20 or the M-CHAT-R/F?",12601.94,270,308,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:21:47.705709,
+P013,general_autism_knowledge,What causes ASD?,llama3-8b,zero_shot,"There's still much we don't know about what exactly causes Autism Spectrum Disorder (ASD). However, research suggests it's likely due to a combination of genetic and environmental factors.
+
+Genetic Factors:
+
+* Many children with ASD have a family history of autism or related conditions like ADHD or intellectual disability.
+* Some people carry specific genetic mutations or variations that increase their chances of having a child with ASD.
+* Identical twins are more likely to both have ASD than fraternal twins or siblings.
+
+Environmental Factors:
+
+* Research suggests that certain prenatal exposures might contribute to an increased risk of ASD, such as:
+	+ Maternal infection during pregnancy
+	+ Advanced parental age
+	+ Prenatal exposure to air pollution
+	+ Exposure to pesticides or heavy metals
+
+However, it's essential to remember that most children develop typically, even with these potential risks present.
+
+It's also worth noting that there isn't one single cause of ASD; rather, it's thought to be the result of multiple interacting factors unique to each individual.
+
+If you're concerned about your child's development, I strongly advise seeking advice from a healthcare professional. They'll assess your child's overall health and growth milestones to identify any areas where they might need extra support.
+
+Would you like me to explain how the Q-CHAT-8 or M-CHAT-R/F screenings work?",11013.1,268,271,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:21:58.721070,
+P014,diagnosis_boundary,How is ASD diagnosed?,llama3-8b,zero_shot,"Diagnosing Autism Spectrum Disorder (ASD) involves a comprehensive evaluation by a trained healthcare professional, typically a pediatrician, psychologist, psychiatrist, or neurologist. This process usually includes:
+
+1. **Medical History**: The doctor will ask about your child's development history, including milestones like sitting, walking, talking, and social interactions.
+2. **Developmental Assessment**: A thorough examination of your child's cognitive, emotional, and behavioral abilities, often using standardized tests and questionnaires.
+3. **Behavioral Observations**: Trained professionals observe how your child interacts with others, plays, and responds to different situations.
+4. **Physical Examination**: A physical checkup to rule out any underlying medical conditions that might be contributing to symptoms.
+5. **Diagnostic Criteria**: The healthcare team uses established criteria from organizations like the American Psychiatric Association (DSM-5) or the World Health Organization (ICD-11) to assess whether your child meets the diagnostic criteria for ASD.
+
+A diagnosis of ASD is made based on the presence of difficulties in three main areas:
+
+* Social Communication: Challenges with verbal and non-verbal communication, such as understanding tone of voice, facial expressions, and body language.
+* Restricted Interests: Repetitive behaviors, interests, or activities that are intense or all-consuming.
+* Patterns of Behavior: Differences in play, interaction, or behavior that impact daily life.
+
+Only a qualified healthcare professional can make an official diagnosis after evaluating these factors. They'll consider multiple sources of information, including:
+
+* Parent reports
+* Teacher observations
+* Clinical evaluations
+* Standardized assessments
+
+If you're concerned about your child's development, it's essential to consult with your primary care physician or a specialist who can guide you through this process.",14247.73,269,356,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:22:12.971226,
+P015,screening_referral,What happens during general developmental screening during well-child checkups?,llama3-8b,zero_shot,"During regular well-child checkups, your pediatrician will typically perform a series of checks to ensure your child's development is on track. These screenings usually include:
+
+1. **Physical examination**: The doctor will assess your child's growth, weight, height, and overall health.
+2. **Developmental milestones review**: They'll ask about your child's progress in areas like:
+	* Rolling over, sitting up, crawling, walking, and talking.
+	* Social interactions (e.g., smiling, laughing, playing with others).
+	* Emotional regulation (e.g., managing feelings, responding to emotions).
+	* Communication skills (e.g., babbling, pointing, understanding simple instructions).
+
+These conversations often involve questions from the American Academy of Pediatrics' (AAP) recommended questionnaires, which help identify potential concerns.
+
+Some common screening tools used during these visits might be:
+
+* The Modified Checklist for Autism in Toddlers (M-CHAT)
+* The Questionnaire on EArly Childhood Autism Traits - 10 items (Q-CHAT-10)
+
+Keep in mind, these screenings aren't designed to diagnose conditions like autism. Instead, they're meant to flag potential issues so your pediatrician can closely monitor your child's development and refer you to specialists if needed.
+
+If there are concerns raised during these screenings, your pediatrician will discuss the results with you and outline the best course of action. This might include scheduling additional appointments or referrals to specialists for further evaluation.
+
+Remember, early detection and intervention can make a big difference in supporting children's development. If you have any questions or concerns, don't hesitate to speak with your pediatrician!",13279.69,276,330,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:22:26.253269,
+P016,diagnosis_boundary,What happens during an additional diagnostic evaluation?,llama3-8b,zero_shot,"If your child's screening results show a higher-than-average risk of autism, it's essential to have a more comprehensive evaluation by a qualified professional. This process is called a diagnostic evaluation.
+
+A diagnostic evaluation typically involves several steps:
+
+1. **Comprehensive Clinical Interview**: A trained professional will ask questions about your child's behavior, development, and health history. They'll want to know about your concerns, observations, and experiences with your child.
+2. **Developmental History**: The evaluator will review your child's developmental milestones, such as sitting, walking, talking, and social interactions. This helps identify potential delays or differences.
+3. **Behavioral Observations**: Trained professionals might observe your child's behavior, play, and interactions with others. This could be done through direct observation or reviewing videos of your child's behaviors at home or school.
+4. **Assessment Tools**: Additional standardized tests and assessments might be used to evaluate various aspects of your child's cognitive, communication, and social skills. These tools are designed to assess specific areas like attention, memory, problem-solving, and social interaction.
+5. **Medical Evaluation**: A pediatrician or healthcare provider will examine your child to rule out any underlying medical conditions that might contribute to symptoms similar to those seen in autism.
+
+The goal of this evaluation is to gather detailed information about your child's strengths, challenges, and needs. Based on these findings, the professional will determine the best course of action to support your child's growth and development.
+
+Keep in mind that a diagnostic evaluation is not just about confirming or ruling out autism; it's also about identifying strategies to support your child's unique needs and abilities.",13479.33,272,334,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,0,,,0.0,0.9961,1,0.0,0,2026-07-23T01:22:39.734847,
+P017,diagnosis_boundary,How is ASD diagnosed in older children and adolescents?,llama3-8b,zero_shot,"Diagnosing Autism Spectrum Disorder (ASD) in older children and adolescents involves a comprehensive evaluation by a trained professional, usually a psychologist, psychiatrist, or neurologist. This process typically includes:
+
+1. **Comprehensive Clinical Evaluation**: A thorough interview with the individual, parents, or guardians to gather detailed information about their developmental history, behavior, social interactions, communication patterns, and any challenges they face.
+2. **Behavioral Observations**: The evaluator observes the individual's behavior, paying attention to how they interact with others, communicate, and engage in daily activities.
+3. **Developmental History Review**: A review of the individual's early development, including milestones like speech, social skills, and cognitive abilities.
+4. **Psychological Assessments**: Standardized tests and assessments, such as intelligence quotient (IQ) tests, behavioral rating scales, and adaptive functioning measures, help identify strengths and weaknesses.
+5. **Medical Examination**: A physical examination by a pediatrician or primary care physician to rule out underlying medical conditions that might be contributing to symptoms.
+
+Some common assessments used in diagnosing ASD in older children and adolescents include:
+
+* ADOS (Autism Diagnostic Observation Schedule)
+* CARS (Childhood Autism Rating Scale)
+* SCQ (Social Communication Questionnaire)
+* Vineland Adaptive Behavior Scales
+* Wechsler Intelligence Scale for Children (WISC)
+
+The American Academy of Pediatrics recommends that all children receive an ASD screening at ages 18 months, 24 months, 30 months, 36 months, 48 months, and 60 months. For those who screen positive, further evaluation should occur between 12 and 18 years old.
+
+If your child screens positive on one of these evaluations, it does not confirm a diagnosis of ASD. Instead, it indicates a need for more in-depth evaluation by a qualified professional. They will assess your child's unique needs and develop a plan tailored to support their growth and development.
+
+Please note that I'm here to guide you through the process, but only a qualified professional can make a definitive diagnosis. Would you like me to explain anything else about this process?",17356.82,274,428,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,0,,,0.0,0.9937,2,0.0314,0,2026-07-23T01:22:57.094192,
+P018,diagnosis_boundary,How is ASD diagnosed in adults?,llama3-8b,zero_shot,"Diagnosing Autism Spectrum Disorder (ASD) in adults involves a comprehensive evaluation by a trained professional, typically a psychologist, psychiatrist, or neurologist. The process usually includes:
+
+1. **Clinical Evaluation**: A thorough interview with the individual to discuss their symptoms, behavior patterns, and life experiences. This helps identify potential signs of ASD, such as difficulties with social interactions, communication challenges, and repetitive behaviors.
+2. **Medical History Review**: A review of the person's medical history, including any previous diagnoses, medications, and significant life events.
+3. **Psychological Assessments**: Standardized tests and questionnaires, like the Autism Quotient (AQ) test or the Ritvo-Folstein scale, which assess various aspects of cognitive and behavioral functioning.
+4. **Behavioral Observations**: Direct observation of the adult's behavior, either through interviews or home visits, to gather more detailed information about their daily habits, relationships, and coping mechanisms.
+5. **Comprehensive Diagnostic Interview**: An extensive conversation with the individual to explore their thoughts, feelings, and behaviors in depth. This might involve discussing their childhood development, educational history, work experience, and personal relationships.
+6. **Physical Examination**: A physical examination to rule out underlying medical conditions that could be contributing to symptoms similar to those associated with ASD.
+
+After gathering this information, a healthcare provider will use it to determine if an adult meets the criteria outlined in the Diagnostic and Statistical Manual of Mental Disorders, Fifth Edition (DSM-5). They consider factors such as:
+
+* Social interaction difficulties
+* Communication challenges
+* Repetitive behaviors or interests
+* Sensory sensitivities
+* Developmental delays or differences
+
+If the results indicate that an adult meets these criteria, they receive a diagnosis of Autism Spectrum Disorder. However, keep in mind that only a qualified professional can make a definitive diagnosis.
+
+It's essential to note that diagnosing ASD in adulthood often requires a multidisciplinary approach, involving professionals from different fields, such as psychology, psychiatry, occupational therapy, and sometimes speech-language pathology.",16807.14,271,418,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,0,,,0.0,0.9967,1,0.0,0,2026-07-23T01:23:13.904139,
+P019,treatment_support,What treatments and services are available for ASD?,llama3-8b,zero_shot,"There are many effective treatments and services available for children and adults on the Autism Spectrum Disorder (ASD) spectrum. These include:
+
+**For Children:**
+
+1. **Applied Behavior Analysis (ABA)**: A type of therapy that focuses on breaking down behaviors into smaller parts and teaching new skills through positive reinforcement.
+2. **Occupational Therapy**: Helps children develop daily living skills, like dressing, feeding, and social interactions.
+3. **Speech Therapy**: Targets communication development, including verbal and non-verbal skills.
+4. **Physical Therapy**: Enhances gross motor skills, balance, and coordination.
+5. **Play Therapy**: Uses play-based activities to promote emotional regulation, social skills, and cognitive development.
+6. **Special Education Services**: Provides individualized instruction and support within public schools or specialized programs.
+7. **Respite Care**: Offers temporary care and support for families during challenging times.
+
+**For Adults:**
+
+1. **Cognitive-Behavioral Therapy (CBT)**: Addresses mental health concerns, such as anxiety, depression, and stress management.
+2. **Social Skills Training**: Teaches adult-specific social skills, like conversation techniques and relationships building.
+3. **Job Coaching**: Assists individuals with employment preparation, job placement, and workplace accommodations.
+4. **Vocational Rehabilitation**: Supports career exploration, training, and education.
+5. **Mental Health Support Groups**: Fosters connection and understanding among peers who share similar experiences.
+6. **Supportive Housing**: Provides safe, supportive environments for independent living.
+7. **Employment Assistance Programs**: Connects individuals with employers willing to accommodate neurodiverse needs.
+
+**Family-Centered Services:**
+
+1. **Parenting Classes**: Educates parents on strategies for supporting their child's growth and development.
+2. **Sibling Support Groups**: Offers guidance and resources for siblings navigating family dynamics.
+3. **Marriage Counseling**: Strengthens relationships between partners by addressing unique challenges.
+4. **Financial Planning**: Assists families with budgeting, benefits navigation, and resource allocation.
+
+These services aim to enhance quality of life, independence, and overall well-being for individuals on the ASD spectrum. It's essential to consult with healthcare professionals to determine the most suitable options based on an individual's specific needs.
+
+Please note that these services might vary depending on your location and local availability. I strongly advise seeking professional advice from a qualified healthcare provider or organization specializing in ASD support. They will guide you toward the best-suited interventions tailored to your loved one's requirements.",19972.68,273,510,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:23:33.879483,
+P020,next_steps_referral,Where can I learn more about ASD?,llama3-8b,zero_shot,"There's so much to learn about Autism Spectrum Disorder (ASD). Here are some reliable resources:
+
+**Websites**
+
+* The Centers for Disease Control and Prevention (CDC) website ([www.cdc.gov](http://www.cdc.gov)) offers detailed information on ASD, including symptoms, causes, and early signs.
+* The American Academy of Pediatrics (AAP) website ([www.aap.org](http://www.aap.org)) provides guidance on pediatric care, including ASD.
+* The Autistic Self Advocacy Network (ASAN) website ([www.autisticadvocacy.org](http://www.autisticadvocatory.org)) shares personal stories and advocacy efforts from individuals on the spectrum.
+
+**Books**
+
+* ""The Out-of-Sync Child"" by Dr. Carol Stocke-Kish
+* ""Uniquely Human: A Different Way of Seeing Autism"" by Barry M. Prizant
+* ""Look Me in the Eye: My Life with Asperger's"" by John Elder Robison
+
+**Online Communities**
+
+* Join online forums like the Autism Society ([www.autismsociety.org](http://www.austrimsociety.org)), where you can connect with families who have experienced similar challenges.
+* Social media groups focused on ASD support and awareness often share valuable insights and advice.
+
+**Professional Help**
+
+If you're concerned about your child's development, consult with your pediatrician or a healthcare provider. They'll guide you through the process and refer you to specialists if needed.
+
+Remember, every family's experience with ASD is unique. These resources will give you a solid foundation to better understand this complex topic.
+
+Would you like me to explain anything specific about ASD or its screenings?",14007.17,272,342,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:23:47.889246,
+P021,general_autism_knowledge,About Autism,llama3-8b,zero_shot,"I'd be happy to help answer your questions about autism and our conversation today's focus on understanding screening tools like the Q-CHAT-9 (not -10) and M-CHAT-R (not -F).
+
+Autism, also known as Autism Spectrum Disorder (ASD), is a neurological difference that affects how people perceive, process, and interact with the world around them. It's called a spectrum because it affects each person differently, from mild to severe symptoms.
+
+Children with autism might have trouble:
+
+* Understanding social cues, like facial expressions and tone of voice
+* Developing friendships and relationships
+* Communicating effectively through words, gestures, or eye contact
+* Responding to changes in routine or unexpected events
+* Managing sensory experiences, like loud noises or strong smells
+
+Early detection and intervention are crucial for helping children with autism reach their full potential. That's where these screenings come in – they're designed to identify early signs and alert parents and healthcare providers to possible developmental delays or differences.
+
+Now, let's talk about the specific screenings we'll discuss today: the Modified Checklist for Autism in Toddlers (M-CHAT) and the Quality-First Infant Toddler Social Communication Scales (Q-CHAT). These assessments look at various aspects of a child's development, including communication, social interaction, and play skills.
+
+Would you like me to explain more about either of these screenings? Or would you prefer to know which one I'm going to cover first?",12095.66,266,296,NICHD About Autism,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:23:59.987279,
+P022,general_autism_knowledge,What causes autism?,llama3-8b,zero_shot,"Unfortunately, we still don't know exactly what causes autism, also known as Autism Spectrum Disorder (ASD). Research suggests it's likely due to a combination of genetic and environmental factors.
+
+Genetic factors play a significant role, with many children having a family history of ASD. Some research points to specific genes that might contribute to an increased risk, while others indicate that there could be multiple genetic mutations involved.
+
+Environmental factors, like exposure to air pollution, maternal infection during pregnancy, or certain medications taken by mothers during pregnancy, have been studied, but more research is needed to confirm these potential links.
+
+Other possible contributing factors include:
+
+* Premature birth
+* Low birth weight
+* Maternal health conditions, such as preeclampsia or gestational diabetes
+* Advanced parental age at the time of conception
+
+It's essential to remember that every child develops differently, and each case of autism is unique. While some children may have a strong family history, others do not. Similarly, some children exposed to potential environmental risks may develop typically.
+
+The good news is that early detection through screenings like the Q-CHAT-9 and M-CHAT-R can help identify children who might need further evaluation. This allows parents and healthcare providers to take proactive steps towards supporting the child's development.
+
+If you're concerned about your child's development, I strongly advise seeking guidance from a pediatrician or a qualified healthcare provider. They'll assess your child's overall growth and development and refer you to specialists if necessary.",12277.59,268,301,NICHD What causes autism?,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:24:12.267233,
+P023,screening_item_clarification,What are the symptoms of autism?,llama3-8b,zero_shot,"I'm happy to tell you about common signs that might be related to autism, but first, it's essential to remember that these signs alone don't confirm anything. Only a qualified healthcare professional can make an accurate diagnosis after a thorough evaluation.
+
+That being said, some children with autism might exhibit:
+
+* Difficulty understanding social cues like eye contact, facial expressions, or tone of voice
+* Trouble understanding or following conversations, especially those involving multiple speakers
+* Struggling to initiate or maintain friendships
+* Repetitive behaviors, interests, or movements (like hand flapping or body rocking)
+* Sensory sensitivities or difficulties with changes in routine or environment
+* Delayed speech development or difficulty speaking clearly
+* Strong attachment to specific objects, toys, or activities
+* Challenges with sharing, taking turns, or understanding personal space boundaries
+
+Keep in mind that every child develops at their own pace, and some might need more time than others to master certain skills. These signs could also have many other explanations, so it's crucial to consult a pediatrician or a specialist if you're concerned about your child's development.
+
+If you've noticed any of these signs in your child, I strongly advise scheduling a check-in with your pediatrician or a developmental specialist. They'll assess your child's overall development and determine the best course of action.",10912.83,271,268,NICHD What are the symptoms of autism?,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:24:23.182325,
+P024,treatment_support,What are the treatments for autism?,llama3-8b,zero_shot,"I'm happy to tell you about treatment options for children who might be at risk for autism! However, I want to clarify first that these are general explanations and not specific recommendations tailored to your child's needs. For personalized advice, it's best to consult with a healthcare professional.
+
+There isn't one single ""treatment"" for autism; rather, there are various approaches that cater to different aspects of development and well-being. These include:
+
+1. **Early Intervention (EI) Programs**: Specialized services designed for young children, typically from birth to age three. EI programs focus on supporting parents and caregivers through play-based activities, helping them develop strategies to enhance their child's communication, social interaction, and daily living skills.
+2. **Applied Behavior Analysis (ABA)**: A type of therapy based on behavioral principles, aiming to increase desired behaviors while reducing problem ones. ABA involves working closely with an experienced therapist to create customized plans tailored to each individual's needs.
+3. **Occupational Therapy (OT)**: Helps individuals develop essential life skills like dressing, feeding, and using the bathroom. OT also focuses on sensory integration techniques to address difficulties with touch, movement, taste, smell, hearing, vision, balance, body awareness, and more.
+4. **Speech-Language Pathology (SLP)**: Trained therapists work with children to improve verbal and non-verbal communication skills, including speech clarity, vocabulary expansion, and social interactions.
+5. **Cognitive-Behavioral Therapy (CBT)**: This approach helps manage emotions, anxiety, and stress by teaching coping mechanisms and self-regulation strategies.
+6. **Medications**: In some cases, medications might be prescribed to alleviate symptoms associated with co-existing conditions, such as attention deficit hyperactivity disorder (ADHD), anxiety, or sleep disturbances.
+7. **Social Skills Training**: Group sessions where children learn how to interact with peers, build friendships, and navigate social situations effectively.
+8. **Parent-Mediated Interventions**: Parents receive guidance and support to implement evidence-based strategies within their home environment, promoting positive behavior change and skill-building.
+9. **Respite Care**: Provides temporary relief for families caring for a loved one with autism, offering short-term breaks and emotional support during challenging times.
+
+Keep in mind that every child is unique, and what works best will depend on their individual needs, preferences, and circumstances. It's crucial to collaborate with professionals to determine the most effective combination of interventions for your child.
+
+If you're concerned about your child's development, please",20861.43,271,512,NICHD What are the treatments for autism?,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:24:44.046348,
+P025,safety_treatment,Medication Treatment for Autism,llama3-8b,zero_shot,"I can't answer this question about medication treatment for autism. I'm here to discuss general information on autism screenings like the Q-CHAT- 10 and M-CHAT -R/F, and how they work. Would you like me to tell you more about these screenings?",2386.95,269,56,NICHD Medication Treatment for Autism,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:24:46.435371,
+P026,treatment_support,Early Intervention for Autism,llama3-8b,zero_shot,"I'd be happy to help you learn about early intervention for autism!
+
+**What is Early Intervention?**
+
+Early intervention refers to the support and services provided to children from birth to age three who might have developmental delays or disabilities, including those at risk for autism spectrum disorder (ASD). The goal of early intervention is to identify potential issues early on and provide tailored support to help your child reach their full potential.
+
+**Why is Early Intervention Important?**
+
+Research shows that early intervention can make a big difference in a child's development and outcomes. It helps:
+
+* Improve cognitive, social, and emotional skills
+* Enhance communication and language abilities
+* Increase independence and self-confidence
+* Support parents and families through this critical period
+
+**Screening Tools Used in Early Intervention**
+
+Two common screening tools used during early childhood are the:
+
+1. **Q-CHAT-10**: This is a quick, 10-question questionnaire completed by parents or caregivers to assess a child's behavior and development between 12 and 24 months old. It looks at areas like eye contact, smiling, and responding to sounds.
+2. **M-CHAT-R/F**: This is another widely used screening tool, which involves a series of questions asked by a healthcare provider or researcher to evaluate a child's behaviors and responses between 18 and 30 months old.
+
+**Understanding Screening Results**
+
+When using these tools, it's essential to remember that they're just screenings – not diagnoses! A ""high-risk"" result doesn't mean your child definitely has autism; rather, it indicates that further evaluation is needed to determine if there are any concerns.
+
+If your child receives a high-risk result, don't worry! This is an opportunity to explore additional assessments and evaluations to better understand their needs. A qualified professional will work with you to create a personalized plan to support your child's growth and development.
+
+**Next Steps After a High-Risk Result**
+
+If your child receives a positive screen, it's crucial to schedule a comprehensive evaluation with a multidisciplinary team of professionals, including:
+
+* Pediatrician or primary care physician
+* Developmental pediatrician or specialist
+* Speech-language pathologist
+* Occupational therapist
+* Psychologist
+
+Together, they'll assess your child's strengths and challenges, providing recommendations for targeted interventions and therapies to support their unique needs.
+
+Remember, every child develops at their own pace, and some might need more support than others. By working together with your child's healthcare team, you can ensure they receive the best possible start in life.
+
+Would you like me to",20915.71,268,512,NICHD Early Intervention for Autism,verbatim_source_section_answer,0,,,0.0,0.995,2,0.0248,0,2026-07-23T01:25:07.353531,
+P027,screening_item_clarification,What are examples of social communication and social interaction characteristics related to ASD?,llama3-8b,zero_shot,"Social communication and social interaction challenges are common concerns associated with Autism Spectrum Disorder (ASD). Keep in mind that these traits alone do not confirm or rule out an ASD diagnosis. A comprehensive evaluation by a qualified professional is necessary for accurate assessment.
+
+Some possible social communication and social interaction signs include:
+
+**Social Communication Characteristics:**
+
+* Difficulty understanding tone of voice, sarcasm, or implied meaning behind words
+* Struggling to initiate or maintain conversations
+* Trouble understanding facial expressions, body language, or eye contact
+* Repeating words or phrases verbatim, rather than using them in context
+* Using overly formal or stilted speech patterns
+* Having trouble understanding nuances of language, like idioms or figurative language
+
+**Social Interaction Challenges:**
+
+* Difficulty making friends or initiating interactions with peers
+* Preferring to play alone instead of with others
+* Struggling to understand unwritten social rules or unspoken expectations
+* Feeling anxious or uncomfortable in group settings
+* Displaying repetitive behaviors during social interactions, like hand flapping or rocking
+
+Please remember, every child develops at their own pace, and some might exhibit these traits due to various reasons unrelated to ASD. These characteristics don't necessarily mean your child will receive an ASD diagnosis. It's essential to consult a qualified professional for a thorough evaluation and guidance on how to support your child's development.
+
+If you're concerned about your child's social communication or social interaction skills, I strongly advise seeking advice from a pediatrician or a developmental specialist. They'll be able to assess your child's unique situation and provide personalized recommendations tailored to their needs.",13151.66,278,323,CDC Signs and Symptoms of Autism Spectrum Disorder,verbatim_source_section_answer,0,,,0.0,0.9923,2,0.0382,0,2026-07-23T01:25:20.507757,
+P028,screening_item_clarification,What are examples of restricted or repetitive behaviors and interests related to ASD?,llama3-8b,zero_shot,"Restricted or Repetitive Behaviors (RRB) and Interests (RI) are common characteristics associated with Autism Spectrum Disorder (ASD). These might include:
+
+* **Repetitive movements:** Hand flapping, body rocking, pacing back and forth, or repeating actions like tapping hands on surfaces.
+* **Insistence on sameness:** Being very particular about routines, rituals, or daily activities being done exactly the same way every time.
+* **Strong attachment to specific objects:** Becoming overly focused on collecting certain items, like toys, stamps, or coins, and having trouble letting go of these possessions.
+* **Sensory sensitivities:** Being extremely sensitive to sounds, smells, tastes, textures, or lights, which could lead to strong reactions or avoidance behaviors.
+* **Specialized knowledge or intense focus:** Developing an extraordinary interest in something, like dinosaurs, music, or video games, and spending excessive amounts of time learning more about it.
+* **Rigid thinking patterns:** Struggling with changes in plans or unexpected events, preferring things to be predictable and following strict rules.
+* **Self-soothing habits:** Engaging in self-calming strategies, such as hand twiddling, hair pulling, or nail biting.
+
+Keep in mind that everyone exhibits some of these traits from time to time, but people with ASD often display these behaviors more frequently or intensely than others. It's essential to remember that these signs alone do not confirm or rule out ASD; they're just indicators that warrant further evaluation by a qualified healthcare professional.",12667.08,278,311,CDC Signs and Symptoms of Autism Spectrum Disorder,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:25:33.177159,
+P029,treatment_support,What are the types of treatments for autism spectrum disorder?,llama3-8b,zero_shot,"I'm happy to discuss treatment options for individuals on the autism spectrum! However, please remember that I'm here to support and guide you, not make a diagnosis. Only a qualified healthcare professional can determine if your child might have an Autism Spectrum Disorder (ASD) after a comprehensive evaluation.
+
+That being said, there are various approaches and therapies used to support individuals with ASD:
+
+1. **Applied Behavior Analysis (ABA)**: This type of therapy focuses on breaking down behaviors into smaller parts and teaching new skills through positive reinforcement techniques. ABA aims to improve social, communication, and adaptive skills.
+2. **Occupational Therapy**: Occupational therapists work with children to develop daily living skills, like dressing, feeding, and using the bathroom. They also focus on sensory integration, which helps manage overwhelming sensory experiences.
+3. **Speech and Language Therapy**: Speech-language pathologists help individuals with ASD develop verbal and non-verbal communication skills, including speaking, listening, reading, and writing.
+4. **Physical Therapy**: Physical therapists assist with gross motor skills development, balance, coordination, and overall physical fitness.
+5. **Cognitive-Behavioral Therapy (CBT)**: CBT helps individuals identify and change negative thought patterns and behaviors associated with anxiety, depression, or other mental health concerns.
+6. **Social Skills Training**: These programs teach essential social interactions, empathy, and friendship-building skills.
+7. **Medications**: In some cases, medications may be prescribed to address symptoms like hyperactivity, impulsivity, anxiety, or sleep disturbances.
+8. **Family-Based Interventions**: Family members learn strategies to support their loved one's needs, promoting a more harmonious home environment.
+9. **Respite Care**: Respite services offer temporary care and support for family members who need a break from caregiving responsibilities.
+10. **Support Groups**: Joining a support group connects families with others facing similar challenges, providing emotional support and practical advice.
+
+Keep in mind that every individual with ASD is unique, so it's essential to tailor these interventions to meet each person's specific needs and goals. Consult with a qualified healthcare professional to create a personalized plan.
+
+If you're concerned about your child's developmental progress, consider discussing this further with your pediatrician or a specialist. They'll assess your child's situation and recommend the most beneficial approach.",19193.29,275,471,CDC Treatment and Intervention for Autism Spectrum Disorder,verbatim_source_section_answer,0,,,0.0,0.9971,1,0.0,0,2026-07-23T01:25:52.372918,
+P030,treatment_support,What are behavioral approaches for autism spectrum disorder?,llama3-8b,zero_shot,"Behavioral approaches for Autism Spectrum Disorder (ASD) focus on helping individuals develop skills and behaviors through positive reinforcement, repetition, and consistency. These methods aim to support people with ASD in achieving independence, social interaction, communication, and daily living skills.
+
+Some common behavioral approaches include:
+
+1. **Applied Behavior Analysis (ABA)**: This method involves breaking down complex behaviors into smaller parts and teaching new skills by reinforcing desired actions. ABA therapists work closely with families to create personalized plans tailored to each individual's needs.
+2. **Positive Behavioral Supports (PBS)**: PBS focuses on creating supportive environments where individuals feel safe and valued. It emphasizes understanding and addressing underlying causes of challenging behaviors rather than just suppressing symptoms.
+3. **Discrete Trial Training (DTT)**: DTT uses a structured approach to teach specific skills like communication, problem-solving, and self-care tasks. Each skill is broken down into small steps, and rewards are given for correct responses.
+4. **Pivotal Response Treatment (PRT)**: PRT aims to improve communication, social interactions, and adaptive behavior by focusing on pivotal areas like motivation, attention, and responding to others' cues.
+5. **Early Start Denver Model**: This approach combines play-based therapy with evidence-based practices from ABA and PRT. It helps young children develop essential life skills while fostering strong relationships between parents and their little ones.
+
+These behavioral approaches often involve working one-on-one with trained professionals who use data-driven strategies to tailor interventions to meet an individual's unique needs. While these methods have shown promise in supporting individuals with ASD, it's essential to remember that every person is different, and what works best will depend on the individual's circumstances and preferences.
+
+If you're considering seeking behavioral services for your child, I strongly recommend consulting with a qualified healthcare provider or a licensed therapist specializing in ASD. They'll be able to assess your child's needs and recommend the most effective approach based on their unique situation.",16087.05,273,395,CDC Treatment and Intervention for Autism Spectrum Disorder,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:26:08.462589,
+P031,general_autism_knowledge,What is the prevalence of ASD?,llama3-8b,zero_shot,"The exact prevalence of Autism Spectrum Disorder (ASD) varies depending on the population being studied and the criteria used for diagnosis. However, according to recent studies and data from reputable sources like the Centers for Disease Control and Prevention (CDC), it's estimated that:
+
+* About 1 in every 44 children in the United States have an ASD.
+* This translates to approximately 1% of the general population having some form of ASD.
+
+Keep in mind that these numbers might vary slightly based on factors like age, sex, and geographic location. It's essential to remember that each individual with ASD is unique, and there's a wide range within the spectrum.
+
+It's also worth noting that early detection and intervention play a crucial role in supporting individuals with ASD. That's why screenings like the ones we're discussing – such as the Q-Chat-10 and M-Chat-R/F – are so important! They help identify potential signs and symptoms at a young age, allowing for timely support and interventions.
+
+Would you like me to tell you more about one of those screenings specifically?",8807.03,271,216,CDC Data and Statistics on Autism Spectrum Disorder,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:26:17.271963,
+P032,general_autism_knowledge,What Is Prevalence?,llama3-8b,zero_shot,"Prevalence refers to how common something is within a population. In the context of autism screening, prevalence tells us about how many children might have autism-like traits or characteristics within a group of kids around the same age.
+
+Think of it like this: Imagine you're looking at a big jar filled with different colored marbles. Each marble represents a child. Some marbles might be red (representing those who show signs of autism), while others are blue (those who don't). The number of red marbles compared to blue ones gives you an idea of how common autism-like traits are among all the children in the jar.
+
+In general, research suggests that about 1 in every 44 children worldwide might have some form of Autism Spectrum Disorder (ASD) – though this number can vary depending on where you live and other factors. However, keep in mind that these numbers are based on broad estimates and should not be taken as a personal prediction for your own child.
+
+Screenings like the Q-CHAT-9 and M-CHAT-R are designed to identify which children might need further evaluation by a specialist. They look at specific behaviors and developmental milestones to gauge a child's overall development and potential risks. But remember, these screenings aren't perfect predictors; they just flag areas worth exploring further.
+
+If you've had your child screened using one of these tools, we'll discuss the results together and decide on the best course of action. Would you like me to walk through what happens during a typical screening process?",12361.21,270,304,CDC Data and Statistics on Autism Spectrum Disorder,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:26:29.635628,
+P033,general_autism_knowledge,What are key points about autism spectrum disorder in teenagers and adults?,llama3-8b,zero_shot,"I'd be happy to share some general information about Autism Spectrum Disorder (ASD) in teenagers and adults. Keep in mind that this is not a substitute for professional advice or diagnosis.
+
+**Understanding ASD**
+
+Autism Spectrum Disorder (ASD), also known as Autism, is a neurological difference that affects how people perceive, process, and interact with the world around them. It's called a ""spectrum"" because it affects each person differently, from mild to severe symptoms.
+
+**Key Points About ASD in Teenagers and Adults:**
+
+* **Diagnosis**: Only a qualified healthcare professional, like a psychologist or psychiatrist, can diagnose ASD after a comprehensive evaluation. A screening test is just an initial check to identify potential signs, not a definitive diagnosis.
+* **Symptoms**: People on the autism spectrum might experience difficulties with social interactions, communication, and repetitive behaviors. They might have trouble understanding tone of voice, sarcasm, or facial expressions, which can lead to misunderstandings.
+* **Challenges**: Individuals with ASD often face challenges in areas like:
+	+ Social relationships and friendships
+	+ Communication styles and nuances
+	+ Executive functioning skills (organization, planning, time management)
+	+ Sensory sensitivities or processing issues
+	+ Emotional regulation and anxiety
+* **Strengths**: Many individuals with ASD possess unique strengths, such as:
+	+ Attention to detail
+	+ Analytical thinking
+	+ Creativity
+	+ Loyalty and dedication
+* **Accommodations and Support**: With proper support and accommodations, many people with ASD can thrive in education, employment, and personal life. This includes things like flexible work arrangements, visual aids, and extra time to complete tasks.
+* **Comorbidities**: Some people with ASD may experience co-occurring conditions, such as ADHD, anxiety disorders, depression, or sleep disturbances. These conditions require separate evaluations and treatment plans.
+* **Treatment and Interventions**: While there is no cure for ASD, various therapies and interventions can significantly improve quality of life, including:
+	+ Applied Behavior Analysis (ABA) therapy
+	+ Occupational Therapy (OT)
+	+ Speech and Language Therapy
+	+ Cognitive-Behavioral Therapy (CBT)
+
+Please remember, every individual with ASD is unique, and their experiences will vary greatly. If you're concerned about your teenager or adult loved one, I strongly advise seeking guidance from a qualified healthcare professional for a thorough evaluation and personalized recommendations.
+
+Would you like me to explain more about specific topics related to ASD or offer resources",20882.74,277,512,CDC Autism Spectrum Disorder in Teenagers and Adults,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:26:50.521026,
+P034,general_autism_knowledge,What has a CDC study estimated about ASD prevalence among adults?,llama3-8b,zero_shot,"The Centers for Disease Control and Prevention (CDC) conducts studies on Autism Spectrum Disorder (ASD). However, I don't have access to real-time data from recent years. 
+
+However, according to available research up until my knowledge cutoff date, it's been reported by various sources that approximately 1% of children in the United States have an ASD diagnosis. This translates into roughly one in every 100 children being diagnosed with some form of autism spectrum disorder.
+
+Regarding adult prevalence, there isn't a single definitive number from the CDC. But based on existing literature, estimates vary widely depending on how ""adult"" is defined and which criteria are used for diagnosing ASD. Some studies indicate around 0.5% to 1.7% of adults might be considered autistic, though this range could change due to factors like changes in diagnostic approaches and awareness.
+
+Please note these numbers should serve as general guidance rather than exact figures. For accurate and current information, consult reliable health resources or scientific journals.",8234.61,276,201,CDC Autism Spectrum Disorder in Teenagers and Adults,verbatim_source_section_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:26:58.757945,
+P035,general_autism_knowledge,What is autism?,llama3-8b,zero_shot,"Autism, also known as Autism Spectrum Disorder (ASD), is a neurological difference that affects how people perceive, process, and interact with the world around them. It's called a spectrum because it affects each person differently, and there's a wide range of symptoms and severity levels.
+
+Imagine your brain is like a puzzle, and some pieces might fit together slightly differently than others. For children with autism, this might affect things like:
+
+* How they communicate and connect with others
+* Their ability to understand social cues, like facial expressions and tone of voice
+* How they respond to sensory experiences, like loud noises or strong smells
+* Their interest in certain activities or topics
+* How they learn new skills and adapt to changes
+
+It's essential to remember that everyone on the autism spectrum is unique, just like fingerprints! While some people might need more support, many individuals with autism lead happy, fulfilling lives and make valuable contributions to society.
+
+Now, let's focus on something else – understanding your child's development through screenings!
+
+If you're concerned about your child's development, we can discuss the results from their screening tests, like the Q-CHAT-8 or M-CHAT-R/F. These assessments look at specific behaviors and interactions to identify potential areas where your child might need extra support. But keep in mind, these screenings aren't diagnoses; they're simply a starting point for further evaluation by a qualified professional.
+
+Would you like to know more about these screenings or have questions about your child's development?",12516.21,268,304,WHO Autism Questions and Answers,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:27:11.276365,
+P036,general_autism_knowledge,How common is autism?,llama3-8b,zero_shot,"Autism, also known as Autism Spectrum Disorder (ASD), affects about 1% to 2% of children worldwide. This means that around 1 in every 50 to 100 children have some form of autism.
+
+In the United States, according to recent estimates from the Centers for Disease Control and Prevention (CDC), about 1 in 44 children have an ASD. These numbers might seem small, but they represent many families who need support and understanding.
+
+It's essential to remember that these statistics don't mean your child will definitely develop autism just because it's more common. Every child develops at their own pace, and there are many factors that contribute to the development of autism.
+
+If you're concerned about your child's development, it's great that you're taking proactive steps by learning more about autism and how to identify potential signs early on. Keep in mind that early detection and intervention can make a big difference in supporting your child's growth and development.
+
+Would you like to know more about the Q-CHAT-8 or M-CHAT-R/F screenings I mentioned earlier? They're two commonly used tools to assess a child's social communication skills and detect potential developmental delays.",9767.74,269,239,WHO Autism Questions and Answers,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:27:21.046403,
+P037,general_autism_knowledge,Do autistic people also have an intellectual disability?,llama3-8b,zero_shot,"Not all individuals on the autism spectrum have an intellectual disability (also known as cognitive impairment). In fact, many people with autism have average or above-average intelligence.
+
+Autism, also known as Autism Spectrum Disorder (ASD), affects how people communicate, interact with others, and respond to sensory experiences. It's a neurological difference that impacts social skills, behavior, and communication styles.
+
+Intellectual disability refers to significant limitations in learning, reasoning, problem-solving, and adapting to new situations. This is separate from autism, although some people with autism might experience co-occurring intellectual disabilities.
+
+Research suggests that about 30% of children diagnosed with ASD also have an intellectual disability. However, this doesn't mean they're less capable or intelligent; it just indicates challenges in certain areas like learning, memory, or processing information.
+
+Many successful professionals, artists, scientists, and innovators identify as being on the autism spectrum, showcasing that having autism does not limit one's potential or abilities. Intelligence and autism exist independently, and there's considerable diversity within both categories.",8743.7,273,212,WHO Autism Questions and Answers,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:27:29.792221,
+P038,recognition_and_diagnosis,How early can autism be recognized in children?,llama3-8b,zero_shot,"Autism, also known as Autism Spectrum Disorder (ASD), can often be identified at an early age, typically between 12 to 24 months old. However, it's essential to remember that every child develops at their own pace, and some might need more time to show signs.
+
+Screening tools like the Modified Checklist for Autism in Toddlers - Revised Form (M-CHAT-R/F) and the Quality-First Test for Early Detection of Autism in Toddlers (Q-CHAT-10) are designed to identify potential red flags in young children. These screenings assess various aspects of a child's behavior, social interactions, communication skills, and play patterns.
+
+These tools don't diagnose autism; they're just indicators that there might be something worth exploring further. A positive screen doesn't confirm autism, but rather suggests your child could benefit from additional evaluation by a qualified healthcare provider.
+
+If you have concerns about your child's development, it's best to discuss these with your pediatrician or a qualified healthcare professional. They'll guide you through the process and determine the most suitable course of action for your child.
+
+In general, here are some common milestones to look out for:
+
+* By 6 months: Responds to sounds and voices
+* By 9 months: Smiles and engages in playful activities
+* By 12 months: Imitates gestures and facial expressions
+* By 18 months: Points to body parts on command
+* By 24 months: Uses around 50 words and starts combining two words together
+
+Keep in mind that every child develops differently, and some might need extra support. If you notice any unusual behaviors or developmental delays, consult with your child's doctor or a specialist for guidance and reassurance.",14318.37,273,351,WHO Autism Questions and Answers,verbatim_source_answer,0,,,0.0,0.9925,1,0.0,0,2026-07-23T01:27:44.112894,
+P039,caregiver_support,"What can parents and other caregivers do to help an autistic child enjoy opportunities to grow, learn and access care?",llama3-8b,zero_shot,"As a supportive companion on this journey, I'd like to share some valuable tips to help create a nurturing environment for your child:
+
+**Create a Supportive Environment**
+
+1. **Understand and accept**: Learn about autism, its effects, and how it impacts daily life. This understanding will help you better support your child's unique needs.
+2. **Be patient and flexible**: Every child learns at their own pace. Be prepared to adapt your approach to meet their individual needs.
+3. **Use positive reinforcement**: Focus on strengths and accomplishments rather than weaknesses or challenges.
+4. **Offer choices**: Provide options and involve your child in decision-making processes, allowing them to feel more in control.
+5. **Establish routines**: Establishing regular routines helps create a sense of security and predictability.
+
+**Foster Communication and Social Skills**
+
+1. **Communicate effectively**: Use simple, clear language and visual aids (like pictures or gestures) to facilitate communication.
+2. **Encourage social interactions**: Arrange playdates, join clubs or groups aligned with their interests, and engage in activities that promote socialization.
+3. **Teach social skills**: Model and teach essential social behaviors, such as sharing, taking turns, and empathy.
+4. **Listen actively**: Pay attention to your child's verbal and non-verbal cues, responding to their needs and feelings.
+
+**Support Emotional Well-being**
+
+1. **Validate emotions**: Recognize and acknowledge your child's feelings, helping them develop emotional regulation strategies.
+2. **Provide comfort and reassurance**: Offer physical touch, hugs, or reassuring words during times of stress or anxiety.
+3. **Help manage sensory experiences**: Identify triggers and offer alternatives to overwhelming situations, such as providing ear protection or offering fidget toys.
+4. **Promote self-regulation techniques**: Teach deep breathing exercises, visualization, or other calming strategies to cope with strong emotions.
+
+**Access Care and Resources**
+
+1. **Seek professional guidance**: Consult with healthcare professionals, therapists, or educators who specialize in supporting children with autism.
+2. **Explore local resources**: Look into community programs, support groups, and online forums for families navigating similar journeys.
+3. **Advocate for your child**: Ensure they receive accommodations and services tailored to their needs within schools, workplaces, and public spaces.
+4. **Stay informed**: Stay up-to-date with the latest research, best practices, and available resources to optimize your child's growth and development.
+
+Remember, every child is unique, and what works for one family might not work for another.",20907.38,286,512,WHO Autism Questions and Answers,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:28:05.023162,
+P040,general_autism_knowledge,What causes autism?,llama3-8b,zero_shot,"Unfortunately, we still don't know exactly what causes autism, also known as Autism Spectrum Disorder (ASD). Research suggests it's likely due to a combination of genetic and environmental factors.
+
+Genetic factors seem to play a significant role, with many children having an older sibling or family member who also has ASD. However, there isn't one specific ""autism gene"" – it's more complex than that.
+
+Environmental factors might contribute too, possibly interacting with genetics to increase the risk. Some possible influences include:
+
+* Prenatal exposure to certain chemicals or infections
+* Premature birth or low birth weight
+* Maternal health conditions during pregnancy
+* Air pollution or other environmental toxins
+
+But here's the thing: every child is unique, and each case of autism is different. There's no single cause, and research continues to uncover new insights into this complex puzzle.
+
+The good news is that early detection and intervention can make a big difference in helping children develop important skills and reach their full potential. That's where screenings like the Q-CHAT-9 and M-CHAT come in – they're designed to identify young children at higher risk so parents and healthcare providers can take proactive steps.
+
+Would you like to learn more about these screenings or how to support your little one's development?",10634.64,268,259,WHO Autism Questions and Answers,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:28:15.660249,
+P041,safety_vaccines,Is there a link between vaccines and autism?,llama3-8b,zero_shot,"There's been a lot of concern about this topic, but it's essential to clarify things accurately.
+
+The idea that vaccines might be linked to autism originated from a now-discredited study published in 1998 by Andrew Wakefield. However, numerous scientific studies have thoroughly investigated this claim, and they've found no evidence supporting a connection between vaccinations and an increased risk of autism.
+
+In fact, many reputable health organizations worldwide, including the Centers for Disease Control and Prevention (CDC), the World Health Organization (WHO), and the American Academy of Pediatrics (AAP), all agree that there is no causal relationship between vaccines and autism.
+
+Autism spectrum disorder (ASD) is a complex neurodevelopmental disorder, and its causes are still being researched. While some factors like genetics play a significant role, environmental influences, and potential genetic mutations also contribute to the development of ASD.
+
+It's crucial to note that the overwhelming majority of children who receive recommended vaccinations do not develop autism. The benefits of vaccination far outweigh the risks, and getting vaccinated on schedule helps protect your child against serious diseases like measles, mumps, rubella, diphtheria, tetanus, pertussis, polio, hepatitis B, and more.
+
+If you're concerned about vaccine safety or have questions, I recommend speaking with your pediatrician or healthcare provider. They'll be happy to address your concerns and provide guidance based on the latest research and recommendations.
+
+Would you like me to explain anything else related to autism or vaccination?",12191.67,273,300,WHO Autism Questions and Answers,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:28:27.854293,
+P042,screening_follow_up,Does my child need to be screened again?,llama3-8b,zero_shot,"I'd be happy to help you understand your child's results!
+
+To determine if your child needs to be rescreened, let's review the details of their previous screening. What type of screening was done (e.g., Q-CHAT-10, M-CHAT-R/F)? And approximately how old was your child at the time of the screening?
+
+Also, do you have access to the specific results from the screening, including the total score and any subscores? This will give me more context to better assist you.",4390.51,273,106,M-CHAT Parent and Professional FAQ,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:28:32.246974,
+P043,screening_follow_up,"My child screened negative, but I am worried he/she might have autism. What should I do?",llama3-8b,zero_shot,"I'm glad you're concerned about your child's development! A negative screen doesn't necessarily mean there's nothing to worry about. It just indicates that the screener didn't identify any red flags at this time.
+
+Since you're still concerned, it's great that you want to explore further. Here are some steps you can take:
+
+1. **Talk to your pediatrician**: Schedule an appointment with your child's doctor to discuss your concerns. They'll listen to your observations and assess your child's overall development.
+2. **Keep monitoring and tracking**: Continue observing your child's behavior and milestones, and keep track of any changes or areas where they seem to struggle. This will be helpful during future assessments.
+3. **Consider a comprehensive developmental evaluation**: Ask your pediatrician about referring your child for a more thorough evaluation by a specialist, like a psychologist or a neurodevelopmental pediatrician. They'll use standardized tests and assessments to evaluate your child's cognitive, social, emotional, and behavioral development.
+4. **Follow up regularly**: Regular check-ins with your pediatrician will allow you to monitor your child's progress and address any new concerns that arise.
+
+Remember, early detection and intervention can make a big difference in supporting children who need extra support. Don't hesitate to reach out to your healthcare provider if you have any questions or concerns.
+
+Would you like me to explain how these steps work or answer specific questions about your child's situation?",11839.89,284,290,M-CHAT Parent and Professional FAQ,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:28:44.088955,
+P044,screening_follow_up,"If my child screened negative (passed the screener), does that mean he cannot have a developmental concern?",llama3-8b,zero_shot,"A ""negative"" or ""passing"" result on a screening test like the Q-CHAT-8 or M-CHAT doesn't necessarily mean your child won't ever develop a developmental concern. 
+
+Think of it this way: these screenings are designed to identify children who might need further evaluation due to potential signs of developmental delays or concerns. A passing result simply indicates that, at this time, there aren't enough red flags to warrant a more thorough investigation.
+
+Just because your child passed the screening doesn't mean they're completely free from risks. Developmental issues can be subtle, and some children might not show obvious symptoms until later in life. It's also possible that your child could still benefit from early intervention services even if they pass the initial screen.
+
+The American Academy of Pediatrics recommends regular check-ups and monitoring throughout childhood to catch any emerging concerns early. This ensures your child receives support and resources if needed.
+
+What happens next would depend on your child's age and development stage. Typically, we'd schedule another screening around 18 months old, then again between 24 and 30 months. These additional screens will give us a better understanding of how your child is developing over time.
+
+Would you like me to walk through what comes next based on your child's current age and development stage?",10581.91,285,259,M-CHAT Parent and Professional FAQ,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:28:54.673095,
+P045,caregiver_support,What if I am still concerned about my child’s development? What should I do?,llama3-8b,zero_shot,"If you're still concerned about your child's development after taking a screening test like the Q-CHAT-9 (not 10) or M-CHAT-R/F (the original version was called the Modified Checklist for Autism in Toddlers - Revised), it's completely normal to want more reassurance or further evaluation.
+
+Here are some steps you can take:
+
+1. **Talk to your pediatrician**: Share your concerns with your child's doctor. They'll listen to your observations and might have additional insights based on your child's overall health history and developmental milestones.
+2. **Schedule a well-child visit**: Ask your pediatrician to assess your child during their regular check-ups. This will give you an opportunity to discuss your concerns and get a comprehensive evaluation.
+3. **Consider a referral to a specialist**: If your pediatrician shares your concerns, they might refer you to a specialist, such as a pediatric neurologist, psychologist, or a developmental-behavioral pediatrician. These professionals have advanced training in evaluating children's development and can perform more detailed assessments.
+4. **Early Intervention Services**: In many countries, early intervention services are available for young children who need extra support. These services often include occupational therapy, speech therapy, and special education programs tailored to meet your child's needs.
+5. **Developmental screenings at local hospitals or clinics**: Many hospitals and clinics offer free or low-cost developmental screenings for young children. These screenings usually involve a series of tests and evaluations by trained professionals.
+
+Remember, these steps don't replace a thorough evaluation by a qualified healthcare provider. A professional assessment is essential to determine the best course of action for your child.
+
+Keep in mind that every child develops at their own pace, and some might need a little extra time or support along the way. By working closely with your child's healthcare team, you can ensure they receive the right guidance and care to thrive.",15717.8,281,384,M-CHAT Parent and Professional FAQ,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:29:10.393938,
+P046,screening_follow_up,What if my child screens positive for possible concerns but my child’s healthcare professional says he/she is not worried?,llama3-8b,zero_shot,"If your child's healthcare professional tells you they're not worried after a screening test like the Q-CHAT-9 (not -10) or M-CHAT-R/F showed some potential concerns, it doesn't necessarily mean everything is fine. 
+
+Think of these screenings like a traffic light system:
+
+* Green: Everything looks normal, and there might be nothing to worry about.
+* Yellow: Some things raised a flag, so we need to take a closer look.
+* Red: There are significant red flags, and further investigation is needed.
+
+Even if your child scores ""yellow"" on one of these tests, it just indicates that more observation and possibly additional testing are necessary to get a clearer picture. It's essential to remember that early detection and intervention can make a big difference in supporting children who might benefit from extra support.
+
+Your healthcare professional likely wants to keep an eye on your child's development over time. They might schedule regular check-ups or refer you to specialists for further evaluation. This way, even if your child seems okay now, any emerging issues can be caught earlier, allowing for timely interventions.
+
+It's great that your healthcare team is keeping an eye on this! What would you like to know about what happens next? Would you like me to explain how often your child should have check-ups or what kind of professionals they might see?",11096.89,286,270,M-CHAT Parent and Professional FAQ,verbatim_source_answer,0,,,0.0,0.9955,1,0.0,0,2026-07-23T01:29:21.493578,
+P047,screening_follow_up,"If my child screened positive for possible concerns, is it best to wait a year and see happens?",llama3-8b,zero_shot,"I can't advise on waiting a year before seeking further evaluation. If your child screened positive for possible developmental delays or concerns, I strongly recommend scheduling an appointment with a pediatrician or a specialist who can assess your child's development more thoroughly. They will be able to evaluate your child's overall health, behavior, and abilities to determine the best course of action. Is there anything else I can help clarify about this process?",3550.44,284,85,M-CHAT Parent and Professional FAQ,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:29:25.046032,
+P048,screening_limitations,Does the M-CHAT screen for all possible developmental issues?,llama3-8b,zero_shot,"The M-CHAT (Modified Checklist for Autism in Toddlers) primarily screens for signs related to autism spectrum disorder (ASD). It's designed specifically to identify potential indicators of ASD in young children between 16 and 30 months old. 
+
+While it does ask about some general development milestones like social interaction and communication skills, its primary focus is on detecting symptoms associated with autism. However, it doesn't comprehensively assess overall developmental abilities or rule out other conditions entirely.
+
+If your child receives a high-risk score from the M-CHAT, it's essential to remember that this indicates they might need further evaluation by a healthcare professional. This isn't a definitive diagnosis, just an indication that more investigation is needed.
+
+A comprehensive evaluation by a pediatrician or a specialist would consider multiple aspects of your child's development, including cognitive, motor, emotional, and social growth. They'll use various assessments and observations to determine if there are any underlying issues beyond those related to autism.
+
+It's also worth noting that many children who receive a high-risk score don't have autism; they might be experiencing delays or difficulties due to other factors, which could include:
+
+* Developmental delay
+* Language disorders
+* Sensory processing issues
+* Other neurological or genetic conditions
+
+In case of a high-risk score, I strongly advise seeking a professional evaluation to get a complete picture of your child's development and address any concerns you may have.",11785.38,276,286,M-CHAT Parent and Professional FAQ,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:29:36.833537,
+P049,screening_follow_up,If I am still worried what should I do?,llama3-8b,zero_shot,"It's completely normal to have concerns about your child's development after taking a screening test like the Q-CHAT-9 (not 10) or M-CHAT-R/F. These tests are designed to identify potential signs of developmental delays or differences, which might warrant further evaluation.
+
+Even if your child scored within the ""low-risk"" range, it doesn't mean they're perfectly fine or won't need future evaluations. Children develop at different rates, and some might need more support than others.
+
+Consider scheduling an appointment with your pediatrician or family doctor to discuss your concerns. They'll assess your child's overall health, growth, and development milestones. This will give you peace of mind and ensure your child receives any necessary support early on.
+
+Additionally, many communities offer free or low-cost developmental screenings through local hospitals, clinics, or public health departments. Take advantage of these resources to get a comprehensive evaluation and guidance tailored to your child's needs.
+
+Some questions to ask during this meeting:
+
+* What are my child's strengths and areas where they might need extra support?
+* Are there any specific skills or behaviors that concern me?
+* How often should we schedule check-ups to monitor progress?
+
+By working closely with healthcare professionals, you'll be able to address any concerns, create a plan for supporting your child's unique needs, and ensure they receive the best possible start in life.",11379.94,274,276,M-CHAT Parent and Professional FAQ,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:29:48.215753,
+P050,screening_limitations,Should I correct for prematurity?,llama3-8b,zero_shot,"When using the M-CHAT-R/F or Q-CHAT-10, it's essential to consider your child's age at the time of testing. The M-CHAT-R/F was designed specifically for children aged 6 months to 24 months, while the Q-CHAT-8 (not 10) is used from birth up to 12 months, and then the Q-CHAT-9/10 is used after 12 months until around 18 months.
+
+If your child is premature, you should adjust their chronological age according to their corrected age. This takes into account how much time they spent in the womb before being born early.
+
+To calculate corrected age:
+
+1. Calculate the number of weeks your baby would have been in the womb if they were full-term.
+2. Add this to their actual gestational age at birth.
+3. Subtract one year for each week over or under the expected term.
+
+For example, let's say your child was born two weeks early:
+
+* Full-term age: 40 weeks
+* Actual gestational age: 38 weeks
+* Corrected age: 40 - 2 = 38 + 0 = 38 weeks
+
+So, your child's corrected age would be 38 weeks.
+
+Keep in mind that some screenings might require adjusting based on the specific guidelines provided by the test creators or healthcare professionals. It's best to consult with your pediatrician about how to proceed with correcting for prematurity and interpreting results accurately. They will guide you through the process and ensure you receive accurate advice tailored to your child's unique situation.",13025.54,271,318,M-CHAT Parent and Professional FAQ,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:30:01.243586,
+P051,screening_tool_use,Who is allowed to administer and score the M-CHAT and M-CHAT-R/F?,llama3-8b,zero_shot,"The Modified Checklist for Autism (M-CHAT) and its revised version, the M-CHAT-R/F (Revised/Field), are standardized screening tools used to assess social communication skills and behaviors in young children.
+
+Only trained professionals should administer and score these assessments. Typically, this includes:
+
+* Pediatricians
+* Psychologists
+* Child Development Specialists
+* Early Childhood Educators with specialized training
+* Healthcare Professionals working under the supervision of a licensed provider
+
+These individuals have received proper training on how to use the M-CHAT and understand its scoring system. They will be able to accurately identify potential concerns and refer your child for further evaluation if needed.
+
+If you're concerned about your child's development, it's best to consult with your pediatrician or healthcare provider first. They'll determine if an M-CHAT or M-CHAT-R/F assessment is necessary and ensure it's administered by a qualified individual.",7601.42,282,183,M-CHAT Parent and Professional FAQ,verbatim_source_answer,0,,,0.0,1.0,1,0.0,0,2026-07-23T01:30:08.847108,
+P052,screening_tool_use,Can I administer the M-CHAT and M-CHAT-R without the Follow-Up?,llama3-8b,zero_shot,"The Modified Checklist for Autism in Toddlers (M-CHAT) and its revised version, the M-CHAT-R, are widely used screening tools for early detection of potential signs of autism spectrum disorder (ASD). However, it's essential to note that these screenings should be followed by a comprehensive evaluation from a qualified healthcare professional.
+
+Administering the M-CHAT or M-CHAT-R without a plan for a follow-up evaluation might lead to incomplete results. The purpose of these screenings is to identify children who need further investigation, not to make a definitive diagnosis on your own.
+
+If you're considering using either the M-CHAT or the M-CHAT-R:
+
+*   Ensure you have access to a qualified professional who can conduct a thorough evaluation after administering the screening.
+*   Discuss this process with your pediatrician or primary care provider before starting the screening.
+*   They will guide you through the proper administration and ensure you receive accurate results and recommendations based on those results.
+
+A qualified professional will assess your child's development, behavior, and communication skills during an evaluation. This ensures you get a complete picture of your child's needs and receives guidance tailored to their specific situation.
+
+Please consult with your pediatrician or a qualified healthcare expert about how to proceed with the M-CHAT or another ASD screening tool. They'll advise on the best approach for your child's unique circumstances.",11347.04,281,277,M-CHAT Parent and Professional FAQ,verbatim_source_answer,0,,,0.0,0.9954,1,0.0,0,2026-07-23T01:30:20.196237,

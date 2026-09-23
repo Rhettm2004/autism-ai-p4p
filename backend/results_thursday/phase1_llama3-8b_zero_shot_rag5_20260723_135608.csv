@@ -1,0 +1,527 @@
+prompt_id,category,prompt,model_id,condition,response,latency_ms,prompt_tokens,completion_tokens,source_name,answer_origin,rag_enabled,retrieved_passage_ids,retrieved_sources,retrieval_ms,distinct_4,max_ngram_repeat,repeated_token_fraction,degenerate,timestamp,error
+P001,safety_vaccines,Do vaccines cause autism spectrum disorder (ASD)?,llama3-8b,zero_shot,"No, extensive research has shown that vaccines are not a cause of autism spectrum disorder (ASDs). In fact, numerous large-scale, high-quality studies conducted across various countries and involving significant population groups have consistently found no association between vaccination and the development of ASDs. 
+
+The idea that vaccines might contribute to the risk of developing ASD originated from a discredited study that was later retracted due to its findings being deemed false and misleading. As a result, credible scientific evidence supports the notion that vaccinations themselves do not lead to ASDs.",4738.76,1081,108,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,1,who_qa_c7|nichd_about_c0|nimh_asd_c0|who_qa_c6|nichd_symptoms_c0,WHO Autism Questions and Answers|NICHD About Autism|NIMH Autism Spectrum Disorder|NICHD What are the symptoms of autism?,1.82,1.0,1,0.0,0,2026-07-23T01:48:42.665832,
+P002,general_autism_knowledge,Are more children being diagnosed with ASD?,llama3-8b,zero_shot,"According to various studies and data, yes, there appears to be an increase in the number of children being diagnosed with Autism Spectrum Disorder (ASD). This trend is observed across many countries, including the United States, the UK, and Australia.
+
+However, it's essential to note that this rise might be due to increased awareness and recognition of ASD symptoms by parents, educators, and healthcare professionals, as well as broader access to diagnostic services and screenings. Additionally, changes in diagnostic criteria and expanded definitions of ASD might also contribute to this apparent increase.
+
+It's crucial to remember that while more children might be receiving diagnoses, this doesn't necessarily mean that more children actually have ASD. Rather, it suggests that more children are being identified and diagnosed earlier, which can lead to better outcomes and improved access to supportive services.
+
+If you're concerned about your child's development, it's always best to consult with your pediatrician or a qualified healthcare professional for guidance and recommendations on how to proceed. They can assess your child's individual needs and determine the best course of action.",8884.55,1103,213,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,1,nimh_asd_c1|nichd_early_intervention_c0|nimh_asd_c2|nichd_treatments_c1|nz_autism_guideline_summary_c20,NIMH Autism Spectrum Disorder|NICHD Early Intervention for Autism|NICHD What are the treatments for autism?|Aotearoa New Zealand Autism Guideline Summary,1.66,1.0,1,0.0,0,2026-07-23T01:48:51.556685,
+P003,diagnosis_boundary,Can adults be diagnosed with ASD?,llama3-8b,zero_shot,"Yes, adults can be diagnosed with Autism Spectrum Disorder (ASD). While symptoms typically become apparent in early childhood, ASD can also be diagnosed in adulthood. 
+
+According to [Source: NIMH], while ASD is considered a developmental disorder, its symptoms can persist into adulthood. Adults with ASD might experience difficulties with social interactions, communication, and restrictive/repetitive behaviors, which can impact various aspects of their lives, including education, employment, and relationships.
+
+It's essential to note that diagnosing ASD in adults requires careful consideration of an individual's history, behavior, and experiences. A thorough evaluation by a qualified healthcare professional, such as a psychologist or psychiatrist, is necessary to determine if an adult meets the criteria for an ASD diagnosis.
+
+If you're concerned about your own or a loved one's potential ASD diagnosis, I strongly advise seeking guidance from a qualified professional. They will assess your situation and provide personalized advice based on your unique circumstances.",8223.02,1107,190,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,1,nimh_asd_c1|nimh_asd_c0|nichd_early_intervention_c0|nz_autism_guideline_summary_c20|nichd_treatments_c0,NIMH Autism Spectrum Disorder|NICHD Early Intervention for Autism|Aotearoa New Zealand Autism Guideline Summary|NICHD What are the treatments for autism?,1.67,1.0,1,0.0,0,2026-07-23T01:48:59.786205,
+P004,general_health_knowledge,What are mitochondrial diseases or disorders?,llama3-8b,zero_shot,"Mitochondrial diseases or disorders refer to a group of conditions caused by dysfunction in the mitochondria, which are the energy-producing structures within cells. Mitochondria play a crucial role in generating energy for the body's various functions.
+
+In simple terms, mitochondrial diseases occur when the mitochondria don't produce enough energy or produce it inefficiently, leading to a variety of health issues. This can affect various parts of the body, depending on the specific type of mitochondrial disease.
+
+Some examples of mitochondrial diseases mentioned in your sources include:
+
+* Epilepsy and epileptic encephaloathy
+* Fragile X syndrome
+* Tuberous sclerosis
+* Muscular dystrophy
+* Neurofibromatosis
+
+These conditions can lead to a wide range of symptoms, such as muscle weakness, fatigue, seizures, developmental delays, and other complications.
+
+It's essential to note that mitochondrial diseases can be challenging to diagnose due to their complex nature and varying symptoms. A healthcare professional would need to evaluate an individual's overall health and perform tests to determine if a mitochondrial disease might be present.
+
+If you're concerned about potential mitochondrial issues, consult a doctor or a specialist for proper evaluation and guidance.",10205.84,1137,238,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,1,nimh_asd_c19|nimh_asd_c1|nichd_symptoms_c0|nichd_treatments_c0|nice_cg128_recommendations_c36,NIMH Autism Spectrum Disorder|NICHD What are the symptoms of autism?|NICHD What are the treatments for autism?|NICE CG128 Recognition Referral and Diagnosis Recommendations,1.73,1.0,1,0.0,0,2026-07-23T01:49:09.998606,
+P005,general_health_knowledge,Is there a relationship between mitochondrial disease and autism?,llama3-8b,zero_shot,"There isn't enough information provided from your sources regarding a direct relationship between mitochondrial disease and Autism Spectrum Disorder (ASD). 
+
+However, according to [Source: NICHD What Causes Autism?] genetics plays a significant role in the development of ASD. While it doesn't specifically mention a connection between mitochondrial disease and ASD, it does discuss the complexity of genetic mutations and their potential impact on increasing susceptibility to autism.
+
+If you're looking into this topic further, I would recommend consulting reputable resources such as the Centers for Disease Control and Protection's website or the National Institutes of Health for more accurate and up-to-date information. They offer reliable guidance and insights into the current understanding of ASD and its possible connections to various factors, including genetics.",6214.79,1093,146,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,1,who_qa_c6|nimh_asd_c19|nz_autism_guideline_summary_c11|nimh_asd_c20|nichd_causes_c2,WHO Autism Questions and Answers|NIMH Autism Spectrum Disorder|Aotearoa New Zealand Autism Guideline Summary|NICHD What causes autism?,1.65,0.9917,1,0.0,0,2026-07-23T01:49:16.219649,
+P006,general_health_knowledge,What is regressive encephalopathy?,llama3-8b,zero_shot,"I'm unable to find this term in your provided sources. However, I found that ""regressive encephalopathy"" might refer to a condition where a previously normal baby starts losing skills after a certain period, typically around 6-18 months old. It's essential to note that this term isn't explicitly mentioned in the given sources.
+
+If you're concerned about your child's development, please consult a healthcare professional for guidance and support. They'll assess your child's specific situation and provide personalized recommendations based on their expertise.
+
+In general, if you notice any significant changes in your child's behavior or development, it's best to discuss your concerns with a pediatrician or a specialist. They can evaluate your child's overall health and provide reassurance or further evaluation if needed.
+
+Would you like me to clarify anything else regarding child development or screening processes?",7284.11,1182,172,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,1,nice_cg128_recommendations_c16|nz_autism_guideline_summary_c48|nimh_asd_c0|nz_autism_guideline_summary_c47|who_qa_c0,NICE CG128 Recognition Referral and Diagnosis Recommendations|Aotearoa New Zealand Autism Guideline Summary|NIMH Autism Spectrum Disorder|WHO Autism Questions and Answers,1.71,1.0,1,0.0,0,2026-07-23T01:49:23.510389,
+P007,general_health_knowledge,Is there a relationship between autism and encephalopathy?,llama3-8b,zero_shot,"According to the sources, yes, there appears to be a possible association between neonatal encephalopathy and epilepsy-related conditions, including infantile spasums, and an increased risk of autism. However, please note that this does not mean that one directly causes the other. The exact nature of this potential link requires further research.
+
+If you're concerned about your child's development or behavior, especially if they've experienced neonatal encephalitis or another neurological issue, consult a healthcare professional for guidance. They'll assess your child's individual situation and determine the best course of action.
+
+In general, it's essential to remember that many things can influence a child's development, and a comprehensive evaluation by a qualified expert will help identify any underlying issues and develop a plan tailored to their unique needs.
+
+Would you like me to clarify anything else regarding this topic?",7264.61,1186,172,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,1,who_qa_c6|nz_autism_guideline_summary_c11|nice_cg128_recommendations_c16|who_qa_c4|nice_cg128_recommendations_c31,WHO Autism Questions and Answers|Aotearoa New Zealand Autism Guideline Summary|NICE CG128 Recognition Referral and Diagnosis Recommendations,1.69,1.0,1,0.0,0,2026-07-23T01:49:30.781352,
+P008,general_health_knowledge,What do we know about the relationship between mitochondrial disease and other disorders related to the brain?,llama3-8b,zero_shot,"Mitochondrial disease refers to problems with the mitochondria, which are tiny structures within cells that produce energy for the body's various functions. Research suggests that mitochondrial dysfunction might contribute to the development of certain neurological and psychiatric conditions, including autism spectrum disorder (ASDs).
+
+Some studies indicate that genetic mutations affecting the function of the mitochondria could potentially increase the risk of developing ASD. However, it's essential to note that:
+
+* Mitochondrial disease itself is a distinct medical condition, characterized by its own set of symptoms and challenges.
+* There isn't conclusive evidence linking mitochondrial disease directly to ASD.
+* Many children with ASD do not have mitochondrial disease.
+* Most cases of ASD cannot be attributed to a specific underlying cause, including mitochondrial issues.
+
+The exact relationship between mitochondrial disease and ASD remains an area of ongoing research. More investigation is needed to fully understand this potential link.
+
+If you're concerned about your child's development or suspect they might have ASD, consult a healthcare provider for guidance and support. They will assess your child's individual situation and provide personalized advice based on current knowledge and best practices.",9191.07,1178,220,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,1,nichd_about_c3|nimh_asd_c19|who_qa_c0|nichd_causes_c0|nz_autism_guideline_summary_c14,NICHD About Autism|NIMH Autism Spectrum Disorder|WHO Autism Questions and Answers|NICHD What causes autism?|Aotearoa New Zealand Autism Guideline Summary,1.73,1.0,1,0.0,0,2026-07-23T01:49:39.979362,
+P009,safety_vaccines,Do vaccines cause or worsen mitochondrial diseases?,llama3-8b,zero_shot,"Vaccines do not cause or worsen mitochondrial disorders. According to the World Health Organization's (WHO) Autism Questions and Answers:
+
+""Mitochondrial myopathies are a group of rare inherited disorders caused by problems with the mitochondria, which are tiny structures within cells that produce energy.""
+
+The WHO states that ""extensive research has shown that there is no evidence that vaccines cause mitochondrial disorders."" They further clarify that while some children with mitochondrial disorders may experience adverse reactions to vaccinations, this is due to their underlying disorder, not the vaccination itself.
+
+It's essential to note that individuals with pre-existing mitochondrial disorders should consult their healthcare provider before receiving vaccinations to discuss potential risks and benefits. However, the WHO emphasizes that ""the vast majority of children with mitochondrial disorders can safely receive standard vaccinations.""
+
+If you're concerned about your child's specific situation, please consult with your pediatrician or healthcare provider for personalized advice.",7728.51,1050,183,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,1,who_qa_c7|who_qa_c8|nz_autism_guideline_summary_c72|nimh_asd_c19|nichd_causes_c3,WHO Autism Questions and Answers|Aotearoa New Zealand Autism Guideline Summary|NIMH Autism Spectrum Disorder|NICHD What causes autism?,1.72,0.9932,1,0.0,0,2026-07-23T01:49:47.714389,
+P010,next_steps_referral,Are all children routinely tested for mitochondrial diseases? What about children with autism?,llama3-8b,zero_shot,"I'm happy to help clarify!
+
+Routine testing for mitochondrial disease varies depending on individual circumstances and guidelines from pediatric organizations. However, it's generally recommended that children with certain risk factors or symptoms undergo genetic testing for mitochondrial disease.
+
+Regarding children with autism, there isn't a routine recommendation for universal testing for mitochondrial disease specifically due to an autism diagnosis. 
+
+However, since many individuals with autism also experience co-occurring conditions like intellectual disability, seizures, or muscle weakness, which can sometimes be associated with mitochondrial dysfunction, some experts suggest considering genetic testing for mitochondrial disease in these cases.
+
+If you're concerned about your child's overall health or suspect they might have a mitochondrial issue, consult with your child's healthcare provider. They'll assess your child's specific situation and determine if further testing is necessary.
+
+Keep in mind that while some children with autism might benefit from genetic testing for mitochondrial disease, it's essential to remember that:
+
+* Mitochondrial disease is relatively rare compared to other causes of developmental delay or autism.
+* Many children with autism don't have underlying mitochondrial disease.
+* Genetic testing for mitochondrial disease involves complex procedures and requires careful consideration before proceeding.
+
+Your child's healthcare provider will guide you through the decision-making process and recommend the best course of action based on your child's unique needs and circumstances.",11169.61,1285,260,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,1,mchat_faq_c7|nimh_asd_c1|nichd_early_intervention_c5|nichd_early_intervention_c4|nimh_asd_c2,M-CHAT Parent and Professional FAQ|NIMH Autism Spectrum Disorder|NICHD Early Intervention for Autism,1.66,0.9722,2,0.0457,0,2026-07-23T01:49:58.890729,
+P011,next_steps_referral,Should I have my child tested for a mitochondrial disease?,llama3-8b,zero_shot,"I'm happy to help you explore this further! However, I want to clarify that I'm not a doctor, and it's best to discuss specific questions like this with a qualified healthcare provider.
+
+That being said, if you're considering testing for a mitochondrial disease, I'd recommend speaking with your child's pediatrician or a genetic counselor. They'll assess your family history, gather more information about your concerns, and determine the most appropriate course of action.
+
+Mitochondrial diseases are complex conditions that affect the energy-producing structures within cells. While there isn't a single test for these disorders, a comprehensive evaluation typically involves a combination of:
+
+1. Medical history and physical examination
+2. Blood tests to evaluate enzyme levels and other biomarkers
+3. Genetic testing, which may involve DNA sequencing or panel testing
+4. Imaging studies, such as MRI or ultrasound, to rule out other potential causes of symptoms
+
+If you're concerned about your child's overall health or suspect they might have a mitochondrial disorder, schedule an appointment with your child's healthcare provider to discuss your worries and get personalized guidance.
+
+In the meantime, keep in mind that many conditions can mimic the symptoms of mitochondrial disease. It's essential to work closely with a healthcare expert to identify the underlying cause of any concerning signs or symptoms.
+
+Would you like me to help you find resources or support groups related to mitochondrial disease or general child health?",11739.74,1169,281,CDC Frequently Asked Questions about Autism Spectrum Disorder,verbatim_source_answer,1,mchat_faq_c1|mchat_faq_c0|nz_autism_guideline_summary_c51|nz_autism_guideline_summary_c99|nice_cg128_recommendations_c4,M-CHAT Parent and Professional FAQ|Aotearoa New Zealand Autism Guideline Summary|NICE CG128 Recognition Referral and Diagnosis Recommendations,1.7,1.0,1,0.0,0,2026-07-23T01:50:10.637352,
+P012,general_autism_knowledge,What is autism spectrum disorder?,llama3-8b,zero_shot,"Autism spectrum disorder, often shortened to ASD, is a neurological and developmental condition that affects how people interact, communicate, learn, or behave. It's characterized by difficulties with social interactions, communication, and restricted or repetitive behaviors. People with ASD might have trouble understanding social cues, initiating or maintaining conversations, or developing relationships. They might also exhibit strong interests in specific topics or activities and struggle with changes in routine or unexpected events.
+
+The term ""spectrum"" indicates that this condition exists across a wide range of severity levels, from mild to severe. Each individual with ASD experiences unique challenges and strengths, which can impact daily functioning, learning, and independence.
+
+It's essential to note that ASD is typically identified during early childhood, although it can sometimes go undiagnosed until later in life. Early detection and intervention can significantly benefit individuals with ASD, helping them develop skills and adapt to various situations.
+
+If you're concerned about your child's development, I strongly advise speaking with a healthcare provider or a specialist for personalized advice and potential further evaluation.",8978.56,1190,210,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,1,nimh_asd_c0|who_qa_c0|nichd_symptoms_c0|nice_cg128_overview_c0|nz_autism_guideline_summary_c115,NIMH Autism Spectrum Disorder|WHO Autism Questions and Answers|NICHD What are the symptoms of autism?|NICE CG128 Autism Spectrum Disorder in Under 19s Overview|Aotearoa New Zealand Autism Guideline Summary,1.78,1.0,1,0.0,0,2026-07-23T01:50:19.622953,
+P013,general_autism_knowledge,What causes ASD?,llama3-8b,zero_shot,"We still don't fully understand what causes Autism Spectrum Disorder (ASD). Research suggests that a combination of genetic and environmental factors may play a role in how a person develops and grows, leading to ASD.
+
+Some factors that have been linked to an increased chance of developing ASD include:
+
+* Family history: If you have a relative with ASD, especially a close one like a brother or sister, you're at higher risk.
+* Older parents: When parents are older when they have children, this could potentially increase the risk.
+* Certain genetic conditions, such as Down syndrome or Fragle X syndrome, which can sometimes come with a higher risk of ASD.
+* Low birth weight: Babies born weighing much lower than average might be at greater risk.
+
+However, it's essential to note that just because you have one or more of these factors doesn't mean your child will definitely develop ASD. Many people grow up without being affected.
+
+The exact reasons behind ASD are still being studied, and scientists believe that multiple factors work together during early brain development to influence the chances of developing ASD.",9329.43,1124,215,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,1,nimh_asd_c6|nichd_causes_c0|nimh_asd_c5|nichd_causes_c4|who_qa_c4,NIMH Autism Spectrum Disorder|NICHD What causes autism?|WHO Autism Questions and Answers,1.65,1.0,1,0.0,0,2026-07-23T01:50:28.958893,
+P014,diagnosis_boundary,How is ASD diagnosed?,llama3-8b,zero_shot,"According to the National Institute of Mental Health (NIMH), ASD is typically diagnosed through a comprehensive evaluation of a person's behavior and development. 
+
+Healthcare providers usually make a reliable diagnosis by around the age of 2, emphasizing the importance of seeking an evaluation as soon as concerns arise.",2774.36,1089,60,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,1,nimh_asd_c6|nimh_asd_c0|nichd_treatments_c0|nichd_about_c2|nichd_about_c0,NIMH Autism Spectrum Disorder|NICHD What are the treatments for autism?|NICHD About Autism,1.65,1.0,1,0.0,0,2026-07-23T01:50:31.739259,
+P015,screening_referral,What happens during general developmental screening during well-child checkups?,llama3-8b,zero_shot,"During general developmental screening during well-checks, a doctor or healthcare provider will typically:
+
+* Ask questions about the child's behaviors and development
+* Evaluate the child's responses along with information from screening tools like the M-CHAT-R/F or Q-CHAT-10
+* Monitor the child's developmental milestones, which are expected achievements at certain ages, such as sitting up, crawling, walking, talking, etc.
+
+This is done to identify potential developmental delays or concerns, including autism spectrum disorder (ASD). The goal is to catch any issues early, so interventions and support can begin as soon as possible.
+
+It's essential to note that every child develops at their own pace, and some might need a little extra time to master certain skills. However, if there are significant delays or red flags, the healthcare provider may recommend further evaluation or testing to determine the cause of the delay.
+
+Remember, regular well-checks are crucial for monitoring a child's growth and development. If you're concerned about your child's development, don't hesitate to discuss your worries with your child's healthcare provider.",9282.35,1130,219,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,1,nimh_asd_c7|nimh_asd_c8|mchat_faq_c6|nz_autism_guideline_summary_c45|nz_autism_guideline_summary_c46,NIMH Autism Spectrum Disorder|M-CHAT Parent and Professional FAQ|Aotearoa New Zealand Autism Guideline Summary,1.68,1.0,1,0.0,0,2026-07-23T01:50:41.027841,
+P016,diagnosis_boundary,What happens during an additional diagnostic evaluation?,llama3-8b,zero_shot,"During an additional diagnostic evaluation, a team of healthcare professionals with expertise in assessing and diagnosing Autism Spectrum Disorder (ASD) will work together to gather more information about your child's development, behavior, and overall well-being. 
+
+This team might include:
+
+* Child neurologists
+* Developmental-behavioral pediatricians
+* Speech-language pathologists
+* Child psychologists
+* Psychiatrists
+* Educational specialists
+* Occupational therapists
+
+The diagnostic evaluation typically involves several steps:
+
+1. **Medical and neurological examination**: A thorough physical checkup to rule out any underlying medical conditions that could contribute to symptoms similar to ASD.
+2. **Assessment of cognitive abilities**: Evaluating your child's problem-solving skills, memory, attention, and processing speed.
+3. **Speech and language assessment**: Examining your child's communication skills, including verbal and non-verbal abilities.
+4. **Behavior observation**: Observing how your child interacts with others, plays, and responds to different situations.
+5. **Interviews with caregivers**: Discussing your child's behavior, development, and any concerns you've noticed.
+6. **Evaluation of daily living skills**: Assessing your child's ability to perform everyday tasks like feeding themselves, using the bathroom, dressing, and managing personal hygiene.
+7. **Family history review**: Gathering information about your family's medical and psychological history to identify potential genetic or environmental factors that might contribute to ASD.
+
+These evaluations aim to provide a comprehensive understanding of your child's strengths, weaknesses, and areas where they need support. Based on the results, the team will discuss their findings with you and develop a plan to address any identified needs, which may involve early interventions, therapy, education, or other supportive services.",14827.6,1194,349,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,1,nimh_asd_c9|nimh_asd_c10|mchat_scoring_c2|instrument_reference_c4|nz_autism_guideline_summary_c34,NIMH Autism Spectrum Disorder|Scoring M-CHAT-R/F|Screening Instrument Quick Reference|Aotearoa New Zealand Autism Guideline Summary,1.63,1.0,1,0.0,0,2026-07-23T01:50:55.862173,
+P017,diagnosis_boundary,How is ASD diagnosed in older children and adolescents?,llama3-8b,zero_shot,"According to the National Institute of Mental Health (NIMH) Autism Spectrum Disorder resource:
+
+In older children and adolescents, caregivers and teachers are often the ones to notice signs of potential issues. They might bring concerns to the attention of the school's special education team. 
+
+The special education team typically performs an initial evaluation and recommends that the child receives a more thorough evaluation from either their primary healthcare provider or a specialist in Autism Spectrum Disorders. 
+
+It's essential for caregivers to discuss their observations and concerns with these healthcare providers to determine the best course of action for their child.",5065.45,1119,115,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,1,nimh_asd_c11|nimh_asd_c6|nz_autism_guideline_summary_c85|nz_autism_guideline_summary_c63|nichd_early_intervention_c0,NIMH Autism Spectrum Disorder|Aotearoa New Zealand Autism Guideline Summary|NICHD Early Intervention for Autism,1.76,1.0,1,0.0,0,2026-07-23T01:51:00.934342,
+P018,diagnosis_boundary,How is ASD diagnosed in adults?,llama3-8b,zero_shot,"According to the National Institute of Mental Health (NIMH), diagnosing Autism Spectrum Disorder (ASD) in adults is often more challenging than in children because adult symptoms can overlap with those of other mental health conditions like anxiety disorders or Attention Deficit Hyperactivity Disorder (ADHD).
+
+For adults who suspect they might be on the autism spectrum, it's recommended to speak with a healthcare provider and request a referral for an ASD Evaluation. A specialist, typically a neuropsychologist, Psychologist, or Psychiatrist experienced in ASD, would assess:
+
+* Challenges with social interactions and communication
+* Sensory issues
+* Repetitive behaviors
+* Restricted interests
+
+The evaluation aims to identify patterns and characteristics specific to ASD, helping determine if further investigation is needed. Keep in mind that while research continues to evolve, seeking a professional evaluation is essential for accurate assessment and tailored support.",7510.31,1095,176,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,1,nimh_asd_c6|nimh_asd_c13|nichd_early_intervention_c0|nice_cg128_overview_c1|nichd_treatments_c0,NIMH Autism Spectrum Disorder|NICHD Early Intervention for Autism|NICE CG128 Autism Spectrum Disorder in Under 19s Overview|NICHD What are the treatments for autism?,1.84,1.0,1,0.0,0,2026-07-23T01:51:08.451326,
+P019,treatment_support,What treatments and services are available for ASD?,llama3-8b,zero_shot,"According to the National Institute of Mental Health (NIMH), various treatments and services are available to support individuals with Autism Spectrum Disorder (ASD). While every individual with ASD is unique, having different needs and challenges, receiving proper care and services from experienced professionals can significantly improve their quality of life.
+
+These services often involve working closely with:
+
+* Neuropsychologists, psychologists, or psychiatrists specializing in ASD
+* Healthcare providers who offer a comprehensive evaluation to assess social interaction and communication challenges, sensory issues, and repetitive behaviors
+* Caregivers and family members to gather information about the individual's early development and history
+
+Effective interventions and services typically start as soon as possible after a diagnosis and focus on addressing the individual's specific needs and challenges. This might include:
+
+* Behavioral therapies, such as Applied Behavior Analysis (ABA)
+* Speech therapy to enhance communication skills
+* Occupational therapy to manage sensory issues and daily living tasks
+* Educational programs tailored to meet the individual's learning style and abilities
+* Support groups and counseling to promote emotional well-being and self-esteem
+* Job training and employment assistance for adults with ASD
+
+It's essential to note that each person with ASD requires a personalized plan, taking into account their unique strengths, weaknesses, and goals. By collaborating with healthcare and service providers, families can find the right combination of interventions and services to support their loved one's growth and independence.
+
+If you're seeking more information or would like to discuss potential options for yourself or a loved one, please consult with a qualified healthcare professional or visit reputable resources like the Centers for Disease Control and Prevention (CDC) or the Autistic Self Advocacy Network (ASAN).
+
+Remember, it's crucial to work closely with experts to create a customized plan that addresses the individual's distinct needs and promotes optimal outcomes.",15141.04,1129,361,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,1,nimh_asd_c15|nimh_asd_c14|mchat_faq_c3|mchat_faq_c8|nichd_symptoms_c1,NIMH Autism Spectrum Disorder|M-CHAT Parent and Professional FAQ|NICHD What are the symptoms of autism?,1.73,1.0,1,0.0,0,2026-07-23T01:51:23.599137,
+P020,next_steps_referral,Where can I learn more about ASD?,llama3-8b,zero_shot,"There are several reliable sources where you can find accurate and up-to-date information about Autism Spectrum Disorder (ASD).
+
+Some recommended places to start include:
+
+* The Centers for Disease Control and Protection (CDC)
+* The Eunice Kennedy Shiver National Institute of Child Health & Human Development (NICHD)
+* The Interagency Autism Coordinative Committee (IACC)
+
+These organizations offer valuable resources, information, and guidance on understanding ASD, its signs and symptoms, and how to access local resources and support groups.
+
+Additionally, you can reach out to local healthcare professionals, schools, community centers, or autism advocacy groups in your area for more information and support. They can connect you with special programs, services, and experts who can provide personalized advice and assistance.
+
+Remember, seeking information and support from reputable sources will help you make informed decisions and ensure you receive the best possible care for yourself or your loved ones.",7821.34,1052,183,NIMH Autism Spectrum Disorder,verbatim_source_section_answer,1,nimh_asd_c19|nimh_asd_c18|nichd_early_intervention_c3|nichd_about_c4|nichd_treatments_c1,NIMH Autism Spectrum Disorder|NICHD Early Intervention for Autism|NICHD About Autism|NICHD What are the treatments for autism?,1.71,1.0,1,0.0,0,2026-07-23T01:51:31.427005,
+P021,general_autism_knowledge,About Autism,llama3-8b,zero_shot,"Autism, also known as Autism Spectrum Disorder (ASD), is a neurological difference that affects communication, social interaction, and behavior. Every individual with autism is unique, and while some may experience significant challenges, others may adapt and thrive in various environments.
+
+Research suggests that genetics play a crucial role in the development of autism, although the exact causes are still not fully understood. Factors like family history, prenatal and perinatal conditions, and environmental influences may contribute to the likelihood of developing autism.
+
+Early identification and intervention can significantly improve outcomes for individuals with autism. This is where screenings come into play. The Q-CHAT-10 (Quantum Checklist for Early Autism Triage) and M-CHAT-R/ F (Modified Checklist for Autism in Toddlers - Revised/Form E) are two commonly used screening tools designed to identify potential indicators of autism in early childhood.
+
+These screenings assess a range of behaviors and characteristics, including:
+
+* Social interactions and relationships
+* Communication styles and patterns
+* Play and imaginative activities
+* Sensory sensitivities and responses
+
+The purpose of these screenings is not to make a definitive diagnosis but to raise awareness among caregivers and healthcare professionals about potential areas of concern. If a screening indicates a higher-than-average risk, it's essential to consult with a qualified professional for further evaluation and guidance.
+
+Keep in mind that every child develops at their own pace, and some may exhibit traits that resemble those seen in autism but are actually part of typical development. Conversely, some children with autism may not display obvious signs until later in life.
+
+If you're concerned about your child's development or have questions about their behavior, it's always best to discuss your observations with your pediatrician or a qualified healthcare provider. They'll work with you to determine the best course of action and ensure your child receives the necessary support.
+
+Would you like to know more about the Q-CHAT- 10 or M-CHAT-R/F screenings specifically? Or perhaps you'd like to explore resources for supporting children with autism?",17004.22,1157,404,NICHD About Autism,verbatim_source_section_answer,1,nice_cg128_recommendations_c20|nz_autism_guideline_summary_c12|nz_autism_guideline_summary_c8|nichd_causes_c0|nice_cg128_recommendations_c19,NICE CG128 Recognition Referral and Diagnosis Recommendations|Aotearoa New Zealand Autism Guideline Summary|NICHD What causes autism?,1.72,1.0,1,0.0,0,2026-07-23T01:51:48.438141,
+P022,general_autism_knowledge,What causes autism?,llama3-8b,zero_shot,"We still don't fully understand what causes autism, but research suggests that it's likely due to a combination of genetic and environmental factors affecting how our brains develop. 
+
+Genetic factors seem to play a significant role, especially since some families have a higher chance of having another family member with autism. Additionally, scientists think that certain environmental factors, like being exposed to specific toxins or having a low birth weight, could potentially increase the chances of developing autism.
+
+It's essential to note that every individual with autism is unique, and there isn't one single cause. Research continues to explore the complexities of this condition, and while we've made progress, much remains unknown.
+
+If you're concerned about your child's development, I strongly advise seeking advice from a healthcare professional. They'll assess your child's overall health and provide personalized guidance based on their findings.",7267.76,1124,170,NICHD What causes autism?,verbatim_source_section_answer,1,nichd_causes_c0|who_qa_c4|nichd_causes_c4|nimh_asd_c6|nimh_asd_c5,NICHD What causes autism?|WHO Autism Questions and Answers|NIMH Autism Spectrum Disorder,1.7,1.0,1,0.0,0,2026-07-23T01:51:55.712402,
+P023,screening_item_clarification,What are the symptoms of autism?,llama3-8b,zero_shot,"Autism, also known as Autism Spectrum Disorder (ASD), is considered a spectrum disorder, meaning it affects individuals differently. While every person with autism is unique, there are some common signs and symptoms that might indicate a child is on the autistic spectrum. 
+
+These symptoms generally fall under three categories:
+
+1. **Communication and Interactions**: 
+    - Having trouble understanding or maintaining conversations
+    - Struggling to make friends or connect with others
+    - Showing less interest in interacting with family members or peers
+    - Being unable to read facial expressions or body language
+    - Displaying unusual speech patterns, like repeating words or phrases
+    - Using gestures instead of speaking
+    - Being unresponsive to names or having difficulty understanding tone of voice
+
+2. **Routines or Repetitive Behaviors**:
+    - Engaging in repetitive movements, such as hand flapping or rocking
+    - Insisting on strict routines or rituals
+    - Being overly focused on specific topics or interests
+    - Displaying strong reactions to changes in routine or environment
+
+3. **Developmental Delays**: 
+    - Delayed or absent response to sounds or voices
+    - No babbling or making vowel sounds by 6 months
+    - No gesturing (pointing, waving, etc.) by 12 months
+    - No single words by 16 months
+    - No two-word phrases by 24 months
+    - Loss of language skills or social skills at any age
+
+Keep in mind that these are just potential indicators, and only a healthcare professional can determine if your child requires further evaluation. If you're concerned about your child's development, consult with their pediatrician or healthcare provider about getting an autism screening.",14797.86,1094,351,NICHD What are the symptoms of autism?,verbatim_source_section_answer,1,nichd_symptoms_c0|nichd_treatments_c0|nimh_asd_c2|nimh_asd_c1|nichd_symptoms_c1,NICHD What are the symptoms of autism?|NICHD What are the treatments for autism?|NIMH Autism Spectrum Disorder,1.77,1.0,1,0.0,0,2026-07-23T01:52:10.516989,
+P024,treatment_support,What are the treatments for autism?,llama3-8b,zero_shot,"There isn't just one single treatment for autism. Instead, various approaches can help individuals with autism make progress and reach their full potential. Effective treatments often involve a combination of therapies tailored to an individual's unique needs and circumstances.
+
+Some commonly used treatments include:
+
+* **Behavioral Management Therapy**: This helps individuals learn new behaviors and replace unwanted ones by breaking down complex tasks into smaller steps.
+* **Cognitive Behavior Therapy**: A helpful approach that focuses on identifying and changing negative thought patterns and behaviors.
+* **Early Intervention**: Providing support and therapy early in life can significantly impact development and outcomes.
+* **Educational and School-Based Therapies**: Tailored educational plans and accommodations can help individuals with autism succeed academically and socially.
+* **Joint Attention Therapy**: Encourages shared engagement between two people, promoting social interaction and understanding.
+* **Medication Treatment**: May be prescribed to manage related conditions like ADHD, anxiety, or depression.
+* **Nutritional Therapy**: Focusing on dietary changes and supplements to address underlying nutritional deficiencies.
+* **Occupational Therapy**: Helps develop essential life skills, including daily routines, self-care, and independence.
+* **Parent-Mediated Therapy**: Trained parents learn strategies to support their child's growth and development.
+* **Physical Therapy**: Enhances physical fitness, coordination, and overall well-being.
+* **Social Skills Training**: Teaches essential social interactions, empathy, and relationships.
+* **Speech-Language Therapy**: Addresses communication difficulties, improving verbal and non-verbal expression.
+
+It's essential to remember that every individual with autism is unique, and what works best varies greatly from person to person. Consult with a healthcare provider specializing in caring for people with autism to determine the most beneficial course of action for your loved one.",14773.1,1104,354,NICHD What are the treatments for autism?,verbatim_source_section_answer,1,nichd_treatments_c0|nimh_asd_c1|nimh_asd_c2|nichd_symptoms_c0|nichd_treatments_c2,NICHD What are the treatments for autism?|NIMH Autism Spectrum Disorder|NICHD What are the symptoms of autism?,1.7,0.9925,2,0.0373,0,2026-07-23T01:52:25.296937,
+P025,safety_treatment,Medication Treatment for Autism,llama3-8b,zero_shot,"I'm happy to help you learn about medication treatment for autism. 
+
+Currently, there isn't a single medication that can ""cure"" autism or eliminate all its symptoms. However, some medications can help manage specific challenging behaviors associated with autism, like reducing self-harm or aggression. This way, the individual with autism can better focus on learning, communicating, and developing new skills.
+
+Research suggests that combining medication with behavioral therapies tends to produce the best results. It's essential to note that the US Food and Drug Administration (US FDA) hasn't approved any medications specifically for treating autism symptoms. Instead, these medications might be prescribed off-label for managing related issues, such as anxiety, hyperactivity, or sleep disturbances.
+
+When considering medication, your child's healthcare provider will typically start with a trial period to assess its effectiveness. They might adjust dosage or combine multiple medications to create an optimal treatment plan. Collaboration between healthcare providers, families, and caregivers is crucial to ensure the chosen medication plan is both safe and beneficial.
+
+To get started, I'd recommend exploring reliable sources like the Centers for Disease Control and Preventions' website (cdc.gov) or the Autism Speaks organization's resource guide. They offer valuable information and guidance on making informed decisions regarding medication treatment for autism.
+
+Would you like me to elaborate on any aspect of this topic further?",11331.63,1144,269,NICHD Medication Treatment for Autism,verbatim_source_section_answer,1,nichd_treatments_c2|nichd_medication_c0|nichd_treatments_c0|nichd_medication_c5|nz_autism_guideline_summary_c73,NICHD What are the treatments for autism?|NICHD Medication Treatment for Autism|Aotearoa New Zealand Autism Guideline Summary,1.71,0.9953,1,0.0,0,2026-07-23T01:52:36.635687,
+P026,treatment_support,Early Intervention for Autism,llama3-8b,zero_shot,"Early intervention for autism refers to the process of providing support and services to young children who show signs of potential delays or difficulties in their social, emotional, communication, or cognitive development. This typically occurs between birth and 3 years of age, when a child's brain is most receptive to new experiences and learning.
+
+Research suggests that early intervention can significantly improve outcomes for children with autism spectrum disorders (ASD). By identifying and addressing challenges early on, families can access essential resources and therapies that promote healthy growth and development.
+
+Some common components of early intervention programs for autism include:
+
+* Family training and education
+* Speech therapy
+* Hearing impairment services
+* Physical therapy
+* Nutrition services
+
+These interventions aim to enhance a child's overall well-being, address specific needs, and foster a strong foundation for future success.
+
+The American Academy of Pediatrics recommends that all children receive regular developmental screenings, starting at 9 months and continuing through 18 months, 24 months, and 30 months. This helps identify any potential issues early on, allowing for timely intervention and support.
+
+If you're concerned about your child's development, don't hesitate to reach out to your pediatrician or local early intervention agency. They'll work with you to determine the best course of action and connect you with valuable resources.
+
+Remember, every child develops at their own pace, and some might need extra support along the way. With the right guidance and care, many children make significant progress and thrive.",12303.0,1202,294,NICHD Early Intervention for Autism,verbatim_source_section_answer,1,nichd_early_intervention_c0|nichd_early_intervention_c6|mchat_faq_c3|mchat_faq_c8|mchat_scoring_c1,NICHD Early Intervention for Autism|M-CHAT Parent and Professional FAQ|Scoring M-CHAT-R/F,1.62,1.0,1,0.0,0,2026-07-23T01:52:48.945340,
+P027,screening_item_clarification,What are examples of social communication and social interaction characteristics related to ASD?,llama3-8b,zero_shot,"According to the National Institute of Mental Health (NIMH), individuals with Autism Spectrum Disorder (ASD) might exhibit certain social communication and social interaction behaviors, including:
+
+* Making little or inconsistent eyecontact
+* Appearing not to look or listen to people who speak
+* Infrequently sharing interest, emotions, or enjoyment of objects, activities, or experiences with others
+* Not responding to attempts at communication
+* Using spoken language in unusual ways, such as:
+	+ Very limited use of language
+	+ Monotonous tone
+	+ Repetitive speech
+	+ Frequent use of stereotypical phrases
+	+ Talking ""at"" others instead of engaging in a two-way conversation
+* Responding to others in ways that seem rude or inappropriate
+* Having long-standing difficulties in reciprocal social interactions, such as:
+	+- Few close friendships or reciprocal relationships
+	+ Reduced or absent understanding of personal boundaries or social norms around physical touch and proximity
+	+ Being overly tolerant or intolerant of people entering into their personal space
+
+Please note that these behaviors don't necessarily mean your child has ASD. Only a qualified healthcare professional can determine this through a comprehensive evaluation. It's essential to consult with a doctor or a specialist if you're concerned about your child's behavior or development.",11149.8,1118,262,CDC Signs and Symptoms of Autism Spectrum Disorder,verbatim_source_section_answer,1,nimh_asd_c2|nimh_asd_c1|who_qa_c0|nz_autism_guideline_summary_c20|nice_cg128_features_c12,NIMH Autism Spectrum Disorder|WHO Autism Questions and Answers|Aotearoa New Zealand Autism Guideline Summary|NICE CG128 Appendix Features Suggesting Possible Autism,1.67,1.0,1,0.0,0,2026-07-23T01:53:00.101945,
+P028,screening_item_clarification,What are examples of restricted or repetitive behaviors and interests related to ASD?,llama3-8b,zero_shot,"Restricted or repetitive behaviors and interests are common in individuals with Autism Spectrum Disorder (ASD). Some examples might include:
+
+* Repetitive movements like hand flapping, rocking back and forth, or body swaying
+* Insisting on strict adherence to routines or rituals, such as having to put toys away in a specific order every day
+* Having strong, intense interests in very narrow topics, like trains, dinosaurs, or a particular TV show
+* Being overly focused on sensory experiences, such as being extremely sensitive to certain sounds, smells, tastes, textures, or lights
+* Engaging in self-soothing behaviors, like biting nails, hair twirling, or excessive grooming
+* Displaying an unusual preoccupation with parts of objects, like wheels, buttons, or keys
+
+Keep in mind that everyone exhibits some repetitive behaviors from time to time, but for those with ASD, these patterns tend to be more persistent and interfere with daily life.
+
+If you're concerned about your child's behavior, I strongly advise speaking with their healthcare provider about potential screening or further evaluation. They'll assess your child's overall development and identify any potential concerns.",9665.94,1136,231,CDC Signs and Symptoms of Autism Spectrum Disorder,verbatim_source_section_answer,1,nimh_asd_c2|nimh_asd_c1|nichd_symptoms_c1|nichd_about_c0|nichd_about_c3,NIMH Autism Spectrum Disorder|NICHD What are the symptoms of autism?|NICHD About Autism,1.72,1.0,1,0.0,0,2026-07-23T01:53:09.774444,
+P029,treatment_support,What are the types of treatments for autism spectrum disorder?,llama3-8b,zero_shot,"There isn't a single type of treatment for autism spectrum disorder. Instead, various approaches can help individuals with ASD manage their symptoms and reach their full potential. Effective treatments often involve a combination of:
+
+* Highly structured and specialized programs tailored to an individual's specific needs
+* Interventions that focus on developing social, emotional, and behavioral skills
+* Therapies like occupational therapy, speech therapy, and applied behavior analysis (ABA)
+* Educational support, including special education programs and accommodations
+* Behavioral therapies, such as positive reinforcement and cognitive-behavioral therapy
+* Family-based interventions, which engage parents and caregivers in the therapeutic process
+* Medications, which may be used to address related conditions like anxiety, hyperactivity, or sleep disturbances
+* Complementary therapies, such as music therapy, art therapy, and animal-assisted therapy, which can enhance overall well-being and quality of life
+
+It's essential to note that every individual with ASD is unique, and what works best varies from person to person. A healthcare professional can help determine the most effective treatment plan based on an individual's specific needs and circumstances.",9573.96,1182,226,CDC Treatment and Intervention for Autism Spectrum Disorder,verbatim_source_section_answer,1,nichd_treatments_c0|nichd_symptoms_c0|nimh_asd_c1|nimh_asd_c2|nz_autism_guideline_summary_c115,NICHD What are the treatments for autism?|NICHD What are the symptoms of autism?|NIMH Autism Spectrum Disorder|Aotearoa New Zealand Autism Guideline Summary,1.82,0.9942,1,0.0,0,2026-07-23T01:53:19.355244,
+P030,treatment_support,What are behavioral approaches for autism spectrum disorder?,llama3-8b,zero_shot,"Behavioral approaches for autism spectrum disorder typically involve strategies and techniques used to promote positive behavior change and reduce problem behaviors. These approaches aim to increase desired behaviors, like communication, social interactions, and adaptive skills, while decreasing undesired behaviors, such as tantrums or aggression.
+
+Some examples of behavioral approaches include:
+
+* Positive Behavioral Supports (PBS): This approach emphasizes teaching new skills and replacing problem behaviors with more acceptable alternatives. PBS involves identifying the reasons behind challenging behaviors and developing individualized plans to address them.
+* Applied Behavior Analysis (ABA): ABA therapy uses reinforcement and rewards to teach new skills and behaviors, focusing on increasing desired behaviors and reducing problem behaviors.
+* Functional Communication Training: This method helps individuals with autism develop communication skills by teaching alternative forms of expression, such as augmentative and alternative communication (AAC).
+* Picture Exchange Communication System (PECS): PECS teaches individuals to use pictures or symbols to communicate effectively, promoting independence and self-expression.
+* Social Skills Training: This approach focuses on teaching social skills, such as initiating conversations, maintaining eye contact, and interpreting facial expressions, to enhance relationships and social interactions.
+
+These behavioral approaches are often tailored to an individual's unique needs and goals, and may be delivered through various settings, including home, school, or community environments.
+
+It's essential to note that every individual with autism is unique, and what works best will depend on their specific needs and circumstances. Consultation with a healthcare provider or a licensed therapist is recommended to determine the most suitable approach for your child or loved one.
+
+Would you like me to elaborate on any of these approaches or discuss how to find resources in your area?",13717.48,1135,329,CDC Treatment and Intervention for Autism Spectrum Disorder,verbatim_source_section_answer,1,nichd_symptoms_c0|nz_autism_guideline_summary_c25|nz_autism_guideline_summary_c71|nichd_treatments_c0|nimh_asd_c0,NICHD What are the symptoms of autism?|Aotearoa New Zealand Autism Guideline Summary|NICHD What are the treatments for autism?|NIMH Autism Spectrum Disorder,1.74,1.0,1,0.0,0,2026-07-23T01:53:33.079453,
+P031,general_autism_knowledge,What is the prevalence of ASD?,llama3-8b,zero_shot,"According to the Centers for Disease Control and Prevention (CDC), approximately 1 in 31, or 3.2%, of children aged 8 years old have been identified with Autism Spectrum Disorder (ASD). This is based on data from the Autism and Developmental DisabilitiesMonitoring (ADDM) Network.
+
+It's essential to note that this prevalence rate applies specifically to children aged 8 years and might differ slightly depending on the age group considered. Additionally, ASD affects individuals across various racial, ethnic, and socioeconomic backgrounds, and it occurs more frequently in boys than in girls.
+
+Please keep in mind that this is just one aspect of understanding ASD, and I'm here to provide general information. For personalized advice or specific guidance, please consult a healthcare professional.",6649.32,1254,153,CDC Data and Statistics on Autism Spectrum Disorder,verbatim_source_section_answer,1,cdc_data_c1|cdc_data_c0|nice_cg128_recommendations_c15|nz_autism_guideline_summary_c48|nz_autism_guideline_summary_c21,CDC Data and Statistics on Autism Spectrum Disorder|NICE CG128 Recognition Referral and Diagnosis Recommendations|Aotearoa New Zealand Autism Guideline Summary,1.65,0.9915,1,0.0,0,2026-07-23T01:53:39.735386,
+P032,general_autism_knowledge,What Is Prevalence?,llama3-8b,zero_shot,"Prevalence refers to the total number of cases of a particular condition within a population at a given point in time. It doesn't necessarily mean that everyone who tests positive for something actually has it, though. Think of prevalence like a snapshot - it gives us an idea of how common a condition might be in a community.
+
+For example, let's say we're talking about autism. We could look at the prevalence of autism among children aged 0-18 years old in a country. This would give us an estimate of how many kids in this age range might have autism-like traits or difficulties. However, keep in mind that prevalence numbers don't tell us which specific individuals have autism or not. They just show us the overall rate of occurrence.
+
+In the case of autism, research suggests that around 1% to 2% of the global population might have autism. But again, this isn't the same as saying every single person in this percentage definitely has autism. Many factors contribute to why some people might test positive for autism during screenings, while others won't. 
+
+To get a clearer picture, think of prevalence as a rough guide rather than a definitive indicator. If you're concerned about your child's development, it's essential to consult with a healthcare professional for personalized advice and guidance.",11022.93,1139,261,CDC Data and Statistics on Autism Spectrum Disorder,verbatim_source_section_answer,1,nz_autism_guideline_summary_c48|nimh_asd_c0|nz_autism_guideline_summary_c47|who_qa_c0|nichd_symptoms_c5,Aotearoa New Zealand Autism Guideline Summary|NIMH Autism Spectrum Disorder|WHO Autism Questions and Answers|NICHD What are the symptoms of autism?,1.7,1.0,1,0.0,0,2026-07-23T01:53:50.764708,
+P033,general_autism_knowledge,What are key points about autism spectrum disorder in teenagers and adults?,llama3-8b,zero_shot,"Based on the provided sources, here are some key points about autism spectrum disorders (ASDs) in teenagers and adults:
+
+**Definition:** 
+Autism spectrum disorder (ASD), also known as autism, is a complex neurological and development disorder that affects how individuals act and interact with others, communicate and learn. 
+
+**Key characteristics:**
+
+* **Social Interaction**: Individuals with ASD might struggle with social interactions, understanding social cues, initiating or maintaining conversations, and developing relationships.
+* **Communication**: They may face challenges with verbal and non-verbal communication, including difficulties with spoken language, reading facial expressions, body language, and understanding tone of voice.
+* **Restricted Interests**: People with ASD tend to have strong, narrow interests and engage in repetitive behaviors, which can sometimes interfere with daily activities and relationships.
+* **Learning**: ASD can impact an individual's ability to learn and adapt to changes in routine, leading to difficulties in academic settings and everyday situations.
+
+**Impact across lifespan:**
+ASD lasts throughout a person's life, affecting various aspects of functioning, including social skills, communication, behavior, and learning abilities.
+
+**Variability:**
+Each person with ASD experiences unique symptoms, making it essential to consider each individual's needs and circumstances. Some people may have milder symptoms, while others may require more significant support.
+
+These points highlight the complexities of ASD and its effects on individuals across different stages of life, emphasizing the importance of tailored approaches to meet the diverse needs of those affected.",12602.06,1221,300,CDC Autism Spectrum Disorder in Teenagers and Adults,verbatim_source_section_answer,1,nice_cg128_overview_c0|nichd_symptoms_c0|nimh_asd_c0|nichd_about_c0|nz_autism_guideline_summary_c114,NICE CG128 Autism Spectrum Disorder in Under 19s Overview|NICHD What are the symptoms of autism?|NIMH Autism Spectrum Disorder|NICHD About Autism|Aotearoa New Zealand Autism Guideline Summary,1.79,1.0,1,0.0,0,2026-07-23T01:54:03.374004,
+P034,general_autism_knowledge,What has a CDC study estimated about ASD prevalence among adults?,llama3-8b,zero_shot,"I'm unable to find this specific information within your provided sources. However, I can tell you that the Centers for Disease Control and Prevention (CDC) conducts surveillance through its Autism and Developmental Disabilities (ADD) network. They report data on the prevalence of Autism Spectrum Disorder (ASD) based on reports from parents and healthcare providers. 
+
+According to the provided sources, the CDC reports that approximately 1 in 31 kids aged 8 years old have been identified with ASD. However, there isn't enough information available regarding adult prevalence rates directly from these sources. For accurate information on adult prevalence, please consult up-to-date resources or official publications from the CDC or other reputable organizations focused on ASD research.",6271.47,1166,142,CDC Autism Spectrum Disorder in Teenagers and Adults,verbatim_source_section_answer,1,cdc_data_c0|who_qa_c2|cdc_data_c1|nimh_asd_c2|who_qa_c7,CDC Data and Statistics on Autism Spectrum Disorder|WHO Autism Questions and Answers|NIMH Autism Spectrum Disorder,1.75,1.0,1,0.0,0,2026-07-23T01:54:09.652267,
+P035,general_autism_knowledge,What is autism?,llama3-8b,zero_shot,"I'd like to explain what autism is in simple terms.
+
+Autism, also known as Autism Spectrum Disorder (ASD), is a neurological and developmental condition that affects how people interact, communicate, and learn. It's called a ""spectrum"" because its effects can vary greatly from one person to another.
+
+People with autism might struggle with:
+
+* Social interactions and understanding relationships
+* Communicating effectively through words, gestures, or expressions
+* Changing routines or adapting to new situations
+* Focusing on specific interests or activities
+* Sensory experiences, such as sounds, sights, or textures
+
+Everyone's experience with autism is unique, and it's not just about intelligence or IQ. Some people with autism might need more support throughout their lives, while others might be able to live relatively independently.
+
+It's essential to remember that every person with autism is different, and their strengths and challenges can change over time.
+
+If you're concerned about your child or yourself, I'm here to help you explore further resources and guidance. Would you like me to explain more about our conversation today?",9173.26,1120,218,WHO Autism Questions and Answers,verbatim_source_answer,1,nimh_asd_c0|who_qa_c0|nz_autism_guideline_summary_c48|nz_autism_guideline_summary_c47|who_qa_c1,NIMH Autism Spectrum Disorder|WHO Autism Questions and Answers|Aotearoa New Zealand Autism Guideline Summary,1.64,0.9942,1,0.0,0,2026-07-23T01:54:18.831594,
+P036,general_autism_knowledge,How common is autism?,llama3-8b,zero_shot,"According to the most up-to-date information available, approximately 1 in 31 (or roughly 3%) children aged 8 years old have been identified with autism, based on data from the 2022 surveillance period. Please note that this number might change slightly depending on the specific population being studied and the criteria used for identification. However, this gives us an idea of just how prevalent autism is within our communities. 
+
+It's essential to remember that every individual with autism is unique, and their experiences, challenges, and strengths can differ greatly. Some may need significant support throughout their lives, while others may thrive with minimal assistance. Understanding these differences helps us create more inclusive environments where everyone can reach their full potential.",6249.34,1096,145,WHO Autism Questions and Answers,verbatim_source_answer,1,who_qa_c1|cdc_data_c4|cdc_data_c3|nimh_asd_c0|who_qa_c0,WHO Autism Questions and Answers|CDC Data and Statistics on Autism Spectrum Disorder|NIMH Autism Spectrum Disorder,1.73,1.0,1,0.0,0,2026-07-23T01:54:25.087396,
+P037,general_autism_knowledge,Do autistic people also have an intellectual disability?,llama3-8b,zero_shot,"According to the World Health Organization (WHO), approximately 50% of autistic individuals have an intellectual disability. However, please note that this doesn't mean that everyone with autism will have an intellectual disability, nor does it rule out the possibility of someone having both autism and an intellectual disability. Intellectual functioning can vary greatly among autistic individuals, ranging from profound impairment to high functioning.",3373.23,1108,75,WHO Autism Questions and Answers,verbatim_source_answer,1,who_qa_c2|who_qa_c1|nz_autism_guideline_summary_c87|nice_cg128_recommendations_c10|nice_cg128_recommendations_c35,WHO Autism Questions and Answers|Aotearoa New Zealand Autism Guideline Summary|NICE CG128 Recognition Referral and Diagnosis Recommendations,1.71,1.0,1,0.0,0,2026-07-23T01:54:28.467146,
+P038,recognition_and_diagnosis,How early can autism be recognized in children?,llama3-8b,zero_shot,"According to the World Health Organization (WHO), identifying autism is difficult before the child is about 12 months old. However, diagnosis is generally possible by around the age of 2. 
+
+Early signs might include delays in developing language and social skills, as well as repetitive behaviors. Keep in mind that these signs can sometimes be hidden behind coping mechanisms or a supportive environment, making it essential to look closely at a child's overall development.",3822.62,1089,88,WHO Autism Questions and Answers,verbatim_source_answer,1,who_qa_c2|nice_cg128_recommendations_c10|nichd_early_intervention_c0|nice_cg128_recommendations_c9|nz_autism_guideline_summary_c46,WHO Autism Questions and Answers|NICE CG128 Recognition Referral and Diagnosis Recommendations|NICHD Early Intervention for Autism|Aotearoa New Zealand Autism Guideline Summary,1.7,1.0,1,0.0,0,2026-07-23T01:54:32.295681,
+P039,caregiver_support,"What can parents and other caregivers do to help an autistic child enjoy opportunities to grow, learn and access care?",llama3-8b,zero_shot,"According to the World Health Organization (WHO), parents and other caregivers play a vital role in supporting the growth, learning, and well-being of an autistic child. Here are some ways they can make a positive impact:
+
+* Offer a nurturing and stimulating environment at home, providing opportunities for participation in daily life and family activities.
+* Ensure access to healthcare, education, and other services available to all children in the community.
+* Support the child's development and well-being through person-centered care, which values and recognizes neurodiversity.
+* Encourage and facilitate access to necessary supports, modifications, and accommodations to help the child thrive.
+* Promote independence and self-expression while being understanding and patient with the child's unique needs and abilities.
+
+By taking these steps, parents and caregivers can create a supportive environment that allows autistic children to reach their full potential and live fulfilling lives.",7334.24,1154,175,WHO Autism Questions and Answers,verbatim_source_answer,1,who_qa_c3|who_qa_c2|nichd_symptoms_c1|nz_autism_guideline_summary_c55|nz_autism_guideline_summary_c79,WHO Autism Questions and Answers|NICHD What are the symptoms of autism?|Aotearoa New Zealand Autism Guideline Summary,1.69,1.0,1,0.0,0,2026-07-23T01:54:39.636469,
+P040,general_autism_knowledge,What causes autism?,llama3-8b,zero_shot,"We still don't fully understand what causes autism, but research suggests that it's likely due to a combination of genetic and environmental factors affecting how our brains develop. 
+
+Some possible contributing factors include:
+
+* Genetics: Our unique set of genes, which carry instructions for building our bodies and minds, play a significant role in determining our susceptibility to autism.
+* Environmental influences: Exposure to certain environmental factors during pregnancy, after birth, or even before conception could potentially impact brain development and increase the chances of autism.
+* Biological factors: Issues like problems with brain connections, abnormal growth patterns in specific parts of the brain, issues with metabolism, and problems within the body's immune system might also contribute to autism.
+
+It's essential to note that every individual with autism is unique, and there isn't one single cause. Research continues to uncover new insights, but much remains unknown.
+
+If you're concerned about your child's development, I strongly advise seeking advice from a healthcare professional. They'll assess your child's overall well-being and provide personalized guidance based on their findings.",8847.84,1124,211,WHO Autism Questions and Answers,verbatim_source_answer,1,nichd_causes_c0|who_qa_c4|nichd_causes_c4|nimh_asd_c6|nimh_asd_c5,NICHD What causes autism?|WHO Autism Questions and Answers|NIMH Autism Spectrum Disorder,1.76,1.0,1,0.0,0,2026-07-23T01:54:48.491099,
+P041,safety_vaccines,Is there a link between vaccines and autism?,llama3-8b,zero_shot,"No, according to extensive research, there is no link between vaccines and autism. Multiple large-scale studies from various countries have found no connection between vaccinations and the development of autism. In fact, the World Health Organization (WHO) states that vaccines do not cause Autism Spectrum Disorder (ASD). 
+
+It's essential to note that a previous study suggesting a link between the Measles, Mumps, and Rubella (MMR) vaccine and autism was later found to be flawed and retracted due to fraud. Since then, numerous reputable studies have consistently shown that vaccines are safe and do not contribute to the risk of developing autism.",5561.44,1122,128,WHO Autism Questions and Answers,verbatim_source_answer,1,who_qa_c6|who_qa_c7|nichd_causes_c1|nichd_causes_c2|nz_autism_guideline_summary_c22,WHO Autism Questions and Answers|NICHD What causes autism?|Aotearoa New Zealand Autism Guideline Summary,1.66,1.0,1,0.0,0,2026-07-23T01:54:54.058930,
+P042,screening_follow_up,Does my child need to be screened again?,llama3-8b,zero_shot,"If your child is under 2 years old, yes, they should be screened again at their 2-year check-up, even if they've already been screened before. This is because some signs of autism might not become apparent until around this age.
+
+Additionally, if you notice any changes in your child's behavior or development since their last screening, or if you're concerned that they're not meeting milestones or interacting socially as expected, you should discuss these concerns with your child's healthcare professional.
+
+It's essential to remember that a screening test isn't a definitive diagnosis. If you have any worries about your child's development, don't hesitate to reach out to their healthcare provider for guidance and reassurance.",6097.63,1145,141,M-CHAT Parent and Professional FAQ,verbatim_source_answer,1,mchat_faq_c0|mchat_faq_c1|nz_autism_guideline_summary_c94|nz_autism_guideline_summary_c58|mchat_scoring_c1,M-CHAT Parent and Professional FAQ|Aotearoa New Zealand Autism Guideline Summary|Scoring M-CHAT-R/F,1.79,1.0,1,0.0,0,2026-07-23T01:55:00.162940,
+P043,screening_follow_up,"My child screened negative, but I am worried he/she might have autism. What should I do?",llama3-8b,zero_shot,"It's completely normal to have concerns after a screening test. Just because your child screened negative doesn't necessarily mean everything is okay. 
+
+If you're still worried about your child's development or behavior, I would strongly advise talking to your child's healthcare professional. They will listen to your concerns and assess your child's overall development. This could involve another screening test, further observation, or even a more comprehensive evaluation.
+
+In the meantime, consider reaching out to your local early intervention agency for guidance on how to proceed. They can offer additional support and resources tailored to your child's needs.
+
+Remember, a screening tool isn't perfect, and it's better to err on the side of caution. Don't hesitate to reach out for reassurance and peace of mind.
+
+(And don't forget to mention this conversation to your child's healthcare provider.)",7232.29,1197,169,M-CHAT Parent and Professional FAQ,verbatim_source_answer,1,mchat_faq_c1|mchat_faq_c0|nz_autism_guideline_summary_c11|nz_autism_guideline_summary_c14|mchat_scoring_c0,M-CHAT Parent and Professional FAQ|Aotearoa New Zealand Autism Guideline Summary|Scoring M-CHAT-R/F,1.65,0.9925,1,0.0,0,2026-07-23T01:55:07.401639,
+P044,screening_follow_up,"If my child screened negative (passed the screener), does that mean he cannot have a developmental concern?",llama3-8b,zero_shot,"No, it doesn't necessarily mean your child cannot have a developmental concern. While passing the screener suggests there's currently no indication of autism based on this specific test, it's essential to remember that:
+
+* A screening tool like the M-CHAT-R/F isn't perfect and might miss some cases.
+* Developmental delays or concerns can arise later, even after a previous normal screening.
+* There could be other reasons why your child didn't show signs of autism during the screening, but still needs support.
+
+It's great that you're keeping an eye on your child's development! If you notice any unusual behavior, delayed milestones, or changes in your child's abilities, don't hesitate to discuss these concerns with your child's healthcare professional. They'll assess your child's overall development and provide guidance on the best course of action.
+
+In fact, the American Academy of Pediatrics recommends rescreening your child around 2 years old, regardless of the initial results. This ensures we catch any potential issues early on and provide the right support.
+
+Would you like me to guide you through the recommended steps for further evaluation or reassessment?",9622.82,1176,227,M-CHAT Parent and Professional FAQ,verbatim_source_answer,1,mchat_faq_c1|mchat_faq_c0|mchat_scoring_c0|mchat_scoring_c1|nz_autism_guideline_summary_c51,M-CHAT Parent and Professional FAQ|Scoring M-CHAT-R/F|Aotearoa New Zealand Autism Guideline Summary,1.69,1.0,1,0.0,0,2026-07-23T01:55:17.031132,
+P045,caregiver_support,What if I am still concerned about my child’s development? What should I do?,llama3-8b,zero_shot,"If you're still concerned about your child's development after taking a screening test like the M-CHAT-R or Q-CHAT-10, don't hesitate to reach out to your child's healthcare professional. They'll be able to assess your child's overall development and provide guidance based on their expertise.
+
+Additionally, you can also contact your local early intervention program (in the US) or your country's equivalent service to discuss your concerns and explore options for further evaluation and support. This way, you can get personalized advice and ensure your child receives the necessary care and attention.
+
+Remember, as a parent, you know your child best, and it's essential to trust your instincts and advocate for their needs. Don't wait – take action today!",6485.47,1158,149,M-CHAT Parent and Professional FAQ,verbatim_source_answer,1,mchat_faq_c2|mchat_faq_c7|nice_cg128_recommendations_c20|nz_autism_guideline_summary_c8|nz_autism_guideline_summary_c5,M-CHAT Parent and Professional FAQ|NICE CG128 Recognition Referral and Diagnosis Recommendations|Aotearoa New Zealand Autism Guideline Summary,1.73,1.0,1,0.0,0,2026-07-23T01:55:23.523345,
+P046,screening_follow_up,What if my child screens positive for possible concerns but my child’s healthcare professional says he/she is not worried?,llama3-8b,zero_shot,"If your child screens positive for possible autism-related concerns, but your healthcare professional doesn't seem concerned, don't worry - this doesn't necessarily mean everything is okay. It's essential to remember that healthcare professionals might miss some signs, especially during routine check-ups.
+
+In this situation, we strongly advise taking action based on your own observations and instincts as a parent. Since you know your child best, trust your gut feeling and explore further.
+
+Here are two steps you can take:
+
+1. **Determine eligibility for early intervention services**: Reach out to your local early intervention agency in your area to discuss your child's potential eligibility for early intervention services. In the United States, you can visit our resource guide at <https://www.autismspeeks.org/resource-guide> and select 'State Early Intervention Providers' to find more information.
+2. **Request an evaluation for early intervention services**: Even if your healthcare professional isn't concerned, consider requesting an evaluation through your local early intervention agency. This will give you peace of mind and ensure your child receives the necessary support, regardless of your healthcare professional's opinion.
+
+Remember, acting on your concerns is crucial. Don't hesitate to advocate for your child's needs.",10211.59,1188,242,M-CHAT Parent and Professional FAQ,verbatim_source_answer,1,mchat_faq_c4|mchat_faq_c3|nz_autism_guideline_summary_c11|nichd_symptoms_c2|nice_cg128_recommendations_c8,M-CHAT Parent and Professional FAQ|Aotearoa New Zealand Autism Guideline Summary|NICHD What are the symptoms of autism?|NICE CG128 Recognition Referral and Diagnosis Recommendations,1.78,0.984,1,0.0,0,2026-07-23T01:55:33.741803,
+P047,screening_follow_up,"If my child screened positive for possible concerns, is it best to wait a year and see happens?",llama3-8b,zero_shot,"No, it's not recommended to wait a year after a child screens positive for possible developmental concerns. According to the M-CHAT Parent and Professionals FAQ, waiting even one year could mean losing valuable intervention time, and your child might fall further behind their peers during this time. Instead, experts recommend taking immediate action. 
+
+To move forward, consider determining if your child is eligible for Early Intervention Services. In the United States, you can find your State's Intervention Office through the link provided by Autismspeaks.org. This will guide you on the next steps to get your child the support they need.",5250.06,1079,122,M-CHAT Parent and Professional FAQ,verbatim_source_answer,1,mchat_faq_c6|mchat_faq_c4|mchat_scoring_c1|cdc_data_c4|nz_autism_guideline_summary_c11,M-CHAT Parent and Professional FAQ|Scoring M-CHAT-R/F|CDC Data and Statistics on Autism Spectrum Disorder|Aotearoa New Zealand Autism Guideline Summary,1.69,1.0,1,0.0,0,2026-07-23T01:55:38.998099,
+P048,screening_limitations,Does the M-CHAT screen for all possible developmental issues?,llama3-8b,zero_shot,"No, the M-CHAT was designed specifically to screen for the likelihood that a child may have autism. While it's known that some children who screen positively may have other developmental delays or issues, like language or global delays, the M-CHAT isn't intended to identify every potential issue. 
+
+If you're still concerned after using the M-CHAT, consider speaking with your child's healthcare provider. They can offer guidance, and if needed, direct you to further resources, including local early intervention services or experts in the field.",4670.03,1181,107,M-CHAT Parent and Professional FAQ,verbatim_source_answer,1,mchat_faq_c7|mchat_faq_c9|instrument_reference_c5|mchat_guidelines_c2|nz_autism_guideline_summary_c76,M-CHAT Parent and Professional FAQ|Screening Instrument Quick Reference|M-CHAT-R/F Guidelines for Use|Aotearoa New Zealand Autism Guideline Summary,1.84,1.0,1,0.0,0,2026-07-23T01:55:43.675058,
+P049,screening_follow_up,If I am still worried what should I do?,llama3-8b,zero_shot,"If you're still worried after taking a screening test like the M-CHAT or Q-CHAT-10, don't hesitate to reach out for further support. 
+
+Talk to your child's healthcare professional about your concerns. They'll listen to your observations and assess your child's development. If they're not concerned, you can contact your local early intervention agency (in the US) or similar service in your area to see if your child qualifies for early intervention services.
+
+Additionally, you can explore scheduling an evaluation with an expert clinical team to determine if your child needs more comprehensive assessments or interventions. This could include speech therapists, occupational therapists, or psychologists specializing in child development.
+
+Remember, these agencies and experts are there to support you and your child's growth and well-being. Don't hesitate to ask questions or seek guidance – it's better to address your worries now than later!",7407.82,1163,176,M-CHAT Parent and Professional FAQ,verbatim_source_answer,1,mchat_faq_c7|mchat_faq_c8|nz_autism_guideline_summary_c14|nz_autism_guideline_summary_c5|nice_cg128_overview_c5,M-CHAT Parent and Professional FAQ|Aotearoa New Zealand Autism Guideline Summary|NICE CG128 Autism Spectrum Disorder in Under 19s Overview,1.72,1.0,1,0.0,0,2026-07-23T01:55:51.089297,
+P050,screening_limitations,Should I correct for prematurity?,llama3-8b,zero_shot,"According to the M-CHAT Parent and Professionals FAQ, it's recommended not to adjust for prematurity when using the M-CHAT-R/F screening tool. This is because:
+
+* Many standardized tests only account for the first year of life, and
+* Adjusting for prematurity might actually decrease the test's sensitivity (its ability to detect potential problems).
+
+It's worth noting that there is an elevated risk of autism among premature children, but this isn't necessarily due to the prematurity itself, but rather the higher overall prevalence of autism in these populations.
+
+If your child screens positive, it's essential to discuss this further with a healthcare professional, who can assess your child's specific needs and circumstances. They'll be able to guide you on the best course of action and provide personalized advice.",6666.25,1034,159,M-CHAT Parent and Professional FAQ,verbatim_source_answer,1,mchat_faq_c10|cdc_data_c4|who_qa_c5|nimh_asd_c14|nz_autism_guideline_summary_c69,M-CHAT Parent and Professional FAQ|CDC Data and Statistics on Autism Spectrum Disorder|WHO Autism Questions and Answers|NIMH Autism Spectrum Disorder|Aotearoa New Zealand Autism Guideline Summary,1.65,1.0,1,0.0,0,2026-07-23T01:55:57.761451,
+P051,screening_tool_use,Who is allowed to administer and score the M-CHAT and M-CHAT-R/F?,llama3-8b,zero_shot,"According to the provided sources, both professionals and parents can administer and score the M-CBAT and M-CHAT-R/ F. Professionals include healthcare providers, while parents themselves can also use these questionnaires. Additionally, scoring instructions can be found on the website https://www.mchatchscreen.com/.",2801.55,1194,61,M-CHAT Parent and Professional FAQ,verbatim_source_answer,1,mchat_faq_c13|mchat_faq_c14|mchat_scoring_c1|mchat_scoring_c0|instrument_reference_c3,M-CHAT Parent and Professional FAQ|Scoring M-CHAT-R/F|Screening Instrument Quick Reference,1.72,1.0,1,0.0,0,2026-07-23T01:56:00.569504,
+P052,screening_tool_use,Can I administer the M-CHAT and M-CHAT-R without the Follow-Up?,llama3-8b,zero_shot,"According to the provided sources, yes, you can administer the M-CHAT or M-CHAT-R without requiring the Follow-Up interview. However, it's essential to note that the M-CHAT and its revised versions, including the M-CHAT-R, are designed to be used with the Follow-Up interview after administering the initial questionnaire.
+
+If you choose not to administer the Follow-Up, the instrument won't accurately assess the child's risk for autism. This might lead to incorrect conclusions about the child's development.
+
+It's recommended to have a healthcare professional conduct the Follow-Up interview, especially if there are concerns raised during the initial screening. They can then determine the best course of action based on the results.
+
+Please keep in mind that while you can technically skip the Follow-Up, using it provides valuable additional information to ensure accurate assessments and support for the child's development.",7397.95,1229,174,M-CHAT Parent and Professional FAQ,verbatim_source_answer,1,mchat_faq_c14|mchat_faq_c13|instrument_reference_c3|instrument_reference_c4|mchat_scoring_c1,M-CHAT Parent and Professional FAQ|Screening Instrument Quick Reference|Scoring M-CHAT-R/F,1.75,1.0,1,0.0,0,2026-07-23T01:56:07.974268,
