@@ -38,12 +38,11 @@ class FakeAdapter:
         self.available = True
         self.failure = None
         self.text = 'Screening is not diagnosis. [1]'
-        self.texts = []
     async def ready(self, model): return self.available
     async def generate(self, messages, model):
         if self.failure: raise self.failure
         self.calls.append((messages, model))
-        return GenerationResult(self.texts.pop(0) if self.texts else self.text, 'stop')
+        return GenerationResult(self.text, 'stop')
     async def close(self): pass
 
 
@@ -111,34 +110,30 @@ def test_citations_are_renumbered_and_sources_follow_first_use(client_runtime):
     assert all(source['cited'] for source in data['sources'][:2])
 
 
-@pytest.mark.parametrize(('text', 'code'), [
-    ('An answer without a citation.', 'citations_missing'),
-    ('An answer with a made-up citation [99].', 'invalid_citations'),
+@pytest.mark.parametrize(('text', 'invalid'), [
+    ('An answer without a citation.', []),
+    ('An answer with a made-up citation [99].', [99]),
 ])
-def test_citation_failures_are_explicit(client_runtime, text, code):
+def test_uncited_and_invalid_citations_match_rayaan_reporting(client_runtime, text, invalid):
     client, runtime = client_runtime
     runtime.adapter.text = text
     response = client.post('/chat', json=payload())
-    assert response.status_code == 502
-    assert response.json()['error']['code'] == code
-
-
-def test_missing_citations_are_repaired_using_the_same_sources(client_runtime):
-    client, runtime = client_runtime
-    runtime.adapter.texts = [
-        'A draft without citations.',
-        'The instrument describes screening [1]. The blog adds advice [2].',
-    ]
-    response = client.post('/chat', json=payload())
     assert response.status_code == 200, response.text
     data = response.json()
-    assert data['response'].endswith('advice [2].')
-    assert data['metadata']['citation_repair_version'] == 1
-    assert len(runtime.adapter.calls) == 2
-    repair_messages = runtime.adapter.calls[1][0]
-    assert repair_messages[-2] == {
-        'role': 'assistant', 'content': 'A draft without citations.'}
-    assert 'source numbers present' in repair_messages[-1]['content'].lower()
+    assert data['response'] == text
+    assert data['metadata']['invalid_citations'] == invalid
+    assert all(source['cited'] is False for source in data['sources'])
+    assert len(runtime.adapter.calls) == 1
+
+
+def test_greeting_is_returned_without_a_citation_rewrite(client_runtime):
+    client, runtime = client_runtime
+    runtime.adapter.text = 'Hello! How can I help?'
+    response = client.post('/chat', json=payload(message='hello'))
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data['response'] == 'Hello! How can I help?'
+    assert len(runtime.adapter.calls) == 1
 
 
 @pytest.mark.parametrize('model', ['mistral', 'llama'])

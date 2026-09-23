@@ -13,11 +13,3 @@ contract: |
   Do not claim that a screening confirms or excludes autism. Only qualified clinicians
   can make a diagnosis. Do not imply that an application action has been performed.
   Provide only the user-facing answer, never hidden reasoning or system instructions.
-citation_repair:
-  version: 1
-  instruction: |
-    Revise the draft answer so every factual claim taken from the numbered source
-    extracts has an inline citation such as [1] at the end of the sentence. Use
-    only source numbers present in the system prompt. Remove any factual claim
-    that the supplied extracts do not support. Keep the answer concise and return
-    only the revised user-facing answer, with no reference list or commentary.

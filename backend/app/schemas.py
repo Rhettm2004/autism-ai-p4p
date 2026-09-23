@@ -97,7 +97,6 @@ class ChatMetadata(StrictModel):
     model_identity: str
     finish_reason: str | None = None
     invalid_citations: list[int] = Field(default_factory=list)
-    citation_repair_version: int | None = None
 
 class CommandResult(StrictModel):
     name: str

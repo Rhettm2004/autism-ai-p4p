@@ -14,13 +14,14 @@ From the project root, run:
 ./run_app.sh
 ```
 
-Choose **1** for the fastest UI test with mock chat, or **2** to have the
-launcher start the local Mistral model and connect Flutter to it. The launcher
-stops any server it started when you quit Flutter with `Ctrl+C`.
+Choose **1** for the fastest UI test, **2** for the integrated Mistral pipeline,
+or **3** for the integrated Llama pipeline. The launcher stops any server it
+started when you quit Flutter with `Ctrl+C`.
 
-You can skip the menu with `./run_app.sh mock` or `./run_app.sh mistral`.
-`./run_app.sh backend` runs the complete research pipeline, but it will explain
-and stop if the required verified corpus is unavailable.
+You can skip the menu with `./run_app.sh mock`, `./run_app.sh mistral`, or
+`./run_app.sh llama`. Both model commands run the Python prompts, RAG, router,
+and citations. `./run_app.sh backend` remains an alias for integrated Mistral;
+`./run_app.sh local` is the legacy direct-Mistral comparison without Python.
 
 ## Included
 

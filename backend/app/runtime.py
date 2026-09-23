@@ -145,8 +145,7 @@ class ChatRuntime:
             messages.extend(self._conversation_messages(request, current_user))
         return turn, messages
 
-    def _metadata(self, request, turn=None, finish_reason=None, invalid_citations=None,
-                  citation_repaired=False):
+    def _metadata(self, request, turn=None, finish_reason=None, invalid_citations=None):
         route_info = turn.route_info if turn is not None else None
         exact = self.cfg['prompt_profile'] == 'rayaan_chat_exact'
         return ChatMetadata(runtime_profile='app_v1', prompt_profile=self.cfg['prompt_profile'],
@@ -157,9 +156,7 @@ class ChatRuntime:
             application_prompt_version=None if exact else self.application['version'],
             model_identity=self.settings.model_identities.get(request.model, request.model),
             finish_reason=finish_reason,
-            invalid_citations=invalid_citations or [],
-            citation_repair_version=(self.application['citation_repair']['version']
-                                     if citation_repaired else None))
+            invalid_citations=invalid_citations or [])
 
     @staticmethod
     def _sources(turn=None, sources=None):
@@ -266,39 +263,11 @@ class ChatRuntime:
             response_text = result.text
             response_sources = turn.sources
             invalid_citations = []
-            citation_repaired = False
             if effective_request.options.cite and turn.sources:
                 from src.chat import order_sources_by_citation, renumber_citations
                 valid = {source['number'] for source in turn.sources}
                 response_text, mapping, invalid_citations = renumber_citations(
                     result.text, valid)
-                if invalid_citations or not mapping:
-                    repair_messages = [
-                        *messages,
-                        {'role': 'assistant', 'content': result.text},
-                        {'role': 'user',
-                         'content': self.application['citation_repair']['instruction']},
-                    ]
-                    try:
-                        result = await asyncio.wait_for(
-                            self.adapter.generate(repair_messages, request.model),
-                            timeout=self.settings.timeout_seconds + 2)
-                    except asyncio.TimeoutError as exc:
-                        raise ServiceError(
-                            'model_timeout',
-                            'The assistant took too long to repair its citations.',
-                            504) from exc
-                    citation_repaired = True
-                    response_text, mapping, invalid_citations = renumber_citations(
-                        result.text, valid)
-                if invalid_citations:
-                    raise ServiceError(
-                        'invalid_citations',
-                        'The model cited a source number that was not provided.', 502)
-                if not mapping:
-                    raise ServiceError(
-                        'citations_missing',
-                        'The model response did not include a source citation.', 502)
                 response_sources = order_sources_by_citation(turn.sources, mapping)
 
             return ChatResponse(request_id=request.request_id, session_id=request.session_id,
@@ -309,7 +278,7 @@ class ChatRuntime:
                 command=(CommandResult(name='ex', executed_question=effective_request.message)
                          if effective_request is not request else None),
                 metadata=self._metadata(request, turn, result.finish_reason,
-                                        invalid_citations, citation_repaired))
+                                        invalid_citations))
 
     async def close(self):
         await self.adapter.close()

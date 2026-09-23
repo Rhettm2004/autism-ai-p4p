@@ -163,11 +163,11 @@ not alter the model prompt. `config/application_prompts.yaml` is retained as the
 inactive `app_context_v1` profile; it is not appended in exact mode. Concise mode
 and inline citations start on in the integrated app; commands can change both
 explicitly. Rayaan's citation renumbering and source ordering are applied to each
-cited answer. An answer with no valid citation, or a citation to a source number
-that was not supplied, is rejected explicitly rather than presented as grounded.
-Citation markers show which retrieved extract the model referenced; they do not
-independently verify that the extract entails the sentence. The original
-single-turn benchmark runner stays unchanged.
+answer. As in `scripts/chat.py`, an answer with no citation is returned unchanged
+and its sources are marked uncited; an invented source number is reported in
+metadata without rewriting the answer. Citation markers show which retrieved
+extract the model referenced; they do not independently verify that the extract
+entails the sentence. The original single-turn benchmark runner stays unchanged.
 
 Key differences from evaluated generation:
 

@@ -6,9 +6,11 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKEND_DIR="$ROOT_DIR/backend"
 MODEL_DIR="$(cd "$ROOT_DIR/../.." && pwd)/Models"
 MISTRAL_MODEL_PATH="${MISTRAL_MODEL_PATH:-$MODEL_DIR/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf}"
-LLAMA_URL="http://127.0.0.1:8080"
+LLAMA_MODEL_PATH="${LLAMA_MODEL_PATH:-$MODEL_DIR/Meta-Llama-3-8B-Instruct-Q4_K_M.gguf}"
+MISTRAL_URL="http://127.0.0.1:8080"
+LLAMA_URL="http://127.0.0.1:8081"
 BACKEND_URL="http://127.0.0.1:8000"
-LLAMA_PID=""
+MODEL_PID=""
 BACKEND_PID=""
 
 usage() {
@@ -16,13 +18,14 @@ usage() {
 Run Autism AI with one command:
 
   ./run_app.sh mock       Flutter with predictable mock replies
-  ./run_app.sh mistral    Start Mistral and connect Flutter directly
-  ./run_app.sh backend    Start Mistral, FastAPI, and integrated Flutter
+  ./run_app.sh mistral    Integrated prompts/RAG/router with local Mistral
+  ./run_app.sh llama      Integrated prompts/RAG/router with local Llama
+  ./run_app.sh local      Legacy direct Mistral comparison (no Python backend)
+  ./run_app.sh backend    Alias for the integrated Mistral mode
 
 Running ./run_app.sh without an option displays a menu.
 
-The backend option requires the complete verified research corpus. Use mock or
-mistral for normal UI testing while that corpus is unavailable.
+The integrated modes require the prepared research corpus and backend environment.
 EOF
 }
 
@@ -30,8 +33,8 @@ cleanup() {
   if [[ -n "$BACKEND_PID" ]] && kill -0 "$BACKEND_PID" 2>/dev/null; then
     kill "$BACKEND_PID" 2>/dev/null || true
   fi
-  if [[ -n "$LLAMA_PID" ]] && kill -0 "$LLAMA_PID" 2>/dev/null; then
-    kill "$LLAMA_PID" 2>/dev/null || true
+  if [[ -n "$MODEL_PID" ]] && kill -0 "$MODEL_PID" 2>/dev/null; then
+    kill "$MODEL_PID" 2>/dev/null || true
   fi
 }
 
@@ -69,7 +72,7 @@ wait_for_url() {
 start_mistral() {
   need_command llama-server "Install llama.cpp first (Homebrew: brew install llama.cpp)."
 
-  if curl --silent --fail --output /dev/null "$LLAMA_URL/health"; then
+  if curl --silent --fail --output /dev/null "$MISTRAL_URL/health"; then
     echo "Using the Mistral server already running on port 8080."
     return
   fi
@@ -90,16 +93,50 @@ start_mistral() {
     --port 8080 \
     --ctx-size 8192 \
     >"$BACKEND_DIR/logs/llama-server.log" 2>&1 &
-  LLAMA_PID=$!
+  MODEL_PID=$!
 
-  if ! wait_for_url "$LLAMA_URL/health" "Mistral" 90 "$LLAMA_PID"; then
+  if ! wait_for_url "$MISTRAL_URL/health" "Mistral" 90 "$MODEL_PID"; then
     tail -n 30 "$BACKEND_DIR/logs/llama-server.log" || true
     exit 1
   fi
   echo "Mistral is ready."
 }
 
+start_llama() {
+  need_command llama-server "Install llama.cpp first (Homebrew: brew install llama.cpp)."
+
+  if curl --silent --fail --output /dev/null "$LLAMA_URL/health"; then
+    echo "Using the Llama server already running on port 8081."
+    return
+  fi
+
+  if [[ ! -f "$LLAMA_MODEL_PATH" ]]; then
+    echo "Llama model not found:"
+    echo "  $LLAMA_MODEL_PATH"
+    echo "Set LLAMA_MODEL_PATH to the GGUF file location and try again."
+    exit 1
+  fi
+
+  mkdir -p "$BACKEND_DIR/logs"
+  echo "Starting Llama. Its log is backend/logs/llama-server-llama.log"
+  llama-server \
+    -m "$LLAMA_MODEL_PATH" \
+    --alias llama \
+    --host 127.0.0.1 \
+    --port 8081 \
+    --ctx-size 8192 \
+    >"$BACKEND_DIR/logs/llama-server-llama.log" 2>&1 &
+  MODEL_PID=$!
+
+  if ! wait_for_url "$LLAMA_URL/health" "Llama" 90 "$MODEL_PID"; then
+    tail -n 30 "$BACKEND_DIR/logs/llama-server-llama.log" || true
+    exit 1
+  fi
+  echo "Llama is ready."
+}
+
 start_backend() {
+  local default_model="${1:-mistral}"
   local python="$BACKEND_DIR/.venv/bin/python"
   if [[ ! -x "$python" ]]; then
     echo "Backend environment not found at backend/.venv."
@@ -119,6 +156,7 @@ start_backend() {
     HF_HOME="$BACKEND_DIR/.cache/huggingface" \
       HF_HUB_OFFLINE=1 \
       TOKENIZERS_PARALLELISM=false \
+      AUTISM_AI_DEFAULT_MODEL="$default_model" \
       exec .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
   ) >"$BACKEND_DIR/logs/api.log" 2>&1 &
   BACKEND_PID=$!
@@ -144,13 +182,15 @@ fi
 if [[ -z "$MODE" ]]; then
   echo "Choose how to run Autism AI:"
   echo "  1) Mock chat (fastest)"
-  echo "  2) Direct Mistral chat"
-  echo "  3) Integrated backend (requires complete corpus)"
-  read -r -p "Enter 1, 2, or 3: " choice
+  echo "  2) Integrated Mistral"
+  echo "  3) Integrated Llama"
+  echo "  4) Legacy direct Mistral comparison"
+  read -r -p "Enter 1, 2, 3, or 4: " choice
   case "$choice" in
     1) MODE="mock" ;;
     2) MODE="mistral" ;;
-    3) MODE="backend" ;;
+    3) MODE="llama" ;;
+    4) MODE="local" ;;
     *) echo "Invalid choice."; exit 1 ;;
   esac
 fi
@@ -160,16 +200,22 @@ case "$MODE" in
     echo "Starting Flutter with mock chat."
     run_flutter --dart-define=CHAT_PROVIDER=mock
     ;;
-  mistral|local)
+  local)
     start_mistral
     echo "Starting Flutter with direct Mistral chat."
     run_flutter \
       --dart-define=CHAT_PROVIDER=local \
-      --dart-define=LOCAL_LLM_BASE_URL="$LLAMA_URL"
+      --dart-define=LOCAL_LLM_BASE_URL="$MISTRAL_URL"
     ;;
-  backend)
-    start_mistral
-    start_backend
+  mistral|backend|llama)
+    if [[ "$MODE" == "llama" ]]; then
+      model="llama"
+      start_llama
+    else
+      model="mistral"
+      start_mistral
+    fi
+    start_backend "$model"
 
     health_file="$(mktemp)"
     health_status="$(curl --silent --output "$health_file" --write-out '%{http_code}' "$BACKEND_URL/health")"
@@ -178,19 +224,18 @@ case "$MODE" in
       echo "The integrated backend is not ready (HTTP $health_status):"
       cat "$health_file"
       echo
-      echo "The current known blocker is the incomplete research corpus."
-      echo "Run './run_app.sh mistral' for real model chat, or './run_app.sh mock'."
+      echo "Check backend/logs/api.log for the unavailable component."
       rm -f "$health_file"
       exit 1
     fi
     rm -f "$health_file"
 
-    echo "Starting Flutter with the integrated backend."
+    echo "Starting Flutter with the integrated $model backend."
     run_flutter \
       --web-port 3000 \
       --dart-define=CHAT_PROVIDER=backend \
       --dart-define=AUTISM_AI_BACKEND_URL="$BACKEND_URL" \
-      --dart-define=AUTISM_AI_MODEL=mistral
+      --dart-define=AUTISM_AI_MODEL="$model"
     ;;
   *)
     usage

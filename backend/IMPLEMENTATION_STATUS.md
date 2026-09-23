@@ -30,9 +30,9 @@ Last verified: 23 September 2026 (Pacific/Auckland).
   `/rag`, `/quit`, and `/exit` support. Command settings are explicit request
   data. Router/RAG/concise and inline citations start on in the integrated app.
 - Applied Rayaan's original citation renumbering and source-ordering functions
-  to API answers. Missing and fabricated citation numbers now produce explicit
-  502 errors instead of an uncited answer paired with a potentially misleading
-  source list.
+  to API answers. As in Rayaan's terminal demo, uncited answers are returned
+  without a rewrite, sources are marked cited or uncited, and invalid source
+  numbers are reported in response metadata.
 - Kept the screening UI, stage flow, question banks, scoring, validation, report,
   mock prediction, direct local chat provider, and mock chat provider in place.
 
@@ -64,10 +64,6 @@ Last verified: 23 September 2026 (Pacific/Auckland).
   the FastAPI adapter, and Mistral. The response used the
   `general_knowledge` route, included supporting-source metadata, and returned
   `action: null`.
-- Live citation check: the first Mistral draft omitted markers, the versioned
-  repair pass revised it against the same supplied extracts, and `/chat` returned
-  HTTP 200 with inline `[1]`, `[2]`, and `[3]` markers. The visible source order
-  matched first citation use and the uncited fourth source was labelled additional.
 - Live Flutter-shaped history check: HTTP 200 after normalizing the initial
   assistant greeting and consecutive user turns for Mistral's strict
   alternating-role chat template.
