@@ -1,0 +1,31 @@
+.venv/
+.env
+data/results/
+data/vectorstore/
+__pycache__/
+*.pyc
+*.pth
+*.bin
+logs/
+
+CLAUDE.md
+
+# Built RAG corpus. Not committed: M-CHAT and NICE permit research use but not
+# redistribution, so the extracted text stays local.
+data/corpus/corpus.csv
+# Variants built with --out for A/B comparison carry the same source text.
+data/corpus/corpus_*.csv
+data/corpus/raw/
+
+# manual/ holds compiled references with citations, not reproduced pages.
+!data/corpus/manual/
+
+# Local Claude Code settings, machine specific
+.claude/settings.local.json
+
+# Blinding map for the grading pass: it names the model, condition and retrieval
+# status behind each opaque grade id. Not tracked, so it cannot be read casually
+# while annotating. Nothing is lost by that: prepare_grading.py regenerates it
+# exactly from a fixed seed.
+data/grading/blind_map.csv
+data/grading_*/blind_map.csv

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../app.dart';
 import '../models/screening_models.dart';
+import '../services/chat_service_factory.dart';
 import '../services/report_download.dart';
 import '../services/report_service.dart';
 import '../services/screening_session_store.dart';
@@ -34,6 +35,7 @@ class _ScreeningPageState extends State<ScreeningPage> {
     _controller =
         widget.controller ??
         ScreeningController(
+          chatService: createConfiguredChatService(),
           sessionStore: SharedPreferencesScreeningSessionStore(),
         );
     unawaited(_controller.initializeSession());
@@ -113,6 +115,8 @@ class _ScreeningPageState extends State<ScreeningPage> {
                                         onSend: _controller.sendChatMessage,
                                         enabled: _controller.chatEnabled,
                                         isSending: _controller.isSendingChat,
+                                        serviceLabel:
+                                            _controller.chatServiceLabel,
                                         inputFocusNode: _chatFocusNode,
                                       ),
                                     ),
@@ -219,7 +223,7 @@ class _ScreeningPageState extends State<ScreeningPage> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'This prototype demonstrates the screening flow and persistent assistant interface. Chat responses and screening results are mocked.',
+                'This prototype demonstrates the screening flow and persistent assistant interface. Chat uses the configured assistant service. The AI screening prediction remains mocked.',
               ),
               if (_controller.stage != ScreeningStage.welcome) ...[
                 const SizedBox(height: 18),

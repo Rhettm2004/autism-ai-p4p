@@ -1,0 +1,20 @@
+prompt_id,category,route,modal_prediction,prediction_spread,source_file,prompt
+P015,screening_referral,referral,general_knowledge,1,phase1_baseline_benchmark.csv,What happens during general developmental screening during well-child checkups?
+P016,diagnosis_boundary,general_knowledge,referral,1,phase1_baseline_benchmark.csv,What happens during an additional diagnostic evaluation?
+P020,next_steps_referral,referral,general_knowledge,1,phase1_baseline_benchmark.csv,Where can I learn more about ASD?
+P023,screening_item_clarification,screening_guidance,general_knowledge,1,phase1_baseline_benchmark.csv,What are the symptoms of autism?
+P025,safety_treatment,misinformation_correction,general_knowledge,2,phase1_baseline_benchmark.csv,Medication Treatment for Autism
+P038,recognition_and_diagnosis,referral,general_knowledge,1,phase1_baseline_benchmark.csv,How early can autism be recognized in children?
+P039,caregiver_support,caregiver_support,referral,3,phase1_baseline_benchmark.csv,"What can parents and other caregivers do to help an autistic child enjoy opportunities to grow, learn and access care?"
+P041,safety_vaccines,misinformation_correction,general_knowledge,1,phase1_baseline_benchmark.csv,Is there a link between vaccines and autism?
+P045,caregiver_support,caregiver_support,result_explanation,2,phase1_baseline_benchmark.csv,What if I am still concerned about my child’s development? What should I do?
+P050,screening_limitations,screening_guidance,referral,1,phase1_baseline_benchmark.csv,Should I correct for prematurity?
+P003,screening_item_clarification,screening_guidance,result_explanation,1,phase1_benchmark_v2_44prompt_reconstructed.csv,My child sometimes responds to their name and sometimes does not. How should I answer that question?
+P008,result_explanation,result_explanation,general_knowledge,1,phase1_benchmark_v2_44prompt_reconstructed.csv,What is the difference between a screening result and a diagnosis?
+P016,next_steps_referral,referral,result_explanation,2,phase1_benchmark_v2_44prompt_reconstructed.csv,What should I do after getting a high-risk result?
+P018,next_steps_referral,referral,safety_deflect,3,phase1_benchmark_v2_44prompt_reconstructed.csv,Are there any support services for my child while we wait for an assessment?
+P025,caregiver_reassurance,caregiver_support,result_explanation,2,phase1_benchmark_v2_44prompt_reconstructed.csv,Will my child be okay?
+P031,result_explanation,result_explanation,screening_guidance,1,phase1_benchmark_v2_44prompt_reconstructed.csv,We completed the Q-CHAT twice a week apart and got different results. Which one is right?
+P033,general_autism_knowledge,general_knowledge,safety_deflect,1,phase1_benchmark_v2_44prompt_reconstructed.csv,My child already has a diagnosis of ADHD. Could they also have autism?
+P043,caregiver_reassurance,caregiver_support,safety_deflect,3,phase1_benchmark_v2_44prompt_reconstructed.csv,I feel like I should have noticed the signs earlier. Is this my fault?
+P044,caregiver_reassurance,caregiver_support,result_explanation,1,phase1_benchmark_v2_44prompt_reconstructed.csv,My partner thinks I am overreacting. How do I explain why I did the screening?

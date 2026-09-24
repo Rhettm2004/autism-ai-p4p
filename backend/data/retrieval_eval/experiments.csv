@@ -1,0 +1,5 @@
+label,note,compare_to,n_prompts,mrr,recall@1,coverage@1,recall@3,coverage@3,recall@5,coverage@5,recall@10,coverage@10
+baseline,"corpus as built on 24 Aug 2026, nav boilerplate present",,52,0.6122,0.5769,0.4995,0.6346,0.6407,0.6346,0.684,0.6731,0.7604
+no_boilerplate,nav lines stripped via sources.yaml boilerplate list,baseline,52,0.6026,0.5577,0.4817,0.6346,0.6358,0.6346,0.6848,0.6731,0.7597
+neighbours,"each hit expanded with adjacent chunks, same k budget",baseline,52,0.5946,0.5769,0.4995,0.6154,0.6713,0.6346,0.7417,0.6346,0.7844
+neighbours_no_boilerplate,neighbour expansion plus boilerplate strip,neighbours,52,0.5817,0.5577,0.4817,0.6154,0.6627,0.6346,0.7413,0.6346,0.7853

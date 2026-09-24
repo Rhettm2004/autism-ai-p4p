@@ -1,0 +1,8 @@
+error_family,total,baseline,rag,baseline_share
+advises correcting for prematurity,4,4,0,1.0
+advises watchful waiting on a positive screen,3,3,0,1.0
+says M-CHAT needs a trained administrator,4,4,0,1.0
+stale 1 in 44 prevalence figure,12,11,1,0.917
+fabricated citation or instrument,28,15,13,0.536
+refusal or non-answer,35,18,17,0.514
+denies the autism-encephalopathy link,8,4,4,0.5

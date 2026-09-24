@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../app.dart';
 import '../models/screening_models.dart';
@@ -10,6 +11,7 @@ class PersistentChatPanel extends StatefulWidget {
     required this.onSend,
     required this.enabled,
     required this.isSending,
+    required this.serviceLabel,
     required this.inputFocusNode,
   });
 
@@ -17,6 +19,7 @@ class PersistentChatPanel extends StatefulWidget {
   final Future<void> Function(String) onSend;
   final bool enabled;
   final bool isSending;
+  final String serviceLabel;
   final FocusNode inputFocusNode;
 
   @override
@@ -97,7 +100,7 @@ class _PersistentChatPanelState extends State<PersistentChatPanel> {
                 ),
                 const SizedBox(width: 5),
                 Text(
-                  'Mock',
+                  widget.serviceLabel,
                   style: Theme.of(context).textTheme.labelSmall
                       ?.copyWith(color: const Color(0xFF667085)),
                 ),
@@ -143,7 +146,7 @@ class _PersistentChatPanelState extends State<PersistentChatPanel> {
                       onSubmitted: (_) => _submit(),
                       decoration: InputDecoration(
                         hintText: widget.enabled
-                            ? 'Ask a question…'
+                            ? 'Ask a question or type /help…'
                             : 'Chat paused for disclaimer',
                         isDense: true,
                         contentPadding: const EdgeInsets.symmetric(
@@ -183,6 +186,9 @@ class _ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final citedSources = message.sources
+        .where((source) => source.cited)
+        .toList();
     return Semantics(
       label: message.isUser ? 'You said' : 'Assistant said',
       child: Container(
@@ -200,7 +206,62 @@ class _ChatBubble extends StatelessWidget {
             bottomRight: Radius.circular(message.isUser ? 3 : 13),
           ),
         ),
-        child: Text(message.text, style: Theme.of(context).textTheme.bodySmall),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(message.text, style: Theme.of(context).textTheme.bodySmall),
+            if (citedSources.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              const Text(
+                'Sources for this answer',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              for (final source in citedSources)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextButton(
+                        onPressed: source.link == null
+                            ? null
+                            : () async {
+                                try {
+                                  final opened = await launchUrl(source.link!);
+                                  if (!opened && context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Could not open this source.',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                } catch (_) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Could not open this source.',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                        child: Text('${source.number}. ${source.title}'),
+                      ),
+                      Text(
+                        'Cited in the answer · '
+                        '${source.lowAuthority ? 'commercial or blog source' : 'authority tier ${source.authority}'}',
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ],
+        ),
       ),
     );
   }

@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import '../data/question_banks.dart';
 import '../models/screening_models.dart';
 import '../models/screening_session.dart';
+import '../services/chat_service.dart';
+import '../services/questionnaire_scoring_service.dart';
 import '../services/mock_services.dart';
 import '../services/screening_session_store.dart';
 
@@ -31,6 +33,9 @@ class ScreeningController extends ChangeNotifier {
   ScreeningSession? _pendingSession;
   bool _persistenceReady = false;
   int _persistenceGeneration = 0;
+  bool _disposed = false;
+  int _chatGeneration = 0;
+  int _contextRevision = 0;
 
   String sessionId;
   DateTime sessionStartedAt;
@@ -53,6 +58,8 @@ class ScreeningController extends ChangeNotifier {
 
   ScreeningSession get sessionSnapshot => _createSession();
 
+  String get chatServiceLabel => _chatService.displayName;
+
   List<ScreeningQuestion> get questions =>
       questionnaireType == null ? const [] : questionBanks[questionnaireType]!;
 
@@ -62,6 +69,12 @@ class ScreeningController extends ChangeNotifier {
 
   ScreeningContext get context => ScreeningContext(
     stage: stage,
+    sessionId: sessionId,
+    revision: _contextRevision,
+    currentQuestionId: stage == ScreeningStage.behaviouralQuestions
+        ? currentQuestion?.id
+        : null,
+    classicalResult: _classicalContextResult,
     questionnaireType: questionnaireType,
     currentQuestionIndex: stage == ScreeningStage.behaviouralQuestions
         ? currentQuestionIndex
@@ -69,7 +82,26 @@ class ScreeningController extends ChangeNotifier {
     currentQuestionText: stage == ScreeningStage.behaviouralQuestions
         ? currentQuestion?.text
         : null,
+    result: result,
   );
+
+  ChatClassicalResult? get _classicalContextResult {
+    if (result == null || questionnaireType == null) return null;
+    try {
+      final calculated = const QuestionnaireScoringService().calculate(
+        questionnaireType: questionnaireType!,
+        answers: behaviouralAnswers,
+      );
+      return ChatClassicalResult(
+        questionnaireType: calculated.questionnaireType,
+        score: calculated.score,
+        referralThreshold: calculated.referralThreshold,
+        thresholdMet: calculated.thresholdMet,
+      );
+    } on FormatException {
+      return null;
+    }
+  }
 
   String get stageLabel => switch (stage) {
     ScreeningStage.welcome => 'Welcome',
@@ -341,7 +373,7 @@ class ScreeningController extends ChangeNotifier {
 
   Future<void> sendChatMessage(String text) async {
     final trimmed = text.trim();
-    if (trimmed.isEmpty || !chatEnabled || isSendingChat) return;
+    if (_disposed || trimmed.isEmpty || !chatEnabled || isSendingChat) return;
 
     chatMessages.add(
       ChatMessage(text: trimmed, isUser: true, timestamp: DateTime.now()),
@@ -349,15 +381,60 @@ class ScreeningController extends ChangeNotifier {
     isSendingChat = true;
     _notify();
 
-    final response = await _chatService.sendMessage(trimmed, context);
-    chatMessages.add(
-      ChatMessage(text: response, isUser: false, timestamp: DateTime.now()),
-    );
-    isSendingChat = false;
-    _notify();
+    final generation = _chatGeneration;
+    final requestContext = context;
+    final historySnapshot = List<ChatMessage>.unmodifiable(chatMessages);
+    try {
+      final response = await _chatService.sendMessage(
+        message: trimmed,
+        history: historySnapshot,
+        context: requestContext,
+      );
+      if (_disposed || generation != _chatGeneration) return;
+      chatMessages.add(
+        ChatMessage(
+          text: response.text,
+          isUser: false,
+          timestamp: DateTime.now(),
+          sources: response.sources,
+          route: response.route,
+          model: response.model,
+        ),
+      );
+    } on ChatServiceException catch (error, stackTrace) {
+      if (_disposed || generation != _chatGeneration) return;
+      debugPrint('Local chat request failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      chatMessages.add(
+        ChatMessage(
+          text: error.userMessage,
+          isError: true,
+          isUser: false,
+          timestamp: DateTime.now(),
+        ),
+      );
+    } catch (error, stackTrace) {
+      if (_disposed || generation != _chatGeneration) return;
+      debugPrint('Unexpected local chat error: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      chatMessages.add(
+        ChatMessage(
+          text: 'The assistant could not respond just now. Please try sending your message again.',
+          isError: true,
+          isUser: false,
+          timestamp: DateTime.now(),
+        ),
+      );
+    } finally {
+      if (!_disposed && generation == _chatGeneration) {
+        isSendingChat = false;
+        _notify();
+      }
+    }
   }
 
   Future<void> restart() async {
+    _chatGeneration += 1;
     _saveTimer?.cancel();
     _saveTimer = null;
     _persistenceGeneration += 1;
@@ -429,6 +506,8 @@ class ScreeningController extends ChangeNotifier {
           chatMessages.any((message) => message.isUser));
 
   void _notify({bool persist = true}) {
+    if (_disposed) return;
+    _contextRevision += 1;
     notifyListeners();
     if (persist) _scheduleSessionSave();
   }
@@ -521,7 +600,11 @@ class ScreeningController extends ChangeNotifier {
 
   @override
   void dispose() {
+    if (_disposed) return;
+    _disposed = true;
+    _chatGeneration += 1;
     _saveTimer?.cancel();
+    _chatService.dispose();
     super.dispose();
   }
 }

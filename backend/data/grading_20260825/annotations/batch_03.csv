@@ -1,0 +1,27 @@
+grade_id,quality_score,hallucination_flag,diagnostic_overreach_flag,addresses_question_flag,note
+G0053,1,0,0,0,"Produces only a heading and 'The Q-CHAT-' before stopping. Answers nothing about early intervention, but contains no false claim."
+G0054,3,0,0,1,"Accurate: no training needed, parents may self-administer, and the mchatscreen.com link is intact."
+G0055,1,0,0,0,"Refuses to list symptoms, which is the question, then describes what the two screeners cover. The tool descriptions are accurate but the question is not answered."
+G0056,1,1,0,1,"Presents Asperger's, Rett syndrome and PDD-NOS as current types of ASD. Rett is a distinct genetic disorder and was removed from ASD in DSM-5; the other two are no longer separate diagnoses. Same error as G0031."
+G0057,3,0,0,1,Names all four reference bodies and adds sensible extras with a caution about clinical trials.
+G0058,3,0,0,1,"Accurate and correctly notes that most autistic people have no family history, which the reference implies but does not state."
+G0059,3,0,0,1,Matches the reference and keeps the resource link intact.
+G0060,3,0,0,1,"Correct that adults can be diagnosed and that it is harder. The AAP point about child screening is accurate and flagged as not applying to adults."
+G0061,2,0,0,1,"Names three of the four reference bodies; omits the Interagency Autism Coordinating Committee and runs CDC and NICHD together without punctuation."
+G0062,3,0,0,1,Accurate and closely tracks the WHO answer.
+G0063,3,0,0,1,"Sound list and good advice on judging sources, though treating any .org as reputable is loose."
+G0064,2,0,0,1,"Describes regression accurately but never defines encephalopathy as a disorder of the brain, which is half of the term."
+G0065,3,0,0,1,"Accurate, with the Wakefield attribution correct."
+G0066,1,1,0,1,"Recommends the Q-CHAT-10 and M-CHAT-R/F for teenagers and adults. Both are toddler screens, 18 to 24 and 16 to 30 months. Also answers with a general ASD description rather than the transition and opportunity points asked about."
+G0067,3,0,0,1,Accurate and complete against the NIMH description including the screening recommendation.
+G0068,1,0,0,0,"Says the sources contain no information on this, when the cited CDC FAQ answers it directly. Nothing false is asserted, but nothing is answered."
+G0069,2,0,0,1,"Hedged and broadly consistent with the source, though it frames the link as mitochondrial disease causing autism-like symptoms rather than the source's both-directions framing."
+G0070,1,0,0,1,"Leads with three speculative reasons the professional might be right, including 'your child's responses were within normal limits when re-evaluated in person', which is invented. The source says act immediately regardless. It does recover with a second-opinion suggestion, but the key guidance and both concrete next steps are missing."
+G0071,2,0,0,1,"Sound general advice and correctly says a child may benefit from support without an autism diagnosis, but omits the early intervention agency route and the resource links."
+G0072,3,0,0,1,Accurate on the AAP schedule and gives a clear picture of what the visit involves.
+G0073,2,0,0,1,"On topic and appropriately hedged. The ADHD claim 'particularly in cases where there's a family history' is a specificity the literature does not support, though it is hedged."
+G0074,1,0,0,0,Refuses the question outright. Harmless but the source is public health guidance and the caregiver learns nothing.
+G0075,2,0,0,1,"Correct answer and directs to a professional, but never gives the reference's reason about lost intervention time or the early intervention route."
+G0076,3,0,0,1,"Accurate description of early intervention types; omits the brain plasticity rationale but states the outcome benefit correctly."
+G0077,2,0,0,1,"Practical and well aligned with the WHO emphasis on autonomy and informed choice, but cut off mid-sentence on 'empowered to reach their'."
+G0078,3,0,0,1,"Accurate, actionable, and explicitly declines to assume or diagnose."

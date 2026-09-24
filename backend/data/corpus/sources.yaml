@@ -1,0 +1,584 @@
+# RAG corpus source manifest.
+#
+# THIS IS THE FILE TO EDIT WHEN ADDING A SOURCE. Nothing else needs changing.
+# scripts/build_corpus.py reads this, fetches each url, extracts the readable
+# text, and writes the chunked corpus that the retriever indexes.
+#
+# Fields per source:
+#   id           short stable identifier, used in passage ids. No spaces.
+#   name         human-readable name. Must match the source_name column in the
+#                benchmark for retrieval evaluation to score against it.
+#   url          page to fetch, or
+#   local        file under data/corpus/manual/ for sources that block fetching
+#   authority    tier used when two sources disagree.
+#                1 = primary clinical guideline
+#                2 = official public health body
+#                3 = instrument documentation
+#   enabled      set false to keep a source listed but out of the corpus
+#
+# ---------------------------------------------------------------------------
+# LICENSING. Read before publishing or committing the built corpus.
+#
+# M-CHAT-R/F: free for non-profit teaching and research, which covers this
+# project, but reposting is not permitted without a licence. NICE: download for
+# private research and study only, not for redistribution. Consequently
+# data/corpus/corpus.csv and data/corpus/raw/ are gitignored. Build the corpus
+# locally, do not commit it, and do not publish the extracted text.
+# ---------------------------------------------------------------------------
+
+sources:
+
+  # =========================================================================
+  # SCREENING INSTRUMENT DOCUMENTATION
+  #
+  # Highest value group. Phase 1 hallucination on screening item clarification
+  # was 43.8%, driven by wrong age ranges, wrong item counts and reversed
+  # scoring thresholds. None of the general health pages below cover these.
+  # =========================================================================
+
+  - id: qchat_scoring_key
+    name: Q-CHAT Scoring Key
+    url: https://docs.autismresearchcentre.com/tests/QCHAT_scoringkey.pdf
+    authority: 3
+    enabled: false
+    # DISABLED. Raw scoring grid, not prose. Its 10 passages are columns of
+    # response options that match many queries lexically while carrying no
+    # explanatory content. Dropping it and qchat_instrument raised probe
+    # coverage from 4/7 to 6/7 at k=5. See scoring/evaluate_corpus_coverage.py.
+    # Fixes: "a score of 6 out of 10 on the Q-CHAT is a typical score"
+
+  - id: qchat_instrument
+    name: Quantitative Checklist for Autism in Toddlers (Q-CHAT)
+    url: https://docs.autismresearchcentre.com/tests/QCHAT.pdf
+    authority: 3
+    enabled: false
+    # DISABLED. The raw questionnaire. 10 passages of literal item text
+    # ("Does your child look at you when you call his/her name?") which
+    # surfaced for unrelated queries such as "do I need a referral".
+    # Index documentation about an instrument, not the instrument itself.
+    # Fixes: item wording and response scale questions
+
+  - id: qchat_arc_page
+    name: Q-CHAT Autism Research Centre
+    url: https://www.autismresearchcentre.com/tests/quantitative-checklist-for-autism-in-toddlers-q-chat/
+    authority: 3
+    enabled: true
+    # Allison et al. 2008 establishes the 18 to 24 month range.
+    # Fixes: "Q-CHAT-10 is designed for children aged 4 to 9 years"
+
+  - id: qchat10_red_flags
+    name: Allison et al. 2012 Short Q-CHAT Red Flags
+    url: https://docs.autismresearchcentre.com/papers/2012_Allisonetal_JAACAP_RedFlags.pdf
+    authority: 3
+    enabled: false
+    # DISABLED. Full academic paper: 122 passages, 29% of the whole corpus,
+    # most of it methods, statistics and references. It crowded out short
+    # authoritative pages. Cite it in the report rather than indexing it.
+    # The paper that defines Q-CHAT-10 and its cutoff.
+
+  - id: mchat_scoring
+    name: Scoring M-CHAT-R/F
+    url: https://www.mchatscreen.com/mchat-rf/scoring/
+    authority: 3
+    enabled: true
+    # Carries the scoring bands directly: 0-2 low, 3-7 moderate, 8-20 high.
+    # Fixes: "failing 5 items" interpretation and the reversed thresholds.
+
+  - id: mchat_guidelines
+    name: M-CHAT-R/F Guidelines for Use
+    url: https://www.mchatscreen.com/mchat-rf/
+    authority: 3
+    enabled: true
+
+  - id: instrument_reference
+    name: Screening Instrument Quick Reference
+    local: manual/instrument_reference.txt
+    authority: 3
+    enabled: true
+    # Compiled from the cited instrument documentation. Exists because several
+    # facts appear on the live pages only obliquely, for example the Q-CHAT age
+    # range appearing inside a paper title rather than in body text, and so are
+    # not reliably retrievable from the fetched HTML. Every statement is
+    # traceable to a cited source. Fixes the M-CHAT 16 to 30 month range, the
+    # Q-CHAT 18 to 24 month range, and the scoring bands.
+
+  - id: mchat_faq
+    name: M-CHAT Parent and Professional FAQ
+    url: https://www.mchatscreen.com/contact-2/
+    authority: 3
+    enabled: true
+    # Fixes: "M-CHAT can be used for a three and a half year old"
+    # Actual range is 16 to 30 months.
+
+  # =========================================================================
+  # CLINICAL GUIDELINES
+  # =========================================================================
+
+  - id: nice_cg128_recommendations
+    name: NICE CG128 Recognition Referral and Diagnosis Recommendations
+    url: https://www.nice.org.uk/guidance/cg128/chapter/Recommendations
+    authority: 1
+    enabled: true
+    # Referral criteria and the recognition pathway.
+
+  - id: nice_cg128_overview
+    name: NICE CG128 Autism Spectrum Disorder in Under 19s Overview
+    url: https://www.nice.org.uk/guidance/cg128
+    authority: 1
+    enabled: true
+
+  - id: nice_cg128_features
+    name: NICE CG128 Appendix Features Suggesting Possible Autism
+    url: https://www.nice.org.uk/guidance/cg128/chapter/Appendix-Features-suggesting-possible-autism
+    authority: 1
+    enabled: true
+
+  - id: nz_autism_guideline_summary
+    name: Aotearoa New Zealand Autism Guideline Summary
+    url: https://www.whaikaha.govt.nz/assets/Autism-Guideline/Aotearoa-New-Zealand-Autism-Guideline-Summary.pdf
+    authority: 1
+    enabled: true
+    # 1.3MB. Start with the summary; the full guideline is 4.2MB and chunks
+    # into thousands of passages, most of them irrelevant to screening.
+
+  - id: nz_autism_guideline_full
+    name: Aotearoa New Zealand Autism Guideline Third Edition
+    url: https://www.whaikaha.govt.nz/assets/Autism-Guideline/Aotearoa-New-Zealand-Autism-Guideline-Third-Edition.pdf
+    authority: 1
+    enabled: false
+    # Disabled by default. Enable only if the summary proves too thin, and
+    # check what it does to retrieval precision before keeping it.
+    # Fixes: NZ referral pathway and wait time questions.
+
+  # =========================================================================
+  # PUBLIC HEALTH BODIES
+  # Already the source of the benchmark reference answers.
+  # =========================================================================
+
+  - id: cdc_faq
+    name: CDC Frequently Asked Questions about Autism Spectrum Disorder
+    url: https://www.cdc.gov/autism/faq/index.html
+    authority: 2
+    enabled: false
+    # DISABLED. cdc.gov returns 403 to scripted requests. Save the page
+    # into data/corpus/manual/ and switch to a local: path to enable.
+
+  - id: cdc_signs
+    name: CDC Signs and Symptoms of Autism Spectrum Disorder
+    url: https://www.cdc.gov/autism/signs-symptoms/index.html
+    authority: 2
+    enabled: false
+    # DISABLED. cdc.gov returns 403 to scripted requests. Save the page
+    # into data/corpus/manual/ and switch to a local: path to enable.
+
+  - id: cdc_treatment
+    name: CDC Treatment and Intervention for Autism Spectrum Disorder
+    url: https://www.cdc.gov/autism/treatment/index.html
+    authority: 2
+    enabled: false
+    # DISABLED. cdc.gov returns 403 to scripted requests. Save the page
+    # into data/corpus/manual/ and switch to a local: path to enable.
+
+  - id: cdc_data
+    name: CDC Data and Statistics on Autism Spectrum Disorder
+    local: manual/cdc_prevalence.txt
+    authority: 2
+    enabled: true
+    # cdc.gov returns 403 to scripted requests regardless of user agent, so this
+    # is a saved copy of the published page. Fixes the "1 in 44" prevalence
+    # error present in all four Phase 1 runs.
+
+  - id: cdc_teens_adults
+    name: CDC Autism Spectrum Disorder in Teenagers and Adults
+    url: https://www.cdc.gov/autism/about/asd-in-teenagers-adults.html
+    authority: 2
+    enabled: false
+    # DISABLED. cdc.gov returns 403 to scripted requests. Save the page
+    # into data/corpus/manual/ and switch to a local: path to enable.
+
+  - id: nimh_asd
+    name: NIMH Autism Spectrum Disorder
+    url: https://www.nimh.nih.gov/health/publications/autism-spectrum-disorder
+    authority: 2
+    enabled: true
+
+  - id: nichd_about
+    name: NICHD About Autism
+    url: https://www.nichd.nih.gov/health/topics/autism/conditioninfo
+    authority: 2
+    enabled: true
+
+  - id: nichd_symptoms
+    name: NICHD What are the symptoms of autism?
+    url: https://www.nichd.nih.gov/health/topics/autism/conditioninfo/symptoms
+    authority: 2
+    enabled: true
+
+  - id: nichd_causes
+    name: NICHD What causes autism?
+    url: https://www.nichd.nih.gov/health/topics/autism/conditioninfo/causes
+    authority: 2
+    enabled: true
+
+  - id: nichd_treatments
+    name: NICHD What are the treatments for autism?
+    url: https://www.nichd.nih.gov/health/topics/autism/conditioninfo/treatments
+    authority: 2
+    enabled: true
+
+  - id: nichd_medication
+    name: NICHD Medication Treatment for Autism
+    url: https://www.nichd.nih.gov/health/topics/autism/conditioninfo/treatments/medication-treatment
+    authority: 2
+    enabled: true
+
+  - id: nichd_early_intervention
+    name: NICHD Early Intervention for Autism
+    url: https://www.nichd.nih.gov/health/topics/autism/conditioninfo/treatments/early-intervention
+    authority: 2
+    enabled: true
+
+  - id: who_qa
+    name: WHO Autism Questions and Answers
+    url: https://www.who.int/news-room/questions-and-answers/item/autism-spectrum-disorders-%28asd%29
+    authority: 1
+    enabled: true
+
+  # =========================================================================
+  # NEEDS MANUAL DOWNLOAD
+  #
+  # These cannot be fetched by script. Put the file in data/corpus/manual/,
+  # then switch the entry from a comment to enabled with a local: path.
+  # =========================================================================
+
+  # ICD-11 6A02 Autism Spectrum Disorder.
+  # The ICD-11 browser at icd.who.int renders its content with JavaScript, so a
+  # scripted fetch returns only the navigation shell. Two options:
+  #   1. Download the print release, extract the 6A02 section, save as a text
+  #      or PDF file in data/corpus/manual/:
+  #      https://icdcdn.who.int/static/releasefiles/2025-01/print-ICD-11-MMS-en.zip
+  #   2. Open https://icd.who.int/browse/2025-01/mms/en#437815624 in a browser
+  #      and save the 6A02 entry manually.
+  #
+  # - id: icd11_6a02
+  #   name: ICD-11 6A02 Autism Spectrum Disorder
+  #   local: manual/icd11_6a02.pdf
+  #   authority: 1
+  #   enabled: true
+
+  # DSM-5 ASD criteria.
+  # DSM-5 is APA copyright and is not freely available, so it cannot be added
+  # to the corpus. The CDC and NIMH pages above restate the criteria in
+  # accessible form and are already included, which covers the same ground for
+  # a caregiver-facing tool. Cite DSM-5 in the report, do not index it.
+
+# ---------------------------------------------------------------------------
+# NAVIGATION BOILERPLATE.
+#
+# Lines matching these patterns are dropped before chunking. Each pattern is
+# matched against a whole line, case-insensitively, so prose that happens to
+# mention one of these words is untouched.
+#
+# These lines survive HTML extraction because the pages put them outside the
+# tags build_corpus strips. They matter more than their volume suggests: they
+# sit in the first chunk of a page beside its title, which makes that chunk
+# rank highly for any query phrased like a title, ahead of the chunk that
+# answers the question (F-P2-011).
+#
+# Add a pattern here rather than in code. Regular expression syntax.
+# ---------------------------------------------------------------------------
+  # -------------------------------------------------------------------------
+  # Added 26 August 2026 with benchmark v4. Every source below is cited by at
+  # least one v4 reference answer, so a prompt whose source is missing here
+  # cannot be answered from the corpus however good retrieval is.
+  #
+  # authority 5 is new: commercial and blog content. Several v4 answers are
+  # sourced from ABA providers' and private clinics' marketing pages, which
+  # are not clinical guidance and in some cases advocate approaches the
+  # autistic community contests. They are included because the reference
+  # answers cite them and excluding them would leave those prompts
+  # ungroundable, and they are tiered so retrieval can be measured with and
+  # without them. See D-125.
+  # -------------------------------------------------------------------------
+  - id: whaikaha_nz_autism_guideline
+    name: "Aotearoa New Zealand Autism Guideline: He Waka Huia Takiwātanga Rau, Third Edition"
+    url: https://www.whaikaha.govt.nz/resources/strategies-and-studies/guidelines/nz-autism-guideline
+    authority: 1
+    enabled: true
+    # cited by 3 v4 prompt(s)
+  - id: camhs_frequently_asked_questions
+    name: "Rotherham CAMHS - Frequently Asked Questions"
+    url: https://camhs.rdash.nhs.uk/autism-spectrum-disorder-asd-and-attention-hyperactivity-deficit-disorder-adhd/frequently-asked-questions
+    authority: 2
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: cdc_index_html
+    name: "CDC Data and Statistics on Autism Spectrum Disorder"
+    url: https://www.cdc.gov/autism/data-research/index.html
+    authority: 2
+    enabled: true
+    # cited by 2 v4 prompt(s)
+  - id: healthify_autism
+    name: "Healthify - Autism (takiwātanga) in children"
+    url: https://healthify.nz/health-a-z/a/autism
+    authority: 2
+    enabled: true
+    # cited by 4 v4 prompt(s)
+  - id: kentmedwaymentalhealth_autism_faqs
+    name: "Kent and Medway Mental Health NHS Trust - Autism FAQs"
+    url: https://www.kentmedwaymentalhealth.nhs.uk/about-us/learning-disabilities-autism-and-adhd/autism-assessment-service/autism-faqs
+    authority: 2
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: kidshealth_autism_takiwatanga_asd
+    name: "KidsHealth New Zealand - Autism-Takiwātanga In Children"
+    url: https://www.kidshealth.org.nz/autism-takiwatanga-asd
+    authority: 2
+    enabled: true
+    # cited by 2 v4 prompt(s)
+  - id: kidshealth_jaundice
+    name: "KidsHealth New Zealand - Jaundice"
+    url: https://www.kidshealth.org.nz/jaundice
+    authority: 2
+    enabled: true
+    # Supports the application's existing background question about jaundice.
+  - id: kidshealth_autism_takiwatanga_support_inform
+    name: "KidsHealth New Zealand - Autism-Takiwātanga Support Information For Youth Aged 16 & Older"
+    url: https://www.kidshealth.org.nz/autism-takiwatanga-asd/autism-takiwatanga-support-information-for-youth-aged-16-older
+    authority: 2
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: kidshealth_what_happens_after_a_diagnosis_of
+    name: "KidsHealth New Zealand - What Happens After A Diagnosis Of Autism-Takiwātanga?"
+    url: https://www.kidshealth.org.nz/what-happens-after-a-diagnosis-of-autism-takiwatanga
+    authority: 2
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: mentalhealth_autism
+    name: "Mental Health Foundation of New Zealand - Autism"
+    url: https://mentalhealth.org.nz/explore-mental-health-wellbeing/mental-health-conditions/autism
+    authority: 2
+    enabled: true
+    # cited by 2 v4 prompt(s)
+  - id: nelft_asc_assessment_pathway_faq
+    name: "NELFT NHS Foundation Trust - Autism Spectrum Condition Assessment Pathway FAQ"
+    url: https://www.nelft.nhs.uk/asc-assessment-pathway-faq
+    authority: 2
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: altogetherautism_what_is_autism
+    name: "Altogether Autism - What is autism?"
+    url: https://www.altogetherautism.org.nz/what-is-autism
+    authority: 4
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: autism_all_audiences
+    name: "National Autistic Society - Meltdowns"
+    url: https://www.autism.org.uk/advice-and-guidance/behaviour/meltdowns/all-audiences
+    authority: 4
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: autism_anxiety
+    name: "National Autistic Society - Anxiety"
+    url: https://www.autism.org.uk/advice-and-guidance/mental-health/anxiety
+    authority: 4
+    enabled: true
+    # cited by 2 v4 prompt(s)
+  - id: autism_augmentative_and_alternative_communic
+    name: "Autism Association of Western Australia - AAC"
+    url: https://autism.org.au/services/specialised-areas/augmentative-and-alternative-communication-aac
+    authority: 4
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: autism_autistic_women_and_girls
+    name: "National Autistic Society - Autistic women and girls"
+    url: https://www.autism.org.uk/advice-and-guidance/identity/autistic-women-and-girls
+    authority: 4
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: autism_deciding_whether_to_seek_an_autism_as
+    name: "National Autistic Society - Deciding whether to seek an autism assessment"
+    url: https://www.autism.org.uk/advice-and-guidance/diagnosis/before-diagnosis/deciding-whether-to-seek-an-autism-assessment
+    authority: 4
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: autism_eating_disorders
+    name: "National Autistic Society - Eating disorders"
+    url: https://www.autism.org.uk/advice-and-guidance/mental-health/eating-disorders
+    authority: 4
+    enabled: true
+    # cited by 2 v4 prompt(s)
+  - id: autism_masking
+    name: "National Autistic Society - Masking"
+    url: https://www.autism.org.uk/advice-and-guidance/behaviour/masking
+    authority: 4
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: autism_parents
+    name: "National Autistic Society - Sleep guide for parents"
+    url: https://www.autism.org.uk/advice-and-guidance/physical-health/sleep/parents
+    authority: 4
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: autism_sensory_processing
+    name: "National Autistic Society - Autism and sensory processing"
+    url: https://www.autism.org.uk/advice-and-guidance/about-autism/sensory-processing
+    authority: 4
+    enabled: true
+    # cited by 2 v4 prompt(s)
+  - id: autism_suicide
+    name: "National Autistic Society - Suicide"
+    url: https://www.autism.org.uk/advice-and-guidance/mental-health/suicide
+    authority: 4
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: autismnz_definitions
+    name: "Autism New Zealand - Definitions"
+    url: https://autismnz.org.nz/definitions
+    authority: 4
+    enabled: true
+    # cited by 9 v4 prompt(s)
+  - id: childmind_sensory_processing_faq
+    name: "Child Mind Institute - Sensory Processing FAQ"
+    url: https://childmind.org/article/sensory-processing-faq
+    authority: 4
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: chop_augmentative_and_alternative_communicat
+    name: "Children's Hospital of Philadelphia - AAC"
+    url: https://www.chop.edu/service/augmentative-and-alternative-communication-aac
+    authority: 4
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: medicalnewstoday_masking_autism
+    name: "Medical News Today - Masking Autism"
+    url: https://www.medicalnewstoday.com/articles/masking-autism
+    authority: 4
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: raisingchildren_conditions_that_occur_with_a
+    name: "Raising Children Network - Autism and co-occurring conditions"
+    url: https://raisingchildren.net.au/autism/learning-about-autism/about-autism/conditions-that-occur-with-asd
+    authority: 4
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: raisingchildren_pecs
+    name: "Raising Children Network - Picture Exchange Communication System (PECS)"
+    url: https://raisingchildren.net.au/autism/therapies-guide/pecs
+    authority: 4
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: raisingchildren_sleep_problems_children_with
+    name: "Raising Children Network - Sleep problems in autistic children & teens"
+    url: https://raisingchildren.net.au/autism/health-wellbeing/sleep/sleep-problems-children-with-asd
+    authority: 4
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: raisingchildren_speech_generating_devices
+    name: "Raising Children Network - Speech-generating devices"
+    url: https://raisingchildren.net.au/autism/therapies-guide/speech-generating-devices
+    authority: 4
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: allstaraba_6_stages_of_autism_meltdown
+    name: "All Star ABA - 6 Stages of Autism Meltdown"
+    url: https://www.allstaraba.org/blog/6-stages-of-autism-meltdown
+    authority: 5
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: atherapysolutions_addressing_picky_eating_in
+    name: "Autism Therapy Solutions - Picky Eating in Children with Autism"
+    url: https://atherapysolutions.com/addressing-picky-eating-in-children-with-autism
+    authority: 5
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: autismcare_faq
+    name: "AutismCare Ireland - FAQ"
+    url: https://autismcare.ie/faq
+    authority: 5
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: autismcenterforkids_autism_anxiety_therapy
+    name: "Autism Therapy & Child Counselling Institute - Autism and Anxiety"
+    url: https://autismcenterforkids.com/autism-anxiety-therapy
+    authority: 5
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: autismconnect_autism_and_friendships_during_
+    name: "AutismConnect - Autism and Friendships During Adolescence"
+    url: https://www.autismconnect.com/blogs/autism-and-friendships-during-adolescence-helping-teens-build-meaningful-connections
+    authority: 5
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: blog_why_routine_changes_are_hard_for_kids_w
+    name: "TherapyLake - Routine Changes and Autism"
+    url: https://blog.therapylake.com/why-routine-changes-are-hard-for-kids-with-autism-and-how-to-help
+    authority: 5
+    enabled: true
+    # cited by 2 v4 prompt(s)
+  - id: calgaryadhd_autism
+    name: "New Discovery Psychological Services - Autism FAQ"
+    url: https://www.calgaryadhd.com/autism
+    authority: 5
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: connectncareaba_can_someone_with_level_1_aut
+    name: "Connect n Care ABA - Level 1 Autism and Independent Living"
+    url: https://www.connectncareaba.com/blog/can-someone-with-level-1-autism-live-alone
+    authority: 5
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: getgoally_supporting_an_autistic_child_in_ma
+    name: "Goally - Supporting an Autistic Child in Mainstream School"
+    url: https://getgoally.com/blog/supporting-an-autistic-child-in-mainstream-school
+    authority: 5
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: indiaautismcenter_understanding_autism
+    name: "India Autism Center - Understanding Autism FAQ"
+    url: https://indiaautismcenter.org/category/understanding-autism
+    authority: 5
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: northshorepsychologicalservices_autism_calmi
+    name: "Northshore Psychological Services - Autism Calming Strategies"
+    url: https://northshorepsychologicalservices.com/autism-calming-strategies-home-school
+    authority: 5
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: profoundpsychology_autism_friendships_adults
+    name: "Profound Psychology - Autism and Friendships in Adults"
+    url: https://www.profoundpsychology.co.uk/blog/autism-friendships-adults
+    authority: 5
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: rozscounsellingcorner_understanding_pda_in_c
+    name: "Roz's Counselling Corner - Understanding Autism"
+    url: https://rozscounsellingcorner.co.uk/rozs-support-hub/understanding-pda-in-children-and-young-people
+    authority: 5
+    enabled: true
+    # cited by 1 v4 prompt(s)
+  - id: sunhealthcares_index
+    name: "Sun Health - Virtual Care FAQ"
+    url: https://sunhealthcares.com
+    authority: 5
+    enabled: true
+    # cited by 1 v4 prompt(s)
+
+boilerplate:
+  - 'Breadcrumb'
+  - 'Instagram'
+  - 'Facebook'
+  - 'Twitter'
+  - 'X \(formerly Twitter\)'
+  - 'YouTube'
+  - 'LinkedIn'
+  - 'Pinterest'
+  - 'En Espa[nñ]ol'
+  - 'Skip to (main )?content'
+  - 'Share (this )?(page)?'
+  - 'Print (this )?(page)?'
+  - 'Subscribe'
+  - 'Menu'
+  - 'Search'
+  - 'Home'

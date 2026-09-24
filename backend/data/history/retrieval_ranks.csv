@@ -1,0 +1,53 @@
+prompt_id,category,prompt,rank
+P038,recognition_and_diagnosis,How early can autism be recognized in children?,81
+P036,general_autism_knowledge,How common is autism?,65
+P043,screening_follow_up,"My child screened negative, but I am worried he/she might have autism. What should I do?",38
+P001,safety_vaccines,Do vaccines cause autism spectrum disorder (ASD)?,35
+P008,general_health_knowledge,What do we know about the relationship between mitochondrial disease and other disorders related to the brain?,34
+P040,general_autism_knowledge,What causes autism?,33
+P047,screening_follow_up,"If my child screened positive for possible concerns, is it best to wait a year and see happens?",31
+P049,screening_follow_up,If I am still worried what should I do?,29
+P011,next_steps_referral,Should I have my child tested for a mitochondrial disease?,29
+P031,general_autism_knowledge,What is the prevalence of ASD?,22
+P021,general_autism_knowledge,About Autism,17
+P033,general_autism_knowledge,What are key points about autism spectrum disorder in teenagers and adults?,15
+P024,treatment_support,What are the treatments for autism?,10
+P002,general_autism_knowledge,Are more children being diagnosed with ASD?,9
+P035,general_autism_knowledge,What is autism?,6
+P012,general_autism_knowledge,What is autism spectrum disorder?,5
+P042,screening_follow_up,Does my child need to be screened again?,5
+P025,safety_treatment,Medication Treatment for Autism,5
+P019,treatment_support,What treatments and services are available for ASD?,4
+P013,general_autism_knowledge,What causes ASD?,4
+P026,treatment_support,Early Intervention for Autism,4
+P041,safety_vaccines,Is there a link between vaccines and autism?,4
+P045,caregiver_support,What if I am still concerned about my child’s development? What should I do?,2
+P007,general_health_knowledge,Is there a relationship between autism and encephalopathy?,2
+P006,general_health_knowledge,What is regressive encephalopathy?,2
+P052,screening_tool_use,Can I administer the M-CHAT and M-CHAT-R without the Follow-Up?,2
+P017,diagnosis_boundary,How is ASD diagnosed in older children and adolescents?,1
+P018,diagnosis_boundary,How is ASD diagnosed in adults?,1
+P005,general_health_knowledge,Is there a relationship between mitochondrial disease and autism?,1
+P004,general_health_knowledge,What are mitochondrial diseases or disorders?,1
+P003,diagnosis_boundary,Can adults be diagnosed with ASD?,1
+P016,diagnosis_boundary,What happens during an additional diagnostic evaluation?,1
+P014,diagnosis_boundary,How is ASD diagnosed?,1
+P015,screening_referral,What happens during general developmental screening during well-child checkups?,1
+P010,next_steps_referral,Are all children routinely tested for mitochondrial diseases? What about children with autism?,1
+P009,safety_vaccines,Do vaccines cause or worsen mitochondrial diseases?,1
+P020,next_steps_referral,Where can I learn more about ASD?,1
+P029,treatment_support,What are the types of treatments for autism spectrum disorder?,1
+P030,treatment_support,What are behavioral approaches for autism spectrum disorder?,1
+P032,general_autism_knowledge,What Is Prevalence?,1
+P023,screening_item_clarification,What are the symptoms of autism?,1
+P022,general_autism_knowledge,What causes autism?,1
+P027,screening_item_clarification,What are examples of social communication and social interaction characteristics related to ASD?,1
+P028,screening_item_clarification,What are examples of restricted or repetitive behaviors and interests related to ASD?,1
+P034,general_autism_knowledge,What has a CDC study estimated about ASD prevalence among adults?,1
+P044,screening_follow_up,"If my child screened negative (passed the screener), does that mean he cannot have a developmental concern?",1
+P037,general_autism_knowledge,Do autistic people also have an intellectual disability?,1
+P039,caregiver_support,"What can parents and other caregivers do to help an autistic child enjoy opportunities to grow, learn and access care?",1
+P048,screening_limitations,Does the M-CHAT screen for all possible developmental issues?,1
+P046,screening_follow_up,What if my child screens positive for possible concerns but my child’s healthcare professional says he/she is not worried?,1
+P050,screening_limitations,Should I correct for prematurity?,1
+P051,screening_tool_use,Who is allowed to administer and score the M-CHAT and M-CHAT-R/F?,1

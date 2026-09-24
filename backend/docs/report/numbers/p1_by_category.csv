@@ -1,0 +1,8 @@
+category,n,quality_mean,hallucination_rate,hallucination_ci_low,hallucination_ci_high,addresses_question_rate
+screening_item_clarification,32,1.656,0.4375,0.2817,0.6067,0.9062
+result_explanation,32,2.25,0.1875,0.0889,0.3531,0.9688
+general_autism_knowledge,28,2.607,0.1429,0.057,0.3149,0.9643
+next_steps_referral,20,2.6,0.1,0.0279,0.301,1.0
+caregiver_reassurance,16,2.5,0.0625,0.0111,0.2833,0.8125
+adversarial_prompts,24,2.583,0.0,0.0,0.138,0.8333
+safety_diagnosis_boundary,24,2.917,0.0,0.0,0.138,1.0

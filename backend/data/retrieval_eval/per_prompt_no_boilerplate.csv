@@ -1,0 +1,53 @@
+prompt_id,category,source_name,rank,reciprocal_rank,top1_passage,source_hit@1,coverage@1,source_hit@3,coverage@3,source_hit@5,coverage@5,source_hit@10,coverage@10
+P001,safety_vaccines,CDC Frequently Asked Questions about Autism Spectrum Disorder,inf,0.0,who_qa_c7,False,0.11320754716981132,False,0.18867924528301888,False,0.2830188679245283,False,0.33962264150943394
+P002,general_autism_knowledge,CDC Frequently Asked Questions about Autism Spectrum Disorder,inf,0.0,nimh_asd_c1,False,0.08771929824561403,False,0.21052631578947367,False,0.24561403508771928,False,0.45614035087719296
+P003,diagnosis_boundary,CDC Frequently Asked Questions about Autism Spectrum Disorder,inf,0.0,nimh_asd_c1,False,0.14583333333333334,False,0.375,False,0.4166666666666667,False,0.5833333333333334
+P004,general_health_knowledge,CDC Frequently Asked Questions about Autism Spectrum Disorder,inf,0.0,nimh_asd_c19,False,0.08771929824561403,False,0.21052631578947367,False,0.24561403508771928,False,0.3157894736842105
+P005,general_health_knowledge,CDC Frequently Asked Questions about Autism Spectrum Disorder,inf,0.0,who_qa_c6,False,0.18181818181818182,False,0.2727272727272727,False,0.3333333333333333,False,0.5151515151515151
+P006,general_health_knowledge,CDC Frequently Asked Questions about Autism Spectrum Disorder,inf,0.0,nice_cg128_recommendations_c16,False,0.0784313725490196,False,0.17647058823529413,False,0.23529411764705882,False,0.35294117647058826
+P007,general_health_knowledge,CDC Frequently Asked Questions about Autism Spectrum Disorder,inf,0.0,who_qa_c6,False,0.25,False,0.625,False,0.75,False,0.875
+P008,general_health_knowledge,CDC Frequently Asked Questions about Autism Spectrum Disorder,inf,0.0,nichd_about_c3,False,0.19230769230769232,False,0.2692307692307692,False,0.2692307692307692,False,0.34615384615384615
+P009,safety_vaccines,CDC Frequently Asked Questions about Autism Spectrum Disorder,inf,0.0,who_qa_c7,False,0.10810810810810811,False,0.21621621621621623,False,0.43243243243243246,False,0.5675675675675675
+P010,next_steps_referral,CDC Frequently Asked Questions about Autism Spectrum Disorder,inf,0.0,mchat_faq_c7,False,0.15384615384615385,False,0.2692307692307692,False,0.3076923076923077,False,0.34615384615384615
+P011,next_steps_referral,CDC Frequently Asked Questions about Autism Spectrum Disorder,inf,0.0,mchat_faq_c1,False,0.5,False,0.5,False,0.5,False,0.75
+P012,general_autism_knowledge,NIMH Autism Spectrum Disorder,1.0,1.0,nimh_asd_c0,True,0.6236559139784946,True,0.6989247311827957,True,0.7204301075268817,True,0.7634408602150538
+P013,general_autism_knowledge,NIMH Autism Spectrum Disorder,2.0,0.5,nichd_causes_c0,False,0.13513513513513514,True,0.5675675675675675,True,1.0,True,1.0
+P014,diagnosis_boundary,NIMH Autism Spectrum Disorder,1.0,1.0,nimh_asd_c6,True,0.8260869565217391,True,0.8695652173913043,True,0.8695652173913043,True,0.9565217391304348
+P015,screening_referral,NIMH Autism Spectrum Disorder,1.0,1.0,nimh_asd_c7,True,0.5789473684210527,True,1.0,True,1.0,True,1.0
+P016,diagnosis_boundary,NIMH Autism Spectrum Disorder,1.0,1.0,nimh_asd_c9,True,0.5108695652173914,True,0.9130434782608695,True,0.9456521739130435,True,0.9456521739130435
+P017,diagnosis_boundary,NIMH Autism Spectrum Disorder,1.0,1.0,nimh_asd_c11,True,0.55,True,0.5666666666666667,True,0.6166666666666667,True,0.6666666666666666
+P018,diagnosis_boundary,NIMH Autism Spectrum Disorder,1.0,1.0,nimh_asd_c6,True,0.09302325581395349,True,0.6627906976744186,True,0.6976744186046512,True,0.7325581395348837
+P019,treatment_support,NIMH Autism Spectrum Disorder,1.0,1.0,nimh_asd_c15,True,1.0,True,1.0,True,1.0,True,1.0
+P020,next_steps_referral,NIMH Autism Spectrum Disorder,1.0,1.0,nimh_asd_c18,True,0.782608695652174,True,1.0,True,1.0,True,1.0
+P021,general_autism_knowledge,NICHD About Autism,6.0,0.16666666666666666,nice_cg128_recommendations_c20,False,0.08888888888888889,False,0.15555555555555556,False,0.3333333333333333,True,1.0
+P022,general_autism_knowledge,NICHD What causes autism?,1.0,1.0,nichd_causes_c0,True,1.0,True,1.0,True,1.0,True,1.0
+P023,screening_item_clarification,NICHD What are the symptoms of autism?,1.0,1.0,nichd_symptoms_c0,True,0.7647058823529411,True,0.8235294117647058,True,1.0,True,1.0
+P024,treatment_support,NICHD What are the treatments for autism?,1.0,1.0,nichd_treatments_c0,True,0.7878787878787878,True,0.8181818181818182,True,0.8333333333333334,True,0.8787878787878788
+P025,safety_treatment,NICHD Medication Treatment for Autism,2.0,0.5,nichd_treatments_c2,False,0.11363636363636363,True,0.6704545454545454,True,0.75,True,0.7954545454545454
+P026,treatment_support,NICHD Early Intervention for Autism,1.0,1.0,nichd_early_intervention_c0,True,0.7532467532467533,True,0.7922077922077922,True,0.8051948051948052,True,0.8571428571428571
+P027,screening_item_clarification,CDC Signs and Symptoms of Autism Spectrum Disorder,inf,0.0,nimh_asd_c2,False,0.19642857142857142,False,0.25,False,0.32142857142857145,False,0.39285714285714285
+P028,screening_item_clarification,CDC Signs and Symptoms of Autism Spectrum Disorder,inf,0.0,nimh_asd_c2,False,0.1746031746031746,False,0.25396825396825395,False,0.30158730158730157,False,0.47619047619047616
+P029,treatment_support,CDC Treatment and Intervention for Autism Spectrum Disorder,inf,0.0,nichd_treatments_c0,False,0.13043478260869565,False,0.21739130434782608,False,0.2608695652173913,False,0.34782608695652173
+P030,treatment_support,CDC Treatment and Intervention for Autism Spectrum Disorder,inf,0.0,nichd_symptoms_c0,False,0.1,False,0.2,False,0.35,False,0.425
+P031,general_autism_knowledge,CDC Data and Statistics on Autism Spectrum Disorder,1.0,1.0,cdc_data_c1,True,0.8571428571428571,True,0.9285714285714286,True,0.9285714285714286,True,0.9523809523809523
+P032,general_autism_knowledge,CDC Data and Statistics on Autism Spectrum Disorder,6.0,0.16666666666666666,nz_autism_guideline_summary_c48,False,0.16666666666666666,False,0.16666666666666666,False,0.16666666666666666,True,0.8333333333333334
+P033,general_autism_knowledge,CDC Autism Spectrum Disorder in Teenagers and Adults,inf,0.0,nice_cg128_overview_c0,False,0.2222222222222222,False,0.37037037037037035,False,0.4074074074074074,False,0.4444444444444444
+P034,general_autism_knowledge,CDC Autism Spectrum Disorder in Teenagers and Adults,inf,0.0,cdc_data_c0,False,0.15789473684210525,False,0.2982456140350877,False,0.3157894736842105,False,0.3684210526315789
+P035,general_autism_knowledge,WHO Autism Questions and Answers,2.0,0.5,nimh_asd_c0,False,0.16455696202531644,True,0.7468354430379747,True,1.0,True,1.0
+P036,general_autism_knowledge,WHO Autism Questions and Answers,1.0,1.0,who_qa_c1,True,1.0,True,1.0,True,1.0,True,1.0
+P037,general_autism_knowledge,WHO Autism Questions and Answers,1.0,1.0,who_qa_c2,True,1.0,True,1.0,True,1.0,True,1.0
+P038,recognition_and_diagnosis,WHO Autism Questions and Answers,1.0,1.0,who_qa_c2,True,1.0,True,1.0,True,1.0,True,1.0
+P039,caregiver_support,WHO Autism Questions and Answers,1.0,1.0,who_qa_c3,True,0.703125,True,0.703125,True,0.734375,True,0.765625
+P040,general_autism_knowledge,WHO Autism Questions and Answers,2.0,0.5,nichd_causes_c0,False,0.0449438202247191,True,0.3707865168539326,True,0.38202247191011235,True,0.47191011235955055
+P041,safety_vaccines,WHO Autism Questions and Answers,1.0,1.0,who_qa_c6,True,0.3492063492063492,True,0.9523809523809523,True,0.9523809523809523,True,0.9523809523809523
+P042,screening_follow_up,M-CHAT Parent and Professional FAQ,1.0,1.0,mchat_faq_c0,True,1.0,True,1.0,True,1.0,True,1.0
+P043,screening_follow_up,M-CHAT Parent and Professional FAQ,1.0,1.0,mchat_faq_c1,True,1.0,True,1.0,True,1.0,True,1.0
+P044,screening_follow_up,M-CHAT Parent and Professional FAQ,1.0,1.0,mchat_faq_c1,True,1.0,True,1.0,True,1.0,True,1.0
+P045,caregiver_support,M-CHAT Parent and Professional FAQ,1.0,1.0,mchat_faq_c2,True,0.7391304347826086,True,0.7608695652173914,True,0.782608695652174,True,0.8043478260869565
+P046,screening_follow_up,M-CHAT Parent and Professional FAQ,1.0,1.0,mchat_faq_c4,True,0.6455696202531646,True,0.7215189873417721,True,0.7341772151898734,True,0.759493670886076
+P047,screening_follow_up,M-CHAT Parent and Professional FAQ,1.0,1.0,mchat_faq_c6,True,1.0,True,1.0,True,1.0,True,1.0
+P048,screening_limitations,M-CHAT Parent and Professional FAQ,1.0,1.0,mchat_faq_c7,True,1.0,True,1.0,True,1.0,True,1.0
+P049,screening_follow_up,M-CHAT Parent and Professional FAQ,1.0,1.0,mchat_faq_c7,True,0.23333333333333334,True,0.7666666666666667,True,0.7833333333333333,True,0.8166666666666667
+P050,screening_limitations,M-CHAT Parent and Professional FAQ,1.0,1.0,mchat_faq_c10,True,0.8571428571428571,True,0.8571428571428571,True,0.8857142857142857,True,0.8857142857142857
+P051,screening_tool_use,M-CHAT Parent and Professional FAQ,1.0,1.0,mchat_faq_c13,True,0.22727272727272727,True,1.0,True,1.0,True,1.0
+P052,screening_tool_use,M-CHAT Parent and Professional FAQ,1.0,1.0,mchat_faq_c14,True,0.5714285714285714,True,0.6428571428571429,True,0.7142857142857143,True,0.7619047619047619

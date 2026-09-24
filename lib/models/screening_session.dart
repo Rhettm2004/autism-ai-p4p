@@ -1,3 +1,4 @@
+import 'chat_reply.dart';
 import 'screening_models.dart';
 
 class ScreeningSession {
@@ -23,7 +24,7 @@ class ScreeningSession {
     required this.diagnosticTechnique,
   });
 
-  static const int currentVersion = 1;
+  static const int currentVersion = 2;
 
   final String sessionId;
   final DateTime startedAt;
@@ -73,6 +74,12 @@ class ScreeningSession {
               'text': message.text,
               'isUser': message.isUser,
               'timestamp': message.timestamp.toIso8601String(),
+              'sources': message.sources
+                  .map((source) => source.toJson())
+                  .toList(),
+              'route': message.route,
+              'model': message.model,
+              'isError': message.isError,
             },
           )
           .toList(),
@@ -91,7 +98,7 @@ class ScreeningSession {
   }
 
   factory ScreeningSession.fromJson(Map<String, dynamic> json) {
-    if (json['version'] != currentVersion) {
+    if (json['version'] != 1 && json['version'] != currentVersion) {
       throw const FormatException('Unsupported screening session version.');
     }
 
@@ -133,6 +140,12 @@ class ScreeningSession {
                 text: message['text'] as String,
                 isUser: message['isUser'] as bool,
                 timestamp: DateTime.parse(message['timestamp'] as String),
+                sources: (message['sources'] as List? ?? const [])
+                    .map((source) => ChatSource.fromJson(_jsonMap(source)))
+                    .toList(growable: false),
+                route: message['route'] as String?,
+                model: message['model'] as String?,
+                isError: message['isError'] as bool? ?? false,
               );
             }).toList()
           : const [],

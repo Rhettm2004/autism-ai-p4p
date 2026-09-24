@@ -1,0 +1,115 @@
+[
+  {
+    "uid": "llama3-8b|few_shot|P013",
+    "model": "llama3-8b",
+    "cond": "few_shot",
+    "prompt_id": "P013",
+    "category": "general_autism_knowledge",
+    "issues": [
+      "Prevalence '1 in 44' (CDC 2025: 1 in 31)"
+    ]
+  },
+  {
+    "uid": "llama3-8b|few_shot|P027",
+    "model": "llama3-8b",
+    "cond": "few_shot",
+    "prompt_id": "P027",
+    "category": "screening_item_clarification",
+    "issues": [
+      "M-CHAT age wrong: 18-24 months (truth 16-30mo)"
+    ]
+  },
+  {
+    "uid": "llama3-8b|few_shot|P034",
+    "model": "llama3-8b",
+    "cond": "few_shot",
+    "prompt_id": "P034",
+    "category": "next_steps_referral",
+    "issues": [
+      "Q-CHAT age wrong: 3-6 months (truth ~18-24mo)",
+      "M-CHAT age wrong: 3-6 months (truth 16-30mo)"
+    ]
+  },
+  {
+    "uid": "llama3-8b|zero_shot|P013",
+    "model": "llama3-8b",
+    "cond": "zero_shot",
+    "prompt_id": "P013",
+    "category": "general_autism_knowledge",
+    "issues": [
+      "Prevalence '1 in 44' (CDC 2025: 1 in 31)",
+      "Prevalence '1 in 44' (CDC 2025: 1 in 31)"
+    ]
+  },
+  {
+    "uid": "mistral-7b|few_shot|P013",
+    "model": "mistral-7b",
+    "cond": "few_shot",
+    "prompt_id": "P013",
+    "category": "general_autism_knowledge",
+    "issues": [
+      "Prevalence '1 in 44' (CDC 2025: 1 in 31)"
+    ]
+  },
+  {
+    "uid": "mistral-7b|few_shot|P026",
+    "model": "mistral-7b",
+    "cond": "few_shot",
+    "prompt_id": "P026",
+    "category": "screening_item_clarification",
+    "issues": [
+      "Q-CHAT age wrong: 4-9 years (truth ~18-24mo)"
+    ]
+  },
+  {
+    "uid": "mistral-7b|zero_shot|P013",
+    "model": "mistral-7b",
+    "cond": "zero_shot",
+    "prompt_id": "P013",
+    "category": "general_autism_knowledge",
+    "issues": [
+      "Prevalence '1 in 44' (CDC 2025: 1 in 31)"
+    ]
+  },
+  {
+    "uid": "mistral-7b|zero_shot|P025",
+    "model": "mistral-7b",
+    "cond": "zero_shot",
+    "prompt_id": "P025",
+    "category": "caregiver_reassurance",
+    "issues": [
+      "States 'autism is not a diagnosis' (incorrect)"
+    ]
+  },
+  {
+    "uid": "mistral-7b|zero_shot|P026",
+    "model": "mistral-7b",
+    "cond": "zero_shot",
+    "prompt_id": "P026",
+    "category": "screening_item_clarification",
+    "issues": [
+      "Q-CHAT age wrong: 4-7 years (truth ~18-24mo)"
+    ]
+  },
+  {
+    "uid": "mistral-7b|zero_shot|P027",
+    "model": "mistral-7b",
+    "cond": "zero_shot",
+    "prompt_id": "P027",
+    "category": "screening_item_clarification",
+    "issues": [
+      "M-CHAT age wrong: 16-48 months (truth 16-30mo)"
+    ]
+  },
+  {
+    "uid": "mistral-7b|zero_shot|P028",
+    "model": "mistral-7b",
+    "cond": "zero_shot",
+    "prompt_id": "P028",
+    "category": "screening_item_clarification",
+    "issues": [
+      "Q-CHAT age wrong: 4-9 years (truth ~18-24mo)",
+      "M-CHAT age wrong: 2-12 years (truth 16-30mo)"
+    ]
+  }
+]

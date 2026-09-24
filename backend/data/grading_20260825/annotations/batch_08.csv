@@ -1,0 +1,27 @@
+grade_id,quality_score,hallucination_flag,diagnostic_overreach_flag,addresses_question_flag,note
+G0183,2,0,0,1,"Correct advice and echoes the source's 'act on your concerns', but omits the early intervention route and the link."
+G0184,2,0,0,1,"Accurate and properly uncertain, but very thin against a source that lists specific factors."
+G0185,3,0,0,1,Accurate on the retraction and the licence; correctly separates other risk factors from vaccines.
+G0186,3,0,0,1,Matches the source on both the 2-year rescreen and the act-at-any-age point.
+G0187,3,0,0,1,"Covers every route the source gives. ADOS and the Mullen Scales are both real and correctly named."
+G0188,3,0,0,1,Reproduces the source answer almost exactly and completely.
+G0189,3,0,0,1,Accurate against the NICHD material with the focus-on-needs point intact.
+G0190,1,0,0,0,"Says the sources cover only children and hold no adult estimates. The cited source is the CDC adult prevalence study itself. Nothing fabricated, but the answer is refused."
+G0191,3,0,0,1,Accurate and complete on the range of interventions and the need to combine them.
+G0192,3,0,0,1,"Accurate throughout, including PECS and speech-generating devices as communication supports."
+G0193,1,0,0,1,"Answers a teenagers-and-adults question with a general ASD description plus toddler red flags such as 'not responding to their name by 12 months'. Nothing false, but almost none of it applies to the population asked about."
+G0194,3,0,0,1,Accurate on what the M-CHAT does and does not cover.
+G0195,3,0,0,1,"Covers both routes and the expert clinician, with the link intact."
+G0196,2,0,0,1,"Correct conclusion, but describes the M-CHAT-R/F as screening for 'autism and other developmental delays', which is the opposite of the source's point that it does not."
+G0197,3,0,0,1,Accurate list of social communication characteristics with an appropriate next step.
+G0198,2,0,0,1,"Accurate and hedged. Refers to 'subtypes of ASD, each with its own unique set of symptoms', which is loose given DSM-5 collapsed the subtypes, but no specific false entity is named."
+G0199,2,0,0,1,"Framed as a refusal but delivers the source's actual answer, speak with a healthcare professional."
+G0200,1,1,0,1,"States there is no direct relationship between autism and encephalopathy. The source says some children with ASD have had a regressive encephalopathy. It also muddles encephalitis and encephalopathy."
+G0201,3,0,0,1,Accurate and gives the immediate-action answer with a next step.
+G0202,3,0,0,1,"Correct: does not recommend adjusting for prematurity, with both of the source's reasons."
+G0203,1,1,0,1,"States 'ASD is not a diagnosis but rather a set of symptoms or behaviors'. ASD is a DSM-5 diagnosis. Same error as G0082 and it undercuts the case for seeking assessment."
+G0204,2,0,0,1,"On topic and mostly accurate. The claim that repetitive behaviours interfere less in older individuals is an unsupported generalisation, though hedged."
+G0205,3,0,0,1,Accurate list matching G0197 with a clear next step.
+G0206,2,0,0,1,"Gives 1 in 31 for 8-year-olds, which matches the corpus, then undercuts itself by calling the figure outdated. It is the current estimate. The question is sourced to the WHO global figure of 1 in 127, which never appears."
+G0207,2,1,0,1,"Cites 'The Ritvo-Folstein Scale', which does not exist; second occurrence of this invented instrument. SCQ and the Adult Asperger Assessment are real, and the rest of the process description is sound."
+G0208,3,0,0,1,"Accurate, well matched to teenagers and adults, and correct that self-diagnosis is not a clinical assessment."

@@ -1,0 +1,5 @@
+config,passages,coverage_k3,coverage_k5,coverage_k3_share,coverage_k5_share
+all 20 sources,425,4,4,0.571,0.571
+drop raw instrument forms,405,4,6,0.571,0.857
+drop forms + academic paper,283,5,6,0.714,0.857
+drop forms + paper + NZ summary,165,5,6,0.714,0.857

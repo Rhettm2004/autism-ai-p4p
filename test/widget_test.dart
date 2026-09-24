@@ -13,6 +13,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Autism AI Assistant'), findsOneWidget);
+    expect(find.text('Mock'), findsOneWidget);
     expect(find.byKey(const Key('chat-input')), findsOneWidget);
     expect(
       find.textContaining('Ask me about the screening process'),

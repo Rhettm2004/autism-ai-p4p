@@ -1,0 +1,6 @@
+chunk_size,overlap,probes_covered_k3,probes_covered_k5,probes_covered_k8
+40,10,2,3,3
+60,15,3,4,4
+90,25,3,3,4
+120,30,4,4,4
+160,40,4,4,4

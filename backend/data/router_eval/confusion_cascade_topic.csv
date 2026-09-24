@@ -1,0 +1,8 @@
+,safety_deflect,misinformation_correction,screening_guidance,result_explanation,referral,general_knowledge,caregiver_support
+safety_deflect,90,0,0,22,0,4,4
+misinformation_correction,0,16,0,0,2,22,0
+screening_guidance,0,0,112,18,7,13,0
+result_explanation,0,0,19,103,1,10,7
+referral,0,0,0,24,25,48,3
+general_knowledge,0,14,4,13,21,264,4
+caregiver_support,0,0,4,39,6,4,7
