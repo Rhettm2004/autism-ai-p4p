@@ -268,7 +268,11 @@ class ChatRuntime:
                 valid = {source['number'] for source in turn.sources}
                 response_text, mapping, invalid_citations = renumber_citations(
                     result.text, valid)
-                response_sources = order_sources_by_citation(turn.sources, mapping)
+                response_sources = [
+                    source for source in order_sources_by_citation(
+                        turn.sources, mapping)
+                    if source['cited']
+                ]
 
             return ChatResponse(request_id=request.request_id, session_id=request.session_id,
                 context_revision=request.screening_context.revision, response=response_text,

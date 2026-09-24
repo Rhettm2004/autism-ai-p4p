@@ -336,6 +336,12 @@ sources:
     authority: 2
     enabled: true
     # cited by 2 v4 prompt(s)
+  - id: kidshealth_jaundice
+    name: "KidsHealth New Zealand - Jaundice"
+    url: https://www.kidshealth.org.nz/jaundice
+    authority: 2
+    enabled: true
+    # Supports the application's existing background question about jaundice.
   - id: kidshealth_autism_takiwatanga_support_inform
     name: "KidsHealth New Zealand - Autism-Takiwātanga Support Information For Youth Aged 16 & Older"
     url: https://www.kidshealth.org.nz/autism-takiwatanga-asd/autism-takiwatanga-support-information-for-youth-aged-16-older

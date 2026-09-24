@@ -30,9 +30,9 @@ Last verified: 23 September 2026 (Pacific/Auckland).
   `/rag`, `/quit`, and `/exit` support. Command settings are explicit request
   data. Router/RAG/concise and inline citations start on in the integrated app.
 - Applied Rayaan's original citation renumbering and source-ordering functions
-  to API answers. As in Rayaan's terminal demo, uncited answers are returned
-  without a rewrite, sources are marked cited or uncited, and invalid source
-  numbers are reported in response metadata.
+  to API answers. Uncited answers are returned without a rewrite, only cited
+  sources are exposed to Flutter, and invalid source numbers are reported in
+  response metadata.
 - Kept the screening UI, stage flow, question banks, scoring, validation, report,
   mock prediction, direct local chat provider, and mock chat provider in place.
 
@@ -86,11 +86,13 @@ model-quality evaluation.
 
 Rayaan's documented `build_corpus.py --list` and refresh build were rerun on
 23 September 2026. The project owner then supplied the corpus snapshot used for
-the `chat.py` comparison. It contains 1,670 passages from 51 of the 61 enabled
-manifest sources. `config/corpus_policy.yaml` records the ten exclusions,
-snapshot SHA-256, and reasons without changing Rayaan's upstream manifest. The
-readiness validator accepts this 51-source snapshot and health reports the
-reduced scope. It reproduces the five retrieved passages in the supplied
+the `chat.py` comparison. An official KidsHealth New Zealand jaundice page was
+subsequently added through Rayaan's builder to support the application's existing
+background question. The resulting corpus contains 1,689 passages from 52 of the
+62 enabled manifest sources. `config/corpus_policy.yaml` records the addition,
+ten exclusions, resulting SHA-256, and reasons. The readiness validator accepts
+this 52-source corpus and health reports the reduced scope. The base snapshot
+reproduces the five retrieved passages in the supplied
 "what is asd" prompt when used with neighbour expansion off, but it does not
 contain every source in the current manifest.
 
@@ -110,9 +112,9 @@ Missing source IDs:
 Accepted reduced-corpus fingerprints:
 
 - manifest SHA-256:
-  `9868aa4fd0ac1bcec54a9ee1343f2cfa514174a1ef3d036462eaabc917a615b7`
+  `e8099d006a2debc35c62e04e87f67dd25927788d7778ce631771b74b4c8b9df0`
 - corpus SHA-256:
-  `c185a35adfef3ebe971ac64018d6550ee4ecd9513515c210ca3b48f1976db713`
+  `540364bca8c95f78e206a275ae14d90afd96699573e4ac81b342a70d20608ef7`
 
 The corpus and readiness JSON remain ignored because source redistribution and
 generated-data rules in Rayaan's repository require that. Exact failures are in

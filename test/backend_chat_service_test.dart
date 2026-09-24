@@ -319,6 +319,15 @@ void main() {
                       authority: '5',
                       lowAuthority: true,
                       passageIds: ['x'],
+                      cited: true,
+                    ),
+                    ChatSource(
+                      number: 2,
+                      title: 'Uncited title',
+                      url: 'https://example.org/uncited',
+                      authority: '2',
+                      lowAuthority: false,
+                      passageIds: ['y'],
                     ),
                   ],
                 ),
@@ -334,6 +343,7 @@ void main() {
       );
       expect(find.text('Sources for this answer'), findsOneWidget);
       expect(find.text('1. Source title'), findsOneWidget);
+      expect(find.text('2. Uncited title'), findsNothing);
       expect(find.textContaining('commercial or blog source'), findsOneWidget);
     },
   );

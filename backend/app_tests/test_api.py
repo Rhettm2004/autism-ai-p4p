@@ -81,7 +81,8 @@ def test_chat_routes_retrieves_constructs_prompt_and_sources(client_runtime):
     assert data['action'] is None and data['route'] == 'screening_guidance'
     assert runtime.router.calls == ['What does screening mean?']
     assert data['metadata']['rag_used'] is True
-    assert any(s['low_authority'] for s in data['sources'])
+    assert [source['title'] for source in data['sources']] == [
+        'Fixture instrument documentation']
     assert all(s['passage_ids'] for s in data['sources'])
     assert data['response'].endswith('[1]')
     assert data['sources'][0]['cited'] is True
@@ -122,7 +123,7 @@ def test_uncited_and_invalid_citations_match_rayaan_reporting(client_runtime, te
     data = response.json()
     assert data['response'] == text
     assert data['metadata']['invalid_citations'] == invalid
-    assert all(source['cited'] is False for source in data['sources'])
+    assert data['sources'] == []
     assert len(runtime.adapter.calls) == 1
 
 

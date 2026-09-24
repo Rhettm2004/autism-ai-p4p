@@ -186,6 +186,9 @@ class _ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final citedSources = message.sources
+        .where((source) => source.cited)
+        .toList();
     return Semantics(
       label: message.isUser ? 'You said' : 'Assistant said',
       child: Container(
@@ -207,13 +210,13 @@ class _ChatBubble extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(message.text, style: Theme.of(context).textTheme.bodySmall),
-            if (message.sources.isNotEmpty) ...[
+            if (citedSources.isNotEmpty) ...[
               const SizedBox(height: 8),
               const Text(
                 'Sources for this answer',
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
-              for (final source in message.sources)
+              for (final source in citedSources)
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: Column(
@@ -249,7 +252,7 @@ class _ChatBubble extends StatelessWidget {
                         child: Text('${source.number}. ${source.title}'),
                       ),
                       Text(
-                        '${source.cited ? 'Cited in the answer' : 'Additional retrieved source'} · '
+                        'Cited in the answer · '
                         '${source.lowAuthority ? 'commercial or blog source' : 'authority tier ${source.authority}'}',
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
