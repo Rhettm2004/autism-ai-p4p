@@ -184,7 +184,7 @@ Key differences from evaluated generation:
 | Prompt | `prepare_turn()` blocks + exact question | Same base blocks plus versioned app context/history |
 | Corpus | Research snapshot | Locally prepared/supplied corpus with explicit fingerprint |
 
-The adapter fixes temperature 0.1, max tokens 512, top-k 50, top-p 1, min-p 0 and
+The adapter fixes temperature 0.1, max tokens 256, top-k 50, top-p 1, min-p 0 and
 repeat/presence/frequency penalties 1/0/0. These are explicit app settings, not a
 claim of HF sampling parity. Model aliases are backend configuration, not arbitrary
 user-controlled model URLs. The local GGUF chat template is used by llama.cpp.

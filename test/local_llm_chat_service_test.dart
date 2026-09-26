@@ -52,6 +52,88 @@ void main() {
       },
     );
 
+    test(
+      'starts from natural consent after an explanatory assistant turn',
+      () async {
+        var requestCount = 0;
+        final client = MockClient((request) async {
+          requestCount += 1;
+          return _successResponse('Unexpected');
+        });
+        final service = LocalLlmChatService(
+          baseUrl: 'http://localhost:8080',
+          client: client,
+        );
+        addTearDown(() {
+          service.dispose();
+          client.close();
+        });
+        final history = [
+          _message(
+            'Would you like to start a screening?',
+            isUser: false,
+            minute: 0,
+          ),
+          _message('How does this work?', isUser: true, minute: 1),
+          _message(
+            'When you are ready, say "yes" or "I am ready to start screening".',
+            isUser: false,
+            minute: 2,
+          ),
+        ];
+
+        for (final phrase in [
+          'ok im ready to get started',
+          "I'm ready to start screening",
+          "Let's get started",
+          'yes',
+        ]) {
+          final reply = await service.sendMessage(
+            message: phrase,
+            history: history,
+            context: const ScreeningContext(
+              stage: ScreeningStage.welcome,
+              revision: 4,
+            ),
+          );
+          expect(reply.action?.type, ChatActionType.startScreening);
+          expect(reply.action?.expectedContextRevision, 4);
+        }
+        expect(requestCount, 0);
+      },
+    );
+
+    test('does not start from negative readiness language', () async {
+      var requestCount = 0;
+      final client = MockClient((request) async {
+        requestCount += 1;
+        return _successResponse('Not starting.');
+      });
+      final service = LocalLlmChatService(
+        baseUrl: 'http://localhost:8080',
+        client: client,
+      );
+      addTearDown(() {
+        service.dispose();
+        client.close();
+      });
+
+      final reply = await service.sendMessage(
+        message: "I'm not ready to start screening",
+        history: [
+          _message(
+            'Would you like to start a screening?',
+            isUser: false,
+            minute: 0,
+          ),
+        ],
+        context: const ScreeningContext(stage: ScreeningStage.welcome),
+      );
+
+      expect(reply.action, isNull);
+      expect(requestCount, 1);
+    });
+
     test('sends OpenAI-compatible history and read-only app context', () async {
       late http.Request capturedRequest;
       late Map<String, dynamic> capturedBody;

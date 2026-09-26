@@ -179,7 +179,13 @@ def test_application_profile_includes_history_context_and_questionnaire(client_r
     assert history[0] in messages and history[1] in messages
     assert 'Question four?' in messages[-1]['content']
     assert 'Question eight?' in messages[-1]['content']
-    assert response.json()['metadata']['application_prompt_version'] == 2
+    assert 'Do not repeat the warning that' in messages[0]['content']
+    assert 'When you\'re ready, say "yes"' in messages[0]['content']
+    assert 'The conversational AI guides the user' in messages[0]['content']
+    assert 'Q-CHAT-10 for 18 to under 36 months' in messages[0]['content']
+    assert 'Background details do not currently' in messages[0]['content']
+    assert 'It does not upload answers' in messages[0]['content']
+    assert response.json()['metadata']['application_prompt_version'] == 4
 
 
 def test_clear_welcome_consent_proposes_start_without_model_generation(client_runtime):
@@ -192,6 +198,46 @@ def test_clear_welcome_consent_proposes_start_without_model_generation(client_ru
         'expected_context_revision': 1,
     }
     assert runtime.adapter.calls == []
+
+
+@pytest.mark.parametrize('message', [
+    'ok im ready to get started',
+    "I'm ready to start screening",
+    "Let's get started",
+    'yes',
+])
+def test_natural_welcome_consent_starts_after_an_explanatory_turn(
+        client_runtime, message):
+    client, runtime = client_runtime
+    history = [
+        {'role': 'assistant', 'content': 'Would you like to start a screening?'},
+        {'role': 'user', 'content': 'How does this chatbot work?'},
+        {'role': 'assistant', 'content': (
+            'I can answer questions. When you are ready, say "yes" or '
+            '"I am ready to start screening".')},
+    ]
+    response = client.post('/chat', json=payload(
+        message=message,
+        history=history,
+    ))
+    assert response.status_code == 200
+    assert response.json()['action']['type'] == 'start_screening'
+    assert runtime.adapter.calls == []
+
+
+@pytest.mark.parametrize('message', [
+    "I'm not ready to start screening",
+    "No, don't start the screening",
+])
+def test_negative_welcome_language_does_not_start(client_runtime, message):
+    client, runtime = client_runtime
+    response = client.post('/chat', json=payload(
+        message=message,
+        history=[{'role': 'assistant', 'content': 'Would you like to start a screening?'}],
+    ))
+    assert response.status_code == 200
+    assert response.json()['action'] is None
+    assert len(runtime.adapter.calls) == 1
 
 
 def test_affirmative_does_not_start_without_a_screening_invitation(client_runtime):
@@ -367,7 +413,7 @@ def test_llama_adapter_contract_and_errors():
             for alias in ('mistral', 'llama'):
                 result = await adapter.generate([{'role': 'user', 'content': 'Hello'}], alias)
                 assert result.text == 'Visible' and calls[-1]['model'] == alias
-                assert calls[-1]['repeat_penalty'] == 1.0 and calls[-1]['max_tokens'] == 512
+                assert calls[-1]['repeat_penalty'] == 1.0 and calls[-1]['max_tokens'] == 256
             await adapter.close()
             assert not client.is_closed
         for code, value in [(200, {'choices': []}), (200, {'choices': [{'message': {'content': '<think>secret</think>'}}]}),

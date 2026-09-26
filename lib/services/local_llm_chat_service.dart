@@ -257,9 +257,24 @@ class LocalLlmChatService extends ChatService {
 
   bool _isStartRequest(String message, List<ChatMessage> history) {
     final text = message.toLowerCase().trim().replaceAll(RegExp(r'[.!?]'), '');
-    if (text == '/start' ||
+    if (text == '/start') {
+      return true;
+    }
+    if (const [
+      "don't start",
+      'do not start',
+      'not ready',
+      'no screening',
+      "don't want",
+      'do not want',
+    ].any(text.contains)) {
+      return false;
+    }
+    if (RegExp(
+          r'\b(start|begin|take|do|complete)\b.{0,24}\b(screening|questionnaire|test)\b|\b(screening|questionnaire|test)\b.{0,24}\b(start|begin|take|do|complete)\b',
+        ).hasMatch(text) ||
         RegExp(
-          r'\b(start|begin|take|do)\b.{0,24}\b(screening|questionnaire|test)\b',
+          r"\b(?:i am|i['’]?m|im|we are|we['’]?re)?\s*ready\b.{0,32}\b(?:start|begin|screening|questionnaire|test|get\s+started)\b|\blet['’]?s\s+(?:start|get\s+started)\b",
         ).hasMatch(text)) {
       return true;
     }
@@ -272,18 +287,29 @@ class LocalLlmChatService extends ChatService {
       'okay',
       'ok',
       "let's start",
+      'lets start',
+      "let's get started",
+      'lets get started',
       'ready',
       "i'm ready",
+      'im ready',
       'i am ready',
     }.contains(text)) {
       return false;
     }
-    for (final entry in history.reversed) {
-      if (!entry.isUser) {
-        return entry.text.toLowerCase().contains('start a screening');
-      }
-    }
-    return false;
+    final assistantHistory = history
+        .where((entry) => !entry.isUser)
+        .map((entry) => entry.text.toLowerCase())
+        .join(' ');
+    return const [
+      'start a screening',
+      'start screening',
+      'begin a screening',
+      'ready to start',
+      'ready to get started',
+      'say "yes"',
+      "say 'yes'",
+    ].any(assistantHistory.contains);
   }
 
   @override

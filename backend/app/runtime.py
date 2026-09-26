@@ -20,8 +20,15 @@ class ChatRuntime:
     )
     _affirmatives = {
         'yes', 'yes please', 'yeah', 'yep', 'sure', 'okay', 'ok',
-        'lets start', "let's start", 'ready', "i'm ready", 'i am ready',
+        'lets start', "let's start", 'lets get started', "let's get started",
+        'ready', "i'm ready", 'im ready', 'i am ready',
     }
+    _ready_to_start = re.compile(
+        r"\b(?:i\s+am|i['’]?m|im|we\s+are|we['’]?re)?\s*ready\b.{0,32}"
+        r"\b(?:start|begin|screening|questionnaire|test|get\s+started)\b|"
+        r"\blet['’]?s\s+(?:start|get\s+started)\b",
+        re.IGNORECASE,
+    )
     def __init__(self, settings, adapter=None):
         self.settings = settings
         self.adapter = adapter or LlamaCppAdapter(settings.model_urls, settings.timeout_seconds)
@@ -148,7 +155,8 @@ class ChatRuntime:
                 {'role': 'user', 'content': request.message},
             ]
         else:
-            system = turn.system_prompt + '\n\n' + self.application['contract']
+            system = (turn.system_prompt + '\n\n' + self.application['contract']
+                      + '\n\n' + self.application['process_guide'])
             context = json.dumps(request.screening_context.model_dump(), ensure_ascii=False)
             messages = [{'role': 'system', 'content': system}]
             current_user = ('<read_only_screening_context>\n' + context +
@@ -201,16 +209,21 @@ class ChatRuntime:
             return False
         if cls._explicit_start.search(normalized):
             return True
+        if cls._ready_to_start.search(normalized):
+            return True
         simple = normalized.strip(' .!?')
         if simple not in cls._affirmatives:
             return False
-        previous_assistant = next(
-            (message.content.lower() for message in reversed(request.history)
-             if message.role == 'assistant'),
-            '',
+        # The welcome message can be followed by an explanatory turn before the
+        # user consents, so inspect all assistant turns rather than only the last.
+        assistant_history = ' '.join(
+            message.content.lower() for message in request.history
+            if message.role == 'assistant'
         )
-        return ('start a screening' in previous_assistant
-                or 'begin a screening' in previous_assistant)
+        return any(phrase in assistant_history for phrase in (
+            'start a screening', 'start screening', 'begin a screening',
+            'ready to start', 'ready to get started', 'say "yes"', "say 'yes'",
+        ))
 
     def _start_screening_response(self, request):
         return ChatResponse(
