@@ -51,88 +51,204 @@ const context = ScreeningContext(
   currentQuestionId: 'qchat10_q4',
   currentQuestionIndex: 3,
   currentQuestionText: 'Official wording',
+  questionnaireQuestions: [
+    ScreeningQuestionContext(id: 'qchat10_q4', number: 4, text: 'Question 4'),
+    ScreeningQuestionContext(id: 'qchat10_q8', number: 8, text: 'Question 8'),
+  ],
 );
 
 void main() {
   for (final model in ['mistral', 'llama']) {
-    test('$model sends bounded history once and read-only context', () async {
-      late Map<String, dynamic> captured;
-      final client = MockClient((request) async {
-        expect(request.url.toString(), 'http://localhost:8000/chat');
-        captured = jsonDecode(request.body) as Map<String, dynamic>;
-        return http.Response(jsonEncode(reply(captured)), 200);
-      });
-      final service = AutismAiBackendChatService(
-        baseUrl: 'http://localhost:8000/',
-        model: model,
-        client: client,
-      );
-      addTearDown(client.close);
-      final result = await service.sendMessage(
-        message: 'Explain',
-        context: context,
-        history: [
-          ...List.generate(20, (i) => message('Earlier $i', isUser: i.isEven)),
-          message('Service error', isUser: false, isError: true),
-          message('Explain'),
-        ],
-      );
-      expect(captured['history'], hasLength(12));
-      expect(
-        (captured['history'] as List).any((m) => m['content'] == 'Explain'),
-        isFalse,
-      );
-      expect(captured['model'], model);
-      expect(captured['options'], {
-        'router': true,
-        'rag': true,
-        'cite': true,
-        'concise': true,
-      });
-      expect(
-        captured['screening_context']['current_question']['id'],
-        'qchat10_q4',
-      );
-      expect(captured['screening_context'].containsKey('answers'), isFalse);
-      expect(
-        result.sources.single.link.toString(),
-        'https://example.org/source',
-      );
-    });
+    test(
+      '$model sends conversation history once and read-only context',
+      () async {
+        late Map<String, dynamic> captured;
+        final client = MockClient((request) async {
+          expect(request.url.toString(), 'http://localhost:8000/chat');
+          captured = jsonDecode(request.body) as Map<String, dynamic>;
+          return http.Response(jsonEncode(reply(captured)), 200);
+        });
+        final service = AutismAiBackendChatService(
+          baseUrl: 'http://localhost:8000/',
+          model: model,
+          client: client,
+        );
+        addTearDown(client.close);
+        final result = await service.sendMessage(
+          message: 'Explain',
+          context: context,
+          history: [
+            ...List.generate(
+              20,
+              (i) => message('Earlier $i', isUser: i.isEven),
+            ),
+            message('Service error', isUser: false, isError: true),
+            message('Explain'),
+          ],
+        );
+        expect(captured['history'], hasLength(20));
+        expect(
+          (captured['history'] as List).any((m) => m['content'] == 'Explain'),
+          isFalse,
+        );
+        expect(captured['model'], model);
+        expect(captured['options'], {
+          'router': true,
+          'rag': true,
+          'cite': true,
+          'concise': true,
+        });
+        expect(
+          captured['screening_context']['current_question']['id'],
+          'qchat10_q4',
+        );
+        expect(captured['screening_context'].containsKey('answers'), isFalse);
+        expect(
+          captured['screening_context']['questionnaire_questions'],
+          hasLength(2),
+        );
+        expect(
+          result.sources.single.link.toString(),
+          'https://example.org/source',
+        );
+      },
+    );
   }
 
-  test('rejects mismatched, malformed and action-bearing replies', () async {
-    for (final change in <void Function(Map<String, dynamic>)>[
-      (r) => r['action'] = {'type': 'set_answer', 'answer': 'Always'},
-      (r) => r['session_id'] = 'other',
-      (r) => r['request_id'] = 'other',
-      (r) => r['context_revision'] = 99,
-      (r) => r['model'] = 'llama',
-      (r) => r['route'] = 'invented',
-      (r) => r['sources'] = 'invalid',
-      (r) => r['response'] = '',
-    ]) {
-      final client = MockClient((request) async {
-        final data = reply(jsonDecode(request.body));
-        change(data);
-        return http.Response(jsonEncode(data), 200);
-      });
-      final service = AutismAiBackendChatService(
-        baseUrl: 'http://localhost:8000',
-        client: client,
-      );
-      await expectLater(
-        service.sendMessage(message: 'Explain', history: [], context: context),
-        throwsA(
-          isA<ChatServiceException>().having(
-            (e) => e.type,
-            'type',
-            ChatFailureType.invalidResponse,
+  test(
+    'rejects mismatched, malformed and unsupported action replies',
+    () async {
+      for (final change in <void Function(Map<String, dynamic>)>[
+        (r) => r['action'] = {'type': 'set_answer', 'answer': 'Always'},
+        (r) => r['action'] = {
+          'type': 'start_screening',
+          'expected_context_revision': 5,
+          'answer': 'Always',
+        },
+        (r) => r['session_id'] = 'other',
+        (r) => r['request_id'] = 'other',
+        (r) => r['context_revision'] = 99,
+        (r) => r['model'] = 'llama',
+        (r) => r['route'] = 'invented',
+        (r) => r['sources'] = 'invalid',
+        (r) => r['response'] = '',
+      ]) {
+        final client = MockClient((request) async {
+          final data = reply(jsonDecode(request.body));
+          change(data);
+          return http.Response(jsonEncode(data), 200);
+        });
+        final service = AutismAiBackendChatService(
+          baseUrl: 'http://localhost:8000',
+          client: client,
+        );
+        await expectLater(
+          service.sendMessage(
+            message: 'Explain',
+            history: [],
+            context: context,
           ),
+          throwsA(
+            isA<ChatServiceException>().having(
+              (e) => e.type,
+              'type',
+              ChatFailureType.invalidResponse,
+            ),
+          ),
+        );
+        client.close();
+      }
+    },
+  );
+
+  test('compresses older turns while preserving recent conversation', () async {
+    late Map<String, dynamic> captured;
+    final client = MockClient((request) async {
+      captured = jsonDecode(request.body) as Map<String, dynamic>;
+      return http.Response(jsonEncode(reply(captured)), 200);
+    });
+    final service = AutismAiBackendChatService(
+      baseUrl: 'http://localhost:8000',
+      client: client,
+    );
+    addTearDown(client.close);
+    final history = [
+      for (var index = 0; index < 70; index++)
+        message('Earlier message $index', isUser: index.isEven),
+      message('Current message'),
+    ];
+
+    await service.sendMessage(
+      message: 'Current message',
+      history: history,
+      context: context,
+    );
+
+    final sent = (captured['history'] as List).cast<Map<String, dynamic>>();
+    expect(sent.length, lessThanOrEqualTo(59));
+    expect(sent.first['content'], contains('Earlier conversation excerpts'));
+    expect(sent.last['content'], 'Earlier message 69');
+  });
+
+  test(
+    'accepts a start action and controller validates and applies it',
+    () async {
+      final client = MockClient((request) async {
+        final body = jsonDecode(request.body) as Map<String, dynamic>;
+        final data = reply(body)
+          ..['response'] = 'Let’s begin.'
+          ..['action'] = {
+            'type': 'start_screening',
+            'expected_context_revision': body['screening_context']['revision'],
+          };
+        return http.Response.bytes(
+          utf8.encode(jsonEncode(data)),
+          200,
+          headers: const {'content-type': 'application/json; charset=utf-8'},
+        );
+      });
+      final controller = ScreeningController(
+        chatService: AutismAiBackendChatService(
+          baseUrl: 'http://localhost:8000',
+          client: client,
         ),
       );
+      addTearDown(() {
+        controller.dispose();
+        client.close();
+      });
+
+      await controller.sendChatMessage('Yes please');
+
+      expect(controller.stage, ScreeningStage.toddlerCheck);
+      expect(controller.chatMessages.last.text, 'Let’s begin.');
+    },
+  );
+
+  test('controller ignores a stale start action', () async {
+    final client = MockClient((request) async {
+      final body = jsonDecode(request.body) as Map<String, dynamic>;
+      final data = reply(body)
+        ..['action'] = {
+          'type': 'start_screening',
+          'expected_context_revision': 0,
+        };
+      return http.Response(jsonEncode(data), 200);
+    });
+    final controller = ScreeningController(
+      chatService: AutismAiBackendChatService(
+        baseUrl: 'http://localhost:8000',
+        client: client,
+      ),
+    );
+    addTearDown(() {
+      controller.dispose();
       client.close();
-    }
+    });
+
+    await controller.sendChatMessage('Yes please');
+
+    expect(controller.stage, ScreeningStage.welcome);
   });
 
   test('unavailable backend surfaces failure without fallback', () async {
@@ -173,7 +289,11 @@ void main() {
           'executed_question': null,
         };
       }
-      return http.Response(jsonEncode(data), 200);
+      return http.Response.bytes(
+        utf8.encode(jsonEncode(data)),
+        200,
+        headers: const {'content-type': 'application/json; charset=utf-8'},
+      );
     });
     final service = AutismAiBackendChatService(
       baseUrl: 'http://localhost:8000',

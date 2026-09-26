@@ -51,9 +51,7 @@ class AutismAiBackendChatService extends ChatService {
         transcript.last.text == message) {
       transcript.removeLast();
     }
-    final recent = transcript.skip(
-      transcript.length > 12 ? transcript.length - 12 : 0,
-    );
+    final managedHistory = _managedTranscript(transcript);
     final classical = context.classicalResult;
     final prediction = context.result;
     final body = {
@@ -63,11 +61,7 @@ class AutismAiBackendChatService extends ChatService {
       'message': message,
       'model': model,
       'options': _options,
-      'history': recent
-          .map(
-            (m) => {'role': m.isUser ? 'user' : 'assistant', 'content': m.text},
-          )
-          .toList(),
+      'history': managedHistory,
       'screening_context': {
         'revision': context.revision,
         'stage': context.stage.name,
@@ -82,6 +76,15 @@ class AutismAiBackendChatService extends ChatService {
                 'number': context.currentQuestionIndex! + 1,
                 'text': context.currentQuestionText,
               },
+        'questionnaire_questions': context.questionnaireQuestions
+            .map(
+              (question) => {
+                'id': question.id,
+                'number': question.number,
+                'text': question.text,
+              },
+            )
+            .toList(),
         'classical_result': classical == null
             ? null
             : {
@@ -132,8 +135,7 @@ class AutismAiBackendChatService extends ChatService {
           data['session_id'] != context.sessionId ||
           data['context_revision'] != context.revision ||
           data['model'] != model ||
-          !data.containsKey('action') ||
-          data['action'] != null) {
+          !data.containsKey('action')) {
         throw const FormatException('Unsupported or mismatched response');
       }
       final text = data['response'] as String;
@@ -164,6 +166,10 @@ class AutismAiBackendChatService extends ChatService {
       final executedQuestion = command is Map<String, dynamic>
           ? command['executed_question'] as String?
           : null;
+      final actionData = data['action'];
+      final action = actionData == null
+          ? null
+          : ChatAction.fromJson(actionData as Map<String, dynamic>);
       return ChatReply(
         executedQuestion == null
             ? text.trim()
@@ -171,6 +177,7 @@ class AutismAiBackendChatService extends ChatService {
         route: route,
         model: model,
         sources: List.unmodifiable(sources),
+        action: action,
       );
     } on FormatException {
       throw const ChatServiceException(ChatFailureType.invalidResponse);
@@ -196,5 +203,61 @@ class AutismAiBackendChatService extends ChatService {
       throw ArgumentError.value(base, 'baseUrl', 'Expected HTTP(S) base URL');
     }
     return Uri.parse('$uri/chat');
+  }
+
+  static List<Map<String, String>> _managedTranscript(
+    List<ChatMessage> transcript,
+  ) {
+    const maxMessages = 60;
+    const maxCharacters = 12000;
+    final totalCharacters = transcript.fold<int>(
+      0,
+      (total, message) => total + message.text.length,
+    );
+    if (transcript.length <= maxMessages && totalCharacters <= maxCharacters) {
+      return transcript
+          .map(
+            (message) => {
+              'role': message.isUser ? 'user' : 'assistant',
+              'content': message.text,
+            },
+          )
+          .toList(growable: false);
+    }
+
+    final recent = <ChatMessage>[];
+    var recentCharacters = 0;
+    for (final message in transcript.reversed) {
+      if (recent.length >= 58 ||
+          (recent.isNotEmpty &&
+              recentCharacters + message.text.length > 9000)) {
+        break;
+      }
+      recent.insert(0, message);
+      recentCharacters += message.text.length;
+    }
+    final older = transcript.take(transcript.length - recent.length);
+    final summary = StringBuffer(
+      'Earlier conversation excerpts. U means user and A means assistant. '
+      'Assistant statements are not user-provided facts.\n',
+    );
+    for (final message in older) {
+      final normalized = message.text.replaceAll(RegExp(r'\s+'), ' ').trim();
+      final excerpt = normalized.length > 220
+          ? '${normalized.substring(0, 220)}…'
+          : normalized;
+      final line = '${message.isUser ? 'U' : 'A'}: $excerpt\n';
+      if (summary.length + line.length > 3000) break;
+      summary.write(line);
+    }
+    return [
+      {'role': 'user', 'content': summary.toString().trim()},
+      ...recent.map(
+        (message) => {
+          'role': message.isUser ? 'user' : 'assistant',
+          'content': message.text,
+        },
+      ),
+    ];
   }
 }

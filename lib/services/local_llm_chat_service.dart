@@ -20,7 +20,7 @@ class LocalLlmChatService extends ChatService {
        _ownsClient = client == null,
        _client = client ?? clientFactory();
 
-  static const int maxHistoryMessages = 12;
+  static const int maxHistoryMessages = 60;
 
   static const String _assistantInstructions =
       'You are a conversational assistant supporting an autism screening application. '
@@ -46,6 +46,18 @@ class LocalLlmChatService extends ChatService {
   }) async {
     if (_disposed) {
       throw StateError('LocalLlmChatService has been disposed.');
+    }
+    if (context.stage == ScreeningStage.welcome &&
+        _isStartRequest(message, history)) {
+      return ChatReply(
+        'Of course. Let’s begin with a few details to select the appropriate questionnaire.',
+        route: 'screening_guidance',
+        model: 'mistral',
+        action: ChatAction(
+          type: ChatActionType.startScreening,
+          expectedContextRevision: context.revision,
+        ),
+      );
     }
 
     final requestBody = jsonEncode({
@@ -133,11 +145,8 @@ class LocalLlmChatService extends ChatService {
       );
     }
 
-    final start = transcript.length > maxHistoryMessages
-        ? transcript.length - maxHistoryMessages
-        : 0;
-    final messages = transcript
-        .sublist(start)
+    final managed = _managedTranscript(transcript);
+    final messages = managed
         .map(
           (chatMessage) => {
             'role': chatMessage.isUser ? 'user' : 'assistant',
@@ -164,6 +173,50 @@ class LocalLlmChatService extends ChatService {
     return alternating;
   }
 
+  List<ChatMessage> _managedTranscript(List<ChatMessage> transcript) {
+    final totalCharacters = transcript.fold<int>(
+      0,
+      (total, message) => total + message.text.length,
+    );
+    if (transcript.length <= maxHistoryMessages && totalCharacters <= 12000) {
+      return transcript;
+    }
+
+    final recent = <ChatMessage>[];
+    var recentCharacters = 0;
+    for (final message in transcript.reversed) {
+      if (recent.length >= maxHistoryMessages - 2 ||
+          (recent.isNotEmpty &&
+              recentCharacters + message.text.length > 9000)) {
+        break;
+      }
+      recent.insert(0, message);
+      recentCharacters += message.text.length;
+    }
+    final older = transcript.take(transcript.length - recent.length);
+    final summary = StringBuffer(
+      'Earlier conversation excerpts. U means user and A means assistant. '
+      'Assistant statements are not user-provided facts.\n',
+    );
+    for (final item in older) {
+      final normalized = item.text.replaceAll(RegExp(r'\s+'), ' ').trim();
+      final excerpt = normalized.length > 220
+          ? '${normalized.substring(0, 220)}…'
+          : normalized;
+      final line = '${item.isUser ? 'U' : 'A'}: $excerpt\n';
+      if (summary.length + line.length > 3000) break;
+      summary.write(line);
+    }
+    return [
+      ChatMessage(
+        text: summary.toString().trim(),
+        isUser: true,
+        timestamp: transcript.first.timestamp,
+      ),
+      ...recent,
+    ];
+  }
+
   String _contextMessage(ScreeningContext context) {
     final lines = <String>[
       'Current application context (read-only):',
@@ -178,6 +231,12 @@ class LocalLlmChatService extends ChatService {
     }
     if (context.currentQuestionText != null) {
       lines.add('- Current question text: ${context.currentQuestionText}');
+    }
+    if (context.questionnaireQuestions.isNotEmpty) {
+      lines.add('- Active questionnaire questions (read-only):');
+      for (final question in context.questionnaireQuestions) {
+        lines.add('  ${question.number}. ${question.text}');
+      }
     }
 
     final result = context.result;
@@ -194,6 +253,37 @@ class LocalLlmChatService extends ChatService {
       'Treat this context as informational only. Never alter it or infer a diagnosis from it.',
     );
     return lines.join('\n');
+  }
+
+  bool _isStartRequest(String message, List<ChatMessage> history) {
+    final text = message.toLowerCase().trim().replaceAll(RegExp(r'[.!?]'), '');
+    if (text == '/start' ||
+        RegExp(
+          r'\b(start|begin|take|do)\b.{0,24}\b(screening|questionnaire|test)\b',
+        ).hasMatch(text)) {
+      return true;
+    }
+    if (!const {
+      'yes',
+      'yes please',
+      'yeah',
+      'yep',
+      'sure',
+      'okay',
+      'ok',
+      "let's start",
+      'ready',
+      "i'm ready",
+      'i am ready',
+    }.contains(text)) {
+      return false;
+    }
+    for (final entry in history.reversed) {
+      if (!entry.isUser) {
+        return entry.text.toLowerCase().contains('start a screening');
+      }
+    }
+    return false;
   }
 
   @override

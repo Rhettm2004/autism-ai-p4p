@@ -1,5 +1,5 @@
 profile: app_v1
-prompt_profile: rayaan_chat_exact
+prompt_profile: app_context_v1
 condition: few_shot
 router_config: embeddings_word
 router_track: topic

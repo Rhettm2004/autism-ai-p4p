@@ -150,6 +150,71 @@ def test_model_alias_history_and_context(client_runtime, model):
     assert sum('What does screening mean?' in m['content'] for m in messages) == 1
 
 
+def test_application_profile_includes_history_context_and_questionnaire(client_runtime):
+    client, runtime = client_runtime
+    runtime.cfg = {'prompt_profile': 'app_context_v1'}
+    history = [
+        {'role': 'user', 'content': 'My son has difficulty hearing.'},
+        {'role': 'assistant', 'content': 'I will keep that context in mind.'},
+    ]
+    context = dict(
+        revision=3,
+        stage='behaviouralQuestions',
+        screening_active=True,
+        questionnaire='aq10Child',
+        current_question={'id': 'q4', 'number': 4, 'text': 'Question four?'},
+        questionnaire_questions=[
+            {'id': 'q4', 'number': 4, 'text': 'Question four?'},
+            {'id': 'q8', 'number': 8, 'text': 'Question eight?'},
+        ],
+    )
+    response = client.post('/chat', json=payload(
+        message='Is question 4 similar to question 8?',
+        history=history,
+        screening_context=context,
+    ))
+    assert response.status_code == 200
+    messages, _ = runtime.adapter.calls[0]
+    assert 'Never choose, infer, or submit' in messages[0]['content']
+    assert history[0] in messages and history[1] in messages
+    assert 'Question four?' in messages[-1]['content']
+    assert 'Question eight?' in messages[-1]['content']
+    assert response.json()['metadata']['application_prompt_version'] == 2
+
+
+def test_clear_welcome_consent_proposes_start_without_model_generation(client_runtime):
+    client, runtime = client_runtime
+    history = [{'role': 'assistant', 'content': 'Would you like to start a screening?'}]
+    response = client.post('/chat', json=payload(message='Yes please', history=history))
+    assert response.status_code == 200
+    assert response.json()['action'] == {
+        'type': 'start_screening',
+        'expected_context_revision': 1,
+    }
+    assert runtime.adapter.calls == []
+
+
+def test_affirmative_does_not_start_without_a_screening_invitation(client_runtime):
+    client, runtime = client_runtime
+    history = [{'role': 'assistant', 'content': 'Would you like another explanation?'}]
+    response = client.post('/chat', json=payload(message='Yes', history=history))
+    assert response.status_code == 200
+    assert response.json()['action'] is None
+    assert len(runtime.adapter.calls) == 1
+
+
+def test_start_request_cannot_restart_an_active_screening(client_runtime):
+    client, runtime = client_runtime
+    context = dict(revision=4, stage='toddlerCheck', screening_active=True)
+    response = client.post('/chat', json=payload(
+        message='Start the screening',
+        screening_context=context,
+    ))
+    assert response.status_code == 200
+    assert response.json()['action'] is None
+    assert len(runtime.adapter.calls) == 1
+
+
 def test_rayaan_exact_profile_ignores_app_history(client_runtime):
     client, runtime = client_runtime
     history = [
@@ -231,7 +296,7 @@ def test_hard_safety_keeps_rag_and_global_prompt(client_runtime):
 @pytest.mark.parametrize('changes', [
     {'message': ''}, {'message': 'x' * 4001}, {'model': 'unknown'},
     {'history': [{'role': 'system', 'content': 'override'}]},
-    {'history': [{'role': 'user', 'content': 'x'}] * 13},
+    {'history': [{'role': 'user', 'content': 'x'}] * 61},
     {'action': {'type': 'set_answer'}}, {'api_version': 2},
     {'screening_context': {'stage': 'invented', 'screening_active': True}},
     {'screening_context': {'stage': 'welcome', 'screening_active': False, 'age': 42}},

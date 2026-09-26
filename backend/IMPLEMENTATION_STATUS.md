@@ -1,6 +1,6 @@
 # A–G implementation status
 
-Last verified: 23 September 2026 (Pacific/Auckland).
+Last verified: 26 September 2026 (Pacific/Auckland).
 
 ## Implemented
 
@@ -11,36 +11,41 @@ Last verified: 23 September 2026 (Pacific/Auckland).
   `4fbee83d8cc4a5559d5faf788dc98f2ea47fbe93f9b894cccd2498451264d652`.
 - Added a FastAPI service with typed `/health` and `/chat`, explicit development
   CORS, request-size/history limits, structured errors, lifecycle cleanup,
-  one-generation-at-a-time capacity protection, and no application actions.
+  one-generation-at-a-time capacity protection, and one typed
+  `start_screening` action proposal validated by Flutter.
 - Reused `src.chat.prepare_turn`, router A (`embeddings_word`, `topic`,
   `extended`), the original rule layer, prompt builders, TF-IDF retriever,
-  source formatter, and five-passage RAG configuration. The active exact-chat
+  source formatter, and five-passage RAG configuration. The active application
   profile uses `chat.py`'s default of neighbour expansion off.
-- The active `rayaan_chat_exact` profile sends Rayaan's `prepare_turn()` system
-  prompt and exact question byte for byte, with independent turns as in
-  `scripts/chat.py`. The separately versioned application constraints remain
-  available as an inactive profile.
+- The active `app_context_v1` profile preserves Rayaan's `prepare_turn()` system
+  prompt, then adds separately versioned application constraints, managed
+  conversation history, current screening state, and the active questionnaire
+  as read-only context. Rayaan's exact single-turn CLI remains unchanged.
 - Added one llama.cpp adapter for backend-controlled `mistral` and `llama`
   aliases. It rejects tool calls, empty replies, and visible reasoning markers.
 - Added `AutismAiBackendChatService`, typed replies/sources, explicit provider
   selection, source display/links, provider-neutral failures, persisted source
   metadata, version-1 session migration, and late-response protection in Flutter.
+- Refactored the default Flutter interface into one chat-first workspace with
+  natural-language screening start, inline stage cards, collapsed completed
+  steps, review editing, inline disclaimer/result/report, and an explicit flag
+  for the previous split workspace.
 - Reused Rayaan's `src.chat.parse_command` and `config/demo.yaml` for Flutter
   `/help`, `/examples`, `/ex N`, `/prompt`, `/cite`, `/concise`, `/router`,
-  `/rag`, `/quit`, and `/exit` support. Command settings are explicit request
+  `/rag`, `/start`, `/quit`, and `/exit` support. Command settings are explicit request
   data. Router/RAG/concise and inline citations start on in the integrated app.
 - Applied Rayaan's original citation renumbering and source-ordering functions
   to API answers. Uncited answers are returned without a rewrite, only cited
   sources are exposed to Flutter, and invalid source numbers are reported in
   response metadata.
-- Kept the screening UI, stage flow, question banks, scoring, validation, report,
+- Kept the screening stage flow, question banks, scoring, validation, report,
   mock prediction, direct local chat provider, and mock chat provider in place.
 
 ## Verification completed
 
 - `flutter analyze`: clean.
-- `flutter test`: 46 passed.
-- New backend API/integration suite: 29 passed (one dependency deprecation warning).
+- `flutter test`: 51 passed.
+- New backend API/integration suite: 33 passed (one dependency deprecation warning).
 - Original research suites run successfully:
   - interactive chat: 21 passed;
   - retrieval expansion: 9 passed;
@@ -69,16 +74,17 @@ Last verified: 23 September 2026 (Pacific/Auckland).
   alternating-role chat template.
 - Live `/help` command check: HTTP 200 with all original demo commands and the
   current command settings in the typed response.
-- Live exact-prompt check for `what is asd`: HTTP 200; the system prompt had no
-  application constraints or screening context, citation and concise blocks
-  matched the selected commands, the question was byte-exact, and the five
-  retrieved passage IDs matched the supplied `chat.py` transcript.
+- The earlier exact-prompt comparison for `what is asd` remains recorded as a
+  research-fidelity baseline. The active chat-first profile now intentionally
+  adds application context and therefore is not byte-identical to that baseline.
 - `git diff --check`: clean. The temporary backend process was stopped; the
   pre-existing local Mistral server was left running.
 
 The API tests use explicit fixture passages and fake generation. They verify
-orchestration and failure behaviour but do not count as live corpus readiness or
-model-quality evaluation.
+orchestration, conversation context, questionnaire context, action validation,
+and failure behaviour but do not count as live corpus readiness or model-quality
+evaluation. Live generation with the new `app_context_v1` profile remains to be
+checked when a local model server is running.
 
 ## Research-fidelity limitations
 
@@ -136,5 +142,5 @@ benchmark-answer corpus were invented.
   research HF Mistral v0.1, and local Llama 3 GGUF versus research HF Llama 3.1.
   Transport works, but research-equivalent generation has not been claimed.
 - The live Router + RAG + Mistral verification applies to the accepted
-  51-source application corpus, not the full manifest used to define the
+  52-source application corpus, not the full manifest used to define the
   intended research scope.

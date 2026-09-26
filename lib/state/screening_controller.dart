@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../data/question_banks.dart';
+import '../models/chat_reply.dart';
 import '../models/screening_models.dart';
 import '../models/screening_session.dart';
 import '../services/chat_service.dart';
@@ -82,6 +83,14 @@ class ScreeningController extends ChangeNotifier {
     currentQuestionText: stage == ScreeningStage.behaviouralQuestions
         ? currentQuestion?.text
         : null,
+    questionnaireQuestions: [
+      for (var index = 0; index < questions.length; index++)
+        ScreeningQuestionContext(
+          id: questions[index].id,
+          number: index + 1,
+          text: questions[index].text,
+        ),
+    ],
     result: result,
   );
 
@@ -131,7 +140,7 @@ class ScreeningController extends ChangeNotifier {
     ScreeningStage.report => 1,
   };
 
-  bool get chatEnabled => stage != ScreeningStage.disclaimer;
+  bool get chatEnabled => true;
 
   Future<void> initializeSession() async {
     if (_persistenceReady || isSessionLoading) return;
@@ -401,6 +410,7 @@ class ScreeningController extends ChangeNotifier {
           model: response.model,
         ),
       );
+      _applyChatAction(response.action);
     } on ChatServiceException catch (error, stackTrace) {
       if (_disposed || generation != _chatGeneration) return;
       debugPrint('Local chat request failed: $error');
@@ -475,11 +485,23 @@ class ScreeningController extends ChangeNotifier {
   void _addWelcomeMessage() {
     chatMessages.add(
       ChatMessage(
-        text: 'Hi! I’m your Autism AI assistant. Ask me about the screening process.',
+        text: 'Hello, I’m your Autism AI assistant. I can guide you through the screening process and answer questions along the way. Would you like to start a screening?',
         isUser: false,
         timestamp: DateTime.now(),
       ),
     );
+  }
+
+  void _applyChatAction(ChatAction? action) {
+    if (action == null ||
+        action.expectedContextRevision != _contextRevision ||
+        stage != ScreeningStage.welcome) {
+      return;
+    }
+    switch (action.type) {
+      case ChatActionType.startScreening:
+        startScreening();
+    }
   }
 
   void _goTo(ScreeningStage nextStage) {

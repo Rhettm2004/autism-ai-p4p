@@ -57,10 +57,45 @@ class ChatSource {
 }
 
 class ChatReply {
-  const ChatReply(this.text, {this.route, this.model, this.sources = const []});
+  const ChatReply(
+    this.text, {
+    this.route,
+    this.model,
+    this.sources = const [],
+    this.action,
+  });
   final String text;
   final String? route;
   final String? model;
   final List<ChatSource> sources;
-  // Application actions are deliberately unsupported in stages A–G.
+  final ChatAction? action;
+}
+
+enum ChatActionType { startScreening }
+
+class ChatAction {
+  const ChatAction({required this.type, required this.expectedContextRevision});
+
+  final ChatActionType type;
+  final int expectedContextRevision;
+
+  factory ChatAction.fromJson(Map<String, dynamic> json) {
+    if (json.keys.toSet().difference(const {
+      'type',
+      'expected_context_revision',
+    }).isNotEmpty) {
+      throw const FormatException('Unexpected chat action fields');
+    }
+    if (json['type'] != 'start_screening') {
+      throw const FormatException('Unsupported chat action');
+    }
+    final revision = json['expected_context_revision'];
+    if (revision is! int || revision < 0) {
+      throw const FormatException('Invalid chat action revision');
+    }
+    return ChatAction(
+      type: ChatActionType.startScreening,
+      expectedContextRevision: revision,
+    );
+  }
 }

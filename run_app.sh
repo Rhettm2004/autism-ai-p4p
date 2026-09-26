@@ -138,6 +138,7 @@ start_llama() {
 start_backend() {
   local default_model="${1:-mistral}"
   local python="$BACKEND_DIR/.venv/bin/python"
+  local huggingface_home="${HF_HOME:-$HOME/.cache/huggingface}"
   if [[ ! -x "$python" ]]; then
     echo "Backend environment not found at backend/.venv."
     echo "Follow backend/DEVELOPMENT.md setup once, then rerun this command."
@@ -153,7 +154,7 @@ start_backend() {
   echo "Starting FastAPI. Its log is backend/logs/api.log"
   (
     cd "$BACKEND_DIR"
-    HF_HOME="$BACKEND_DIR/.cache/huggingface" \
+    HF_HOME="$huggingface_home" \
       HF_HUB_OFFLINE=1 \
       TOKENIZERS_PARALLELISM=false \
       AUTISM_AI_DEFAULT_MODEL="$default_model" \

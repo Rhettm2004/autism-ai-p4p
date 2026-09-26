@@ -1,8 +1,9 @@
 # Integrated Autism AI backend (stages A–G)
 
-Flutter stays at the repository root. The screening UI, question banks, scoring,
-validation and PDF reporting remain local and unchanged. Backend `/chat` cannot
-mutate screening state and always returns `action: null`.
+Flutter stays at the repository root. The question banks, scoring, validation
+and PDF reporting remain local. Backend `/chat` cannot mutate screening state.
+It can propose the single allowlisted `start_screening` action; Flutter validates
+the stage and context revision before applying it.
 
 ## Setup
 
@@ -115,14 +116,16 @@ hosting/authentication is outside these stages.
 ## Runtime contract
 
 `POST /chat` accepts API version 1, request/session IDs, a nonblank message of at
-most 4,000 characters, up to 12 previous user/assistant messages, model alias, and
+most 4,000 characters, up to 60 managed user/assistant messages, model alias, and
 read-only screening context. Request bodies are limited to 128 KiB. The current
 message is not duplicated in history. Error bubbles are excluded from history.
 Results contain distinct classical and prediction fields; no answer map or identity
 fields are transmitted automatically.
 
-Replies include text, route, model, sources and provenance hashes; `action` is always
-null. Flutter rejects non-null actions and mismatched correlation IDs. Source links
+Replies include text, route, model, sources and provenance hashes. `action` is
+normally null. At the welcome stage, clear consent or `/start` can return a typed
+`start_screening` proposal. Flutter rejects unsupported, stale, and mismatched
+actions and correlation IDs. Source links
 only open HTTP(S) URLs. Valid inline markers are renumbered with Rayaan's original
 logic, and the returned source list contains only sources cited in the answer.
 An uncited answer has no visible source section. A marker records the model's selected extract; it is not an independent
@@ -132,9 +135,9 @@ Errors have `{error: {code, message, retryable, request_id}}`. Validation is 422
 oversized input 413, unavailable/capacity 503, timeout 504, invalid model reply 502,
 and unexpected errors 500. Failed request bodies are not echoed. One inference runs
 at a time per backend worker; additional requests return busy. Use one worker for
-local development. History is bounded in transport. Under the active
-`rayaan_chat_exact` profile, it is not forwarded to the model because Rayaan's
-demo evaluates every question independently. A sufficiently long retrieved
+local development. The complete typical screening conversation is forwarded.
+Long conversations retain recent turns plus labelled excerpts from older turns.
+A sufficiently long retrieved
 prompt may still exceed a model's context; this returns an explicit upstream
 error rather than silently deleting safety instructions or retrieved evidence.
 
@@ -143,7 +146,7 @@ error rather than silently deleting safety instructions or retrieved evidence.
 The integrated provider reuses `src.chat.parse_command` and reads examples from
 the original `config/demo.yaml`. Type `/help` in the Flutter chat to see all
 commands. `/examples`, `/ex N`, `/prompt`, `/cite on|off`,
-`/concise on|off`, `/router on|off`, `/rag on|off`, `/quit`, and `/exit` are
+`/concise on|off`, `/router on|off`, `/rag on|off`, `/start`, `/quit`, and `/exit` are
 recognized. Settings are sent explicitly on every request and remain local to
 the running Flutter chat-service instance. Router, RAG, concise mode, and inline
 citations start on in the integrated app. `/quit` and `/exit`
@@ -157,11 +160,11 @@ turn, including safety routes: five passages, Rayaan's `chat.py` default of
 neighbour expansion off, and the original soft per-source cap of two. No
 reranker, threshold, vector store or replacement router
 has been introduced. Expansion can exceed the per-source cap. The active
-`rayaan_chat_exact` profile sends `prepare_turn().system_prompt` and the question
-to llama.cpp byte for byte, just as `scripts/chat.py` does. Each turn is independent.
-Read-only screening context and bounded history remain validated API inputs but do
-not alter the model prompt. `config/application_prompts.yaml` is retained as the
-inactive `app_context_v1` profile; it is not appended in exact mode. Concise mode
+`app_context_v1` profile preserves `prepare_turn().system_prompt`, then appends the
+separately versioned application contract. It supplies managed conversation history,
+the current screening stage, and the active questionnaire as read-only context.
+Rayaan's original `scripts/chat.py` and exact single-turn benchmark path remain
+unchanged. Concise mode
 and inline citations start on in the integrated app; commands can change both
 explicitly. Rayaan's citation renumbering and source ordering are applied to each
 answer. An answer with no citation is returned unchanged and the API omits its
@@ -178,7 +181,7 @@ Key differences from evaluated generation:
 | Llama | HF ID is Llama **3.1** 8B | Local filename identifies Llama **3** 8B |
 | Inference | Transformers / BitsAndBytes | llama.cpp OpenAI-compatible HTTP |
 | Repetition | Completion-only custom logits processors | repeat penalty disabled; no claimed equivalent |
-| Prompt | `prepare_turn()` blocks + exact question | Same bytes under `rayaan_chat_exact` |
+| Prompt | `prepare_turn()` blocks + exact question | Same base blocks plus versioned app context/history |
 | Corpus | Research snapshot | Locally prepared/supplied corpus with explicit fingerprint |
 
 The adapter fixes temperature 0.1, max tokens 512, top-k 50, top-p 1, min-p 0 and

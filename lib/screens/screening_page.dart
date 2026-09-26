@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../app.dart';
+import '../config/app_config.dart';
 import '../models/screening_models.dart';
 import '../services/chat_service_factory.dart';
 import '../services/report_download.dart';
@@ -72,6 +73,42 @@ class _ScreeningPageState extends State<ScreeningPage> {
                         Expanded(
                           child: LayoutBuilder(
                             builder: (context, constraints) {
+                              if (AppConfig.chatFirstScreening) {
+                                return Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    12,
+                                    12,
+                                    12,
+                                    8,
+                                  ),
+                                  child: PersistentChatPanel(
+                                    messages: _controller.chatMessages,
+                                    onSend: _controller.sendChatMessage,
+                                    enabled: _controller.chatEnabled,
+                                    isSending: _controller.isSendingChat,
+                                    serviceLabel: _controller.chatServiceLabel,
+                                    inputFocusNode: _chatFocusNode,
+                                    activeContent:
+                                        _controller.stage ==
+                                            ScreeningStage.welcome
+                                        ? null
+                                        : Column(
+                                            children: [
+                                              CompletedScreeningStepsCard(
+                                                controller: _controller,
+                                              ),
+                                              if (_controller.stage.index >
+                                                  ScreeningStage
+                                                      .toddlerCheck
+                                                      .index)
+                                                const SizedBox(height: 10),
+                                              _buildStageCard(),
+                                            ],
+                                          ),
+                                    activeContentKey: _contentKey,
+                                  ),
+                                );
+                              }
                               final chatHeight = constraints.maxHeight < 520
                                   ? 168.0
                                   : (constraints.maxHeight * 0.31).clamp(
@@ -128,7 +165,8 @@ class _ScreeningPageState extends State<ScreeningPage> {
                         ),
                       ],
                     ),
-                    if (_controller.stage == ScreeningStage.disclaimer)
+                    if (!AppConfig.chatFirstScreening &&
+                        _controller.stage == ScreeningStage.disclaimer)
                       DisclaimerOverlay(
                         onContinue: _controller.acknowledgeDisclaimer,
                       ),
@@ -184,9 +222,12 @@ class _ScreeningPageState extends State<ScreeningPage> {
       ScreeningStage.behaviouralQuestions => ScreeningQuestionCard(
         controller: _controller,
       ),
-      ScreeningStage.review || ScreeningStage.disclaimer => ReviewAnswersCard(
+      ScreeningStage.review => ReviewAnswersCard(
         controller: _controller,
         onBack: _controller.backToLastQuestion,
+      ),
+      ScreeningStage.disclaimer => InlineDisclaimerCard(
+        onContinue: _controller.acknowledgeDisclaimer,
       ),
       ScreeningStage.result => ResultCard(
         controller: _controller,

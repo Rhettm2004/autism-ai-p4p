@@ -21,4 +21,9 @@ abstract final class AppConfig {
     'USE_MOCK_CHAT',
     defaultValue: false,
   );
+
+  static const bool chatFirstScreening = bool.fromEnvironment(
+    'CHAT_FIRST_SCREENING',
+    defaultValue: true,
+  );
 }

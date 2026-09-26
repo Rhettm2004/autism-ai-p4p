@@ -12,11 +12,11 @@ void main() {
     await tester.pumpWidget(MyApp(controller: controller));
     await tester.pumpAndSettle();
 
-    expect(find.text('Autism AI Assistant'), findsOneWidget);
+    expect(find.text('AI Assistant'), findsOneWidget);
     expect(find.text('Mock'), findsOneWidget);
     expect(find.byKey(const Key('chat-input')), findsOneWidget);
     expect(
-      find.textContaining('Ask me about the screening process'),
+      find.textContaining('Would you like to start a screening?'),
       findsOneWidget,
     );
 
@@ -40,7 +40,8 @@ void main() {
     await tester.pumpWidget(MyApp(controller: controller));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(const Key('start-screening')));
+    await tester.enterText(find.byKey(const Key('chat-input')), 'Yes please');
+    await tester.testTextInput.receiveAction(TextInputAction.send);
     await tester.pumpAndSettle();
 
     expect(
@@ -51,7 +52,11 @@ void main() {
     );
     expect(find.byKey(const Key('chat-input')), findsOneWidget);
 
+    await tester.ensureVisible(find.text('No'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('No'));
+    await tester.ensureVisible(find.text('Continue'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
 
@@ -71,7 +76,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Continue where you left off?'), findsNothing);
-    expect(find.text('Autism AI Assistant'), findsOneWidget);
+    expect(find.text('AI Assistant'), findsOneWidget);
   });
 
   testWidgets('Continue restores the saved stage from the startup prompt', (

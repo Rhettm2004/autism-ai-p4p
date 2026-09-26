@@ -1,10 +1,10 @@
 # Autism AI
 
-A local Flutter prototype of the Autism AI screening flow. The app uses one
-persistent workspace: the current screening card changes above an in-memory
-chat history and a fixed chat input. The current session is serialized as one
-JSON document in local shared preferences so it can survive an app restart or
-browser refresh.
+A local Flutter prototype of the Autism AI screening flow. The default interface
+is one persistent conversation: the assistant can start the screening from a
+clear user request, and each structured screening card appears inside the chat.
+The complete visible conversation and screening session are serialized locally
+so they can survive an app restart or browser refresh.
 
 ## Easiest way to run
 
@@ -31,6 +31,9 @@ and citations. `./run_app.sh backend` remains an alias for integrated Mistral;
 - Deterministic mock screening result, research validation, and downloadable PDF report
 - Persistent chat through the Python research backend, with explicit local and mock alternatives
 - Continue-or-restart prompt when a saved local session is found
+- Natural-language screening start with a typed, Flutter-validated action
+- Full active questionnaire supplied to the assistant as read-only context
+- Managed conversation context for longer chats
 - Local validation and responsive, accessible Material UI
 
 Supported routing is 18 to under 36 months for Q-CHAT-10, 3–11 years for
@@ -88,9 +91,27 @@ restoration and are not storage for critical or production health data.
 ## Run and verify
 
 ```sh
-flutter run
+./run_app.sh mock
 flutter analyze
 flutter test
+```
+
+In mock mode, type `Yes please` into the opening chat. The age-pathway card
+should appear inside the conversation. For the integrated local models, use
+`./run_app.sh mistral` or `./run_app.sh llama`.
+
+During a manual check, confirm that a general question does not start the
+screening, `start the screening` does, the chat remains usable while a card is
+active, completed steps collapse above the active card, answers can be edited
+from review, the disclaimer/result/report remain inline, cited sources still
+open, and refreshing the browser offers to restore the same session.
+
+The previous split workspace remains available for comparison:
+
+```sh
+flutter run -d chrome \
+  --dart-define=CHAT_PROVIDER=mock \
+  --dart-define=CHAT_FIRST_SCREENING=false
 ```
 
 ## Integrated Python backend (A–G)
