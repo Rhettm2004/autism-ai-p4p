@@ -203,8 +203,8 @@ class ChatRuntime:
         if normalized == '/start':
             return True
         if any(phrase in normalized for phrase in (
-            "don't start", 'do not start', 'not ready', 'no screening',
-            "don't want", 'do not want',
+            "don't start", 'dont start', 'do not start', 'not ready',
+            'no screening', "don't want", 'dont want', 'do not want',
         )):
             return False
         if cls._explicit_start.search(normalized):

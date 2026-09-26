@@ -118,20 +118,25 @@ void main() {
         client.close();
       });
 
-      final reply = await service.sendMessage(
-        message: "I'm not ready to start screening",
-        history: [
-          _message(
-            'Would you like to start a screening?',
-            isUser: false,
-            minute: 0,
-          ),
-        ],
-        context: const ScreeningContext(stage: ScreeningStage.welcome),
-      );
+      for (final phrase in [
+        "I'm not ready to start screening",
+        'Please dont start screening yet',
+      ]) {
+        final reply = await service.sendMessage(
+          message: phrase,
+          history: [
+            _message(
+              'Would you like to start a screening?',
+              isUser: false,
+              minute: 0,
+            ),
+          ],
+          context: const ScreeningContext(stage: ScreeningStage.welcome),
+        );
 
-      expect(reply.action, isNull);
-      expect(requestCount, 1);
+        expect(reply.action, isNull);
+      }
+      expect(requestCount, 2);
     });
 
     test('sends OpenAI-compatible history and read-only app context', () async {

@@ -45,7 +45,7 @@ Last verified: 26 September 2026 (Pacific/Auckland).
 
 - `flutter analyze`: clean.
 - `flutter test`: 53 passed.
-- New backend API/integration suite: 39 passed (one dependency deprecation warning).
+- New backend API/integration suite: 40 passed (one dependency deprecation warning).
 - Original research suites run successfully:
   - interactive chat: 21 passed;
   - retrieval expansion: 9 passed;

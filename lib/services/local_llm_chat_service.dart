@@ -262,10 +262,12 @@ class LocalLlmChatService extends ChatService {
     }
     if (const [
       "don't start",
+      'dont start',
       'do not start',
       'not ready',
       'no screening',
       "don't want",
+      'dont want',
       'do not want',
     ].any(text.contains)) {
       return false;

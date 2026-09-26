@@ -185,7 +185,9 @@ def test_application_profile_includes_history_context_and_questionnaire(client_r
     assert 'Q-CHAT-10 for 18 to under 36 months' in messages[0]['content']
     assert 'Background details do not currently' in messages[0]['content']
     assert 'It does not upload answers' in messages[0]['content']
-    assert response.json()['metadata']['application_prompt_version'] == 4
+    assert 'default to two to four short sentences' in messages[0]['content']
+    assert 'postpones screening without asking another question' in messages[0]['content']
+    assert response.json()['metadata']['application_prompt_version'] == 5
 
 
 def test_clear_welcome_consent_proposes_start_without_model_generation(client_runtime):
@@ -228,6 +230,7 @@ def test_natural_welcome_consent_starts_after_an_explanatory_turn(
 @pytest.mark.parametrize('message', [
     "I'm not ready to start screening",
     "No, don't start the screening",
+    'Please dont start screening yet',
 ])
 def test_negative_welcome_language_does_not_start(client_runtime, message):
     client, runtime = client_runtime
