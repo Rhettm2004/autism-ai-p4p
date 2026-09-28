@@ -144,6 +144,31 @@ void main() {
     expect(controller.submitValidation(), isTrue);
     expect(controller.stage, ScreeningStage.report);
   });
+
+  test('edits a questionnaire answer from review and returns to review', () {
+    final controller = _submitAge(age: 20, isToddler: false);
+    controller.setJaundice(false);
+    controller.setFamilyHistory(false);
+    controller.setCompletedBy('Myself');
+    expect(controller.submitBackgroundDetails(), isTrue);
+
+    for (var index = 0; index < controller.questions.length; index++) {
+      controller.answerCurrentQuestion(
+        controller.currentQuestion!.options.first,
+      );
+      controller.nextQuestion();
+    }
+    expect(controller.stage, ScreeningStage.review);
+
+    final editedQuestion = controller.questions[3];
+    final replacement = editedQuestion.options.last;
+    controller.goToQuestion(3);
+    controller.answerCurrentQuestion(replacement);
+    expect(controller.nextQuestion(), isTrue);
+
+    expect(controller.stage, ScreeningStage.review);
+    expect(controller.behaviouralAnswers[editedQuestion.id], replacement);
+  });
 }
 
 QuestionnaireType? _routeYears(int years) {

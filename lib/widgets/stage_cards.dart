@@ -81,6 +81,96 @@ class StageCardFrame extends StatelessWidget {
   }
 }
 
+class CompletedScreeningStepsCard extends StatelessWidget {
+  const CompletedScreeningStepsCard({super.key, required this.controller});
+
+  final ScreeningController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final steps = <Widget>[];
+    if (controller.respondent.isToddler != null &&
+        controller.stage.index > ScreeningStage.toddlerCheck.index) {
+      steps.add(
+        ListTile(
+          dense: true,
+          leading: const Icon(Icons.check_circle, color: AppColors.success),
+          title: const Text('Age pathway'),
+          subtitle: Text(
+            controller.respondent.isToddler! ? 'Toddler' : 'Age 3 or older',
+          ),
+        ),
+      );
+    }
+    if (controller.respondent.age != null &&
+        controller.stage.index > ScreeningStage.respondentDetails.index) {
+      steps.add(
+        ListTile(
+          dense: true,
+          leading: const Icon(Icons.check_circle, color: AppColors.success),
+          title: const Text('Respondent details'),
+          subtitle: Text(
+            '${controller.respondent.age} ${controller.respondent.ageUnit} · '
+            '${controller.respondent.gender} · ${controller.respondent.ethnicity}',
+          ),
+        ),
+      );
+    }
+    if (controller.background.completedBy != null &&
+        controller.stage.index > ScreeningStage.backgroundQuestions.index) {
+      steps.add(
+        ListTile(
+          dense: true,
+          leading: const Icon(Icons.check_circle, color: AppColors.success),
+          title: const Text('Background questions'),
+          subtitle: Text('Completed by ${controller.background.completedBy}'),
+        ),
+      );
+    }
+    for (var index = 0; index < controller.questions.length; index++) {
+      final question = controller.questions[index];
+      final answer = controller.behaviouralAnswers[question.id];
+      if (answer == null) continue;
+      final canEdit = controller.stage == ScreeningStage.review;
+      steps.add(
+        ListTile(
+          dense: true,
+          leading: CircleAvatar(
+            radius: 14,
+            backgroundColor: AppColors.softBlue,
+            child: Text('${index + 1}'),
+          ),
+          title: Text(
+            question.text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Text(answer),
+          trailing: canEdit
+              ? IconButton(
+                  key: Key('timeline-edit-question-${index + 1}'),
+                  tooltip: 'Edit question ${index + 1}',
+                  onPressed: () => controller.goToQuestion(index),
+                  icon: const Icon(Icons.edit_outlined),
+                )
+              : null,
+        ),
+      );
+    }
+    if (steps.isEmpty) return const SizedBox.shrink();
+    return Card(
+      child: ExpansionTile(
+        key: const Key('completed-screening-steps'),
+        initiallyExpanded: false,
+        leading: const Icon(Icons.history_rounded, color: AppColors.blue),
+        title: const Text('Completed screening steps'),
+        subtitle: Text('${steps.length} completed'),
+        children: steps,
+      ),
+    );
+  }
+}
+
 class WelcomeCard extends StatelessWidget {
   const WelcomeCard({super.key, required this.onStart});
 
@@ -715,6 +805,40 @@ class DisclaimerOverlay extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class InlineDisclaimerCard extends StatelessWidget {
+  const InlineDisclaimerCard({super.key, required this.onContinue});
+
+  final Future<void> Function() onContinue;
+
+  @override
+  Widget build(BuildContext context) {
+    return StageCardFrame(
+      title: 'Important disclaimer',
+      subtitle: 'Please read this before viewing the screening result.',
+      leading: const Icon(
+        Icons.health_and_safety_outlined,
+        size: 34,
+        color: AppColors.blue,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'This app is a screening tool for research purposes. It is not a diagnosis of autism. If you have concerns, please discuss them with a qualified health professional. Anonymised data may be used for research where applicable.',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 18),
+          FilledButton(
+            key: const Key('accept-disclaimer'),
+            onPressed: onContinue,
+            child: const Text('I Understand & Continue'),
+          ),
+        ],
       ),
     );
   }

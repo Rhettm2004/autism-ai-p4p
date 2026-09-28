@@ -5,8 +5,8 @@ note: >-
   The project owner supplied the base corpus snapshot used with Rayaan's chat.py
   implementation. The official KidsHealth New Zealand jaundice page was then
   fetched through Rayaan's existing corpus builder to support the application's
-  jaundice background question. The resulting corpus SHA-256 is
-  540364bca8c95f78e206a275ae14d90afd96699573e4ac81b342a70d20608ef7.
+  jaundice background question. The locally prepared corpus SHA-256 is recorded
+  in data/corpus/readiness.json; it can change when an upstream page changes.
   It contains 52 of the 62 currently enabled manifest sources; exclusions below
   make the remaining difference explicit.
 excluded_sources:

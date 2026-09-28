@@ -13,6 +13,8 @@ class PersistentChatPanel extends StatefulWidget {
     required this.isSending,
     required this.serviceLabel,
     required this.inputFocusNode,
+    this.activeContent,
+    this.activeContentKey,
   });
 
   final List<ChatMessage> messages;
@@ -21,6 +23,8 @@ class PersistentChatPanel extends StatefulWidget {
   final bool isSending;
   final String serviceLabel;
   final FocusNode inputFocusNode;
+  final Widget? activeContent;
+  final Object? activeContentKey;
 
   @override
   State<PersistentChatPanel> createState() => _PersistentChatPanelState();
@@ -33,7 +37,8 @@ class _PersistentChatPanelState extends State<PersistentChatPanel> {
   @override
   void didUpdateWidget(covariant PersistentChatPanel oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.messages.length != widget.messages.length) {
+    if (oldWidget.messages.length != widget.messages.length ||
+        oldWidget.activeContentKey != widget.activeContentKey) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToEnd());
     }
   }
@@ -124,6 +129,16 @@ class _PersistentChatPanelState extends State<PersistentChatPanel> {
                     alignment: Alignment.centerLeft,
                     child: _TypingBubble(),
                   ),
+                if (widget.activeContent != null) ...[
+                  const SizedBox(height: 10),
+                  KeyedSubtree(
+                    key: ValueKey(
+                      'active-screening-card-${widget.activeContentKey}',
+                    ),
+                    child: widget.activeContent!,
+                  ),
+                  const SizedBox(height: 8),
+                ],
               ],
             ),
           ),

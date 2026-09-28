@@ -23,6 +23,11 @@ class CurrentQuestion(StrictModel):
     number: int = Field(ge=1, le=10)
     text: Text
 
+class QuestionnaireQuestion(StrictModel):
+    id: Identifier
+    number: int = Field(ge=1, le=10)
+    text: Text
+
 class ClassicalResult(StrictModel):
     questionnaire: Questionnaire
     score: int = Field(ge=0, le=10)
@@ -46,6 +51,7 @@ class ScreeningContext(StrictModel):
     screening_active: bool
     questionnaire: Questionnaire | None = None
     current_question: CurrentQuestion | None = None
+    questionnaire_questions: list[QuestionnaireQuestion] = Field(default_factory=list, max_length=10)
     classical_result: ClassicalResult | None = None
     prediction_result: PredictionResult | None = None
 
@@ -57,6 +63,10 @@ class ScreeningContext(StrictModel):
             raise ValueError('Current question requires an active questionnaire stage')
         if self.classical_result and self.classical_result.questionnaire != self.questionnaire:
             raise ValueError('Result questionnaire does not match context')
+        if self.questionnaire_questions and self.questionnaire is None:
+            raise ValueError('Questionnaire questions require a selected questionnaire')
+        if len({question.number for question in self.questionnaire_questions}) != len(self.questionnaire_questions):
+            raise ValueError('Questionnaire question numbers must be unique')
         return self
 
 class ChatOptions(StrictModel):
@@ -70,7 +80,7 @@ class ChatRequest(StrictModel):
     request_id: Identifier
     session_id: Identifier
     message: Text
-    history: list[HistoryMessage] = Field(default_factory=list, max_length=12)
+    history: list[HistoryMessage] = Field(default_factory=list, max_length=60)
     model: ModelAlias = 'mistral'
     options: ChatOptions = Field(default_factory=ChatOptions)
     screening_context: ScreeningContext
@@ -103,6 +113,10 @@ class CommandResult(StrictModel):
     arg: str | int | None = None
     executed_question: str | None = None
 
+class StartScreeningAction(StrictModel):
+    type: Literal['start_screening']
+    expected_context_revision: int = Field(ge=0)
+
 class ChatResponse(StrictModel):
     api_version: Literal[1] = 1
     request_id: str
@@ -114,5 +128,5 @@ class ChatResponse(StrictModel):
     sources: list[Source]
     options: ChatOptions
     command: CommandResult | None = None
-    action: None = None
+    action: StartScreeningAction | None = None
     metadata: ChatMetadata

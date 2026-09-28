@@ -14,6 +14,19 @@ class MockChatService extends ChatService {
   }) async {
     final normalized = message.toLowerCase();
 
+    if (context.stage == ScreeningStage.welcome &&
+        _isStartRequest(normalized, history)) {
+      return ChatReply(
+        'Of course. Let’s begin with a few details to select the appropriate questionnaire.',
+        route: 'screening_guidance',
+        model: 'mock',
+        action: ChatAction(
+          type: ChatActionType.startScreening,
+          expectedContextRevision: context.revision,
+        ),
+      );
+    }
+
     if (normalized.contains('question')) {
       if (context.currentQuestionText != null) {
         return ChatReply(
@@ -42,6 +55,65 @@ class MockChatService extends ChatService {
     return ChatReply(
       'The conversational assistant will be connected in a later phase. For now, I can provide simple guidance about this screening flow.',
     );
+  }
+
+  bool _isStartRequest(String message, List<ChatMessage> history) {
+    final text = message.toLowerCase().trim().replaceAll(RegExp(r'[.!?]'), '');
+    if (text == '/start') {
+      return true;
+    }
+    if (const [
+      "don't start",
+      'dont start',
+      'do not start',
+      'not ready',
+      'no screening',
+      "don't want",
+      'dont want',
+      'do not want',
+    ].any(text.contains)) {
+      return false;
+    }
+    if (RegExp(
+          r'\b(start|begin|take|do|complete)\b.{0,24}\b(screening|questionnaire|test)\b|\b(screening|questionnaire|test)\b.{0,24}\b(start|begin|take|do|complete)\b',
+        ).hasMatch(text) ||
+        RegExp(
+          r"\b(?:i am|i['’]?m|im|we are|we['’]?re)?\s*ready\b.{0,32}\b(?:start|begin|screening|questionnaire|test|get\s+started)\b|\blet['’]?s\s+(?:start|get\s+started)\b",
+        ).hasMatch(text)) {
+      return true;
+    }
+    if (!const {
+      'yes',
+      'yes please',
+      'yeah',
+      'yep',
+      'sure',
+      'okay',
+      'ok',
+      "let's start",
+      'lets start',
+      "let's get started",
+      'lets get started',
+      'ready',
+      "i'm ready",
+      'im ready',
+      'i am ready',
+    }.contains(text)) {
+      return false;
+    }
+    final assistantHistory = history
+        .where((entry) => !entry.isUser)
+        .map((entry) => entry.text.toLowerCase())
+        .join(' ');
+    return const [
+      'start a screening',
+      'start screening',
+      'begin a screening',
+      'ready to start',
+      'ready to get started',
+      'say "yes"',
+      "say 'yes'",
+    ].any(assistantHistory.contains);
   }
 }
 

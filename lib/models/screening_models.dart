@@ -102,6 +102,18 @@ class ChatMessage {
   final bool isError;
 }
 
+class ScreeningQuestionContext {
+  const ScreeningQuestionContext({
+    required this.id,
+    required this.number,
+    required this.text,
+  });
+
+  final String id;
+  final int number;
+  final String text;
+}
+
 class ScreeningContext {
   const ScreeningContext({
     required this.stage,
@@ -112,6 +124,7 @@ class ScreeningContext {
     this.questionnaireType,
     this.currentQuestionIndex,
     this.currentQuestionText,
+    this.questionnaireQuestions = const [],
     this.result,
   });
 
@@ -123,5 +136,6 @@ class ScreeningContext {
   final QuestionnaireType? questionnaireType;
   final int? currentQuestionIndex;
   final String? currentQuestionText;
+  final List<ScreeningQuestionContext> questionnaireQuestions;
   final ScreeningResult? result;
 }

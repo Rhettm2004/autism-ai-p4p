@@ -13,6 +13,132 @@ import 'package:http/testing.dart';
 
 void main() {
   group('LocalLlmChatService request', () {
+    test(
+      'starts from clear welcome consent without calling the model',
+      () async {
+        var requestCount = 0;
+        final client = MockClient((request) async {
+          requestCount += 1;
+          return _successResponse('Unexpected');
+        });
+        final service = LocalLlmChatService(
+          baseUrl: 'http://localhost:8080',
+          client: client,
+        );
+        addTearDown(() {
+          service.dispose();
+          client.close();
+        });
+
+        final reply = await service.sendMessage(
+          message: 'Yes please',
+          history: [
+            _message(
+              'Would you like to start a screening?',
+              isUser: false,
+              minute: 0,
+            ),
+            _message('Yes please', isUser: true, minute: 1),
+          ],
+          context: const ScreeningContext(
+            stage: ScreeningStage.welcome,
+            revision: 3,
+          ),
+        );
+
+        expect(requestCount, 0);
+        expect(reply.action?.type, ChatActionType.startScreening);
+        expect(reply.action?.expectedContextRevision, 3);
+      },
+    );
+
+    test(
+      'starts from natural consent after an explanatory assistant turn',
+      () async {
+        var requestCount = 0;
+        final client = MockClient((request) async {
+          requestCount += 1;
+          return _successResponse('Unexpected');
+        });
+        final service = LocalLlmChatService(
+          baseUrl: 'http://localhost:8080',
+          client: client,
+        );
+        addTearDown(() {
+          service.dispose();
+          client.close();
+        });
+        final history = [
+          _message(
+            'Would you like to start a screening?',
+            isUser: false,
+            minute: 0,
+          ),
+          _message('How does this work?', isUser: true, minute: 1),
+          _message(
+            'When you are ready, say "yes" or "I am ready to start screening".',
+            isUser: false,
+            minute: 2,
+          ),
+        ];
+
+        for (final phrase in [
+          'ok im ready to get started',
+          "I'm ready to start screening",
+          "Let's get started",
+          'yes',
+        ]) {
+          final reply = await service.sendMessage(
+            message: phrase,
+            history: history,
+            context: const ScreeningContext(
+              stage: ScreeningStage.welcome,
+              revision: 4,
+            ),
+          );
+          expect(reply.action?.type, ChatActionType.startScreening);
+          expect(reply.action?.expectedContextRevision, 4);
+        }
+        expect(requestCount, 0);
+      },
+    );
+
+    test('does not start from negative readiness language', () async {
+      var requestCount = 0;
+      final client = MockClient((request) async {
+        requestCount += 1;
+        return _successResponse('Not starting.');
+      });
+      final service = LocalLlmChatService(
+        baseUrl: 'http://localhost:8080',
+        client: client,
+      );
+      addTearDown(() {
+        service.dispose();
+        client.close();
+      });
+
+      for (final phrase in [
+        "I'm not ready to start screening",
+        'Please dont start screening yet',
+      ]) {
+        final reply = await service.sendMessage(
+          message: phrase,
+          history: [
+            _message(
+              'Would you like to start a screening?',
+              isUser: false,
+              minute: 0,
+            ),
+          ],
+          context: const ScreeningContext(stage: ScreeningStage.welcome),
+        );
+
+        expect(reply.action, isNull);
+      }
+      expect(requestCount, 2);
+    });
+
     test('sends OpenAI-compatible history and read-only app context', () async {
       late http.Request capturedRequest;
       late Map<String, dynamic> capturedBody;
@@ -106,7 +232,7 @@ void main() {
       );
     });
 
-    test('limits the transcript to the latest 12 messages', () async {
+    test('keeps the complete typical screening conversation', () async {
       late List<dynamic> capturedMessages;
       final client = MockClient((request) async {
         final body = jsonDecode(request.body) as Map<String, dynamic>;
@@ -133,8 +259,8 @@ void main() {
         context: const ScreeningContext(stage: ScreeningStage.welcome),
       );
 
-      expect(capturedMessages, hasLength(12));
-      expect(capturedMessages[1]['content'], 'message-4');
+      expect(capturedMessages, hasLength(16));
+      expect(capturedMessages[1]['content'], 'message-0');
       expect(capturedMessages.last['role'], 'user');
       expect(capturedMessages.last['content'], 'latest-message');
     });

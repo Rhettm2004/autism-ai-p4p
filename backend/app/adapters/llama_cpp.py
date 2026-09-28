@@ -23,7 +23,7 @@ class LlamaCppAdapter:
         # llama.cpp defaults differ from Transformers. These are an explicit app
         # profile, NOT equivalence to Rayaan's completion-only logits processors.
         body = dict(model=model, messages=messages, stream=False, temperature=0.1,
-                    max_tokens=512, top_k=50, top_p=1.0, min_p=0.0,
+                    max_tokens=256, top_k=50, top_p=1.0, min_p=0.0,
                     repeat_penalty=1.0, presence_penalty=0.0, frequency_penalty=0.0)
         try:
             response = await self.client.post(f'{self.urls[model]}/v1/chat/completions',

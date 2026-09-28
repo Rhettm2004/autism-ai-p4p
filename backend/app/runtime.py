@@ -2,15 +2,33 @@ import asyncio
 import hashlib
 import json
 import logging
+import re
 import yaml
 from app.corpus import verify_corpus
 from app.errors import ServiceError
-from app.schemas import ChatResponse, ChatMetadata, CommandResult, Source
+from app.schemas import (ChatResponse, ChatMetadata, CommandResult, Source,
+                         StartScreeningAction)
 from app.adapters.llama_cpp import LlamaCppAdapter
 
 log = logging.getLogger(__name__)
 
 class ChatRuntime:
+    _explicit_start = re.compile(
+        r'\b(start|begin|take|do|complete)\b.{0,24}\b(screening|questionnaire|test)\b|'
+        r'\b(screening|questionnaire|test)\b.{0,24}\b(start|begin|take|do|complete)\b',
+        re.IGNORECASE,
+    )
+    _affirmatives = {
+        'yes', 'yes please', 'yeah', 'yep', 'sure', 'okay', 'ok',
+        'lets start', "let's start", 'lets get started', "let's get started",
+        'ready', "i'm ready", 'im ready', 'i am ready',
+    }
+    _ready_to_start = re.compile(
+        r"\b(?:i\s+am|i['’]?m|im|we\s+are|we['’]?re)?\s*ready\b.{0,32}"
+        r"\b(?:start|begin|screening|questionnaire|test|get\s+started)\b|"
+        r"\blet['’]?s\s+(?:start|get\s+started)\b",
+        re.IGNORECASE,
+    )
     def __init__(self, settings, adapter=None):
         self.settings = settings
         self.adapter = adapter or LlamaCppAdapter(settings.model_urls, settings.timeout_seconds)
@@ -137,7 +155,8 @@ class ChatRuntime:
                 {'role': 'user', 'content': request.message},
             ]
         else:
-            system = turn.system_prompt + '\n\n' + self.application['contract']
+            system = (turn.system_prompt + '\n\n' + self.application['contract']
+                      + '\n\n' + self.application['process_guide'])
             context = json.dumps(request.screening_context.model_dump(), ensure_ascii=False)
             messages = [{'role': 'system', 'content': system}]
             current_user = ('<read_only_screening_context>\n' + context +
@@ -176,6 +195,53 @@ class ChatRuntime:
             command=CommandResult(name=name, arg=arg, executed_question=executed_question),
             metadata=self._metadata(request, turn))
 
+    @classmethod
+    def _wants_to_start_screening(cls, request):
+        if request.screening_context.stage != 'welcome':
+            return False
+        normalized = ' '.join(request.message.lower().strip().split())
+        if normalized == '/start':
+            return True
+        if any(phrase in normalized for phrase in (
+            "don't start", 'dont start', 'do not start', 'not ready',
+            'no screening', "don't want", 'dont want', 'do not want',
+        )):
+            return False
+        if cls._explicit_start.search(normalized):
+            return True
+        if cls._ready_to_start.search(normalized):
+            return True
+        simple = normalized.strip(' .!?')
+        if simple not in cls._affirmatives:
+            return False
+        # The welcome message can be followed by an explanatory turn before the
+        # user consents, so inspect all assistant turns rather than only the last.
+        assistant_history = ' '.join(
+            message.content.lower() for message in request.history
+            if message.role == 'assistant'
+        )
+        return any(phrase in assistant_history for phrase in (
+            'start a screening', 'start screening', 'begin a screening',
+            'ready to start', 'ready to get started', 'say "yes"', "say 'yes'",
+        ))
+
+    def _start_screening_response(self, request):
+        return ChatResponse(
+            request_id=request.request_id,
+            session_id=request.session_id,
+            context_revision=request.screening_context.revision,
+            response='Of course. Let’s begin with a few details to select the appropriate questionnaire.',
+            route='screening_guidance',
+            model=request.model,
+            sources=[],
+            options=request.options,
+            action=StartScreeningAction(
+                type='start_screening',
+                expected_context_revision=request.screening_context.revision,
+            ),
+            metadata=self._metadata(request),
+        )
+
     def _handle_command(self, request):
         from src.chat import COMMANDS, load_examples, parse_command
         try:
@@ -194,6 +260,7 @@ class ChatRuntime:
                 '/concise on|off — toggle concise chat-style instructions',
                 '/router on|off — toggle route-conditioned guidance',
                 '/rag on|off — toggle retrieval',
+                '/start — begin a screening from the welcome conversation',
                 '/quit or /exit — explain how to leave the web demo',
             ])
             return self._command_response(request, text, command.name), request
@@ -242,6 +309,8 @@ class ChatRuntime:
     async def chat(self, request):
         if not all(v == 'ready' for v in self.components.values()):
             raise ServiceError('runtime_unavailable', 'The assistant requires its configured router and source corpus.')
+        if self._wants_to_start_screening(request):
+            return self._start_screening_response(request)
         handled, effective_request = self._handle_command(request)
         if handled is not None:
             return handled
