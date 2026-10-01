@@ -5,6 +5,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import '../data/question_banks.dart';
+import '../models/eaip_model_input.dart';
 import '../models/screening_models.dart';
 import '../models/screening_session.dart';
 import 'questionnaire_scoring_service.dart';
@@ -38,6 +39,7 @@ class ScreeningReportData {
     required this.classicalResult,
     required this.assessmentStatus,
     required this.diagnosticTechnique,
+    required this.eaipInput,
   });
 
   factory ScreeningReportData.fromSession(
@@ -90,6 +92,7 @@ class ScreeningReportData {
       ),
       assessmentStatus: session.assessmentStatus,
       diagnosticTechnique: session.diagnosticTechnique,
+      eaipInput: EaipModelInputPreview.fromSession(session),
     );
   }
 
@@ -114,6 +117,7 @@ class ScreeningReportData {
   final ClassicalScreeningResult classicalResult;
   final String? assessmentStatus;
   final String? diagnosticTechnique;
+  final EaipModelInputPreview eaipInput;
 
   String get filename => 'Autism_AI_Screening_Report_$sessionId.pdf';
 
@@ -428,6 +432,58 @@ class ReportService {
             background: paleBlue,
             borderColor: blue,
             textStyle: baseStyle,
+          ),
+          pw.NewPage(),
+          pw.Row(
+            children: [
+              pw.Text(
+                'Autism AI - integration appendix',
+                style: boldStyle.copyWith(fontSize: 9, color: navy),
+              ),
+              pw.Spacer(),
+              pw.Text(
+                'Session ID: ${data.sessionId}',
+                style: baseStyle.copyWith(fontSize: 8, color: muted),
+              ),
+            ],
+          ),
+          pw.SizedBox(height: 14),
+          _sectionHeading(
+            'EAIP Model Input Preview (Temporary)',
+            orange,
+            boldStyle,
+          ),
+          _noticeBox(
+            text: 'This appendix is included for integration testing. Q1-Q10 numeric encoding has not yet been confirmed from the supplied model documentation, so no numeric values have been guessed.',
+            background: paleOrange,
+            borderColor: orange,
+            textStyle: baseStyle,
+          ),
+          pw.SizedBox(height: 8),
+          _detailsBox(
+            rows: [
+              for (var index = 1; index <= 10; index++)
+                (
+                  'Q$index',
+                  '${data.eaipInput.rawQuestionAnswers['Q$index']} | model value: pending confirmation',
+                ),
+              (
+                'Age',
+                '${data.eaipInput.age ?? 'Not provided'} (${data.eaipInput.ageUnit})',
+              ),
+              ('Sex', data.eaipInput.sex ?? 'Not provided'),
+              ('Ethnicity', data.eaipInput.ethnicity ?? 'Not provided'),
+              ('Jauntice', data.eaipInput.jauntice ?? 'Not provided'),
+              (
+                'FamilyASDHistory',
+                data.eaipInput.familyAsdHistory ?? 'Not provided',
+              ),
+              ('AutismAgeCategory', data.eaipInput.autismAgeCategory),
+            ],
+            baseStyle: baseStyle.copyWith(fontSize: 8.5),
+            boldStyle: boldStyle.copyWith(fontSize: 8.5),
+            borderColor: border,
+            labelColor: muted,
           ),
         ],
       ),

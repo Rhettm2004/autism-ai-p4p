@@ -96,6 +96,16 @@ void main() {
       expect(report.assessmentStatus, assessmentStatuses.last);
       expect(report.includeDiagnosticTechnique, isTrue);
       expect(report.diagnosticTechnique, diagnosticTechniques[2]);
+      expect(report.eaipInput.rawQuestionAnswers, hasLength(10));
+      expect(report.eaipInput.questionEncodingConfirmed, isFalse);
+      expect(report.eaipInput.age, 24);
+      expect(report.eaipInput.ageUnit, 'months');
+      expect(report.eaipInput.sex, 'm');
+      expect(report.eaipInput.ethnicity, 'Asian');
+      expect(report.eaipInput.jauntice, 'no');
+      expect(report.eaipInput.familyAsdHistory, 'yes');
+      expect(report.eaipInput.autismAgeCategory, 'chat');
+      expect(report.eaipInput.toModelPayload(), containsPair('Q1', null));
     });
 
     test('omits diagnostic technique when it is not applicable', () {

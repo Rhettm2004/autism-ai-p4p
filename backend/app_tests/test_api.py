@@ -182,12 +182,13 @@ def test_application_profile_includes_history_context_and_questionnaire(client_r
     assert 'Do not repeat the warning that' in messages[0]['content']
     assert 'When you\'re ready, say "yes"' in messages[0]['content']
     assert 'The conversational AI guides the user' in messages[0]['content']
-    assert 'Q-CHAT-10 for 18 to under 36 months' in messages[0]['content']
-    assert 'Background details do not currently' in messages[0]['content']
+    assert 'Do not describe this application as using Q-CHAT' in messages[0]['content']
+    assert 'age-specific ten-question' in messages[0]['content']
+    assert 'EAIP-DARV prediction service is not yet connected' in messages[0]['content']
     assert 'It does not upload answers' in messages[0]['content']
     assert 'default to two to four short sentences' in messages[0]['content']
     assert 'postpones screening without asking another question' in messages[0]['content']
-    assert response.json()['metadata']['application_prompt_version'] == 5
+    assert response.json()['metadata']['application_prompt_version'] == 6
 
 
 def test_clear_welcome_consent_proposes_start_without_model_generation(client_runtime):
@@ -296,6 +297,7 @@ def test_reuses_rayaan_commands_and_updates_explicit_options(client_runtime):
     help_response = client.post('/chat', json=payload(message='/help'))
     assert help_response.status_code == 200
     assert '/examples' in help_response.json()['response']
+    assert 'Rayaan' not in help_response.json()['response']
     assert help_response.json()['command']['name'] == 'help'
     assert runtime.adapter.calls == []
 
@@ -316,6 +318,8 @@ def test_example_and_prompt_commands_use_original_demo_data(client_runtime):
     client, runtime = client_runtime
     examples = client.post('/chat', json=payload(message='/examples'))
     assert examples.status_code == 200
+    assert examples.json()['response'].startswith('Scripted example questions:')
+    assert 'Rayaan' not in examples.json()['response']
     assert 'What is autism spectrum disorder?' in examples.json()['response']
 
     example = client.post('/chat', json=payload(message='/ex 1'))

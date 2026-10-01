@@ -253,7 +253,7 @@ class ChatRuntime:
         if command.name == 'help':
             text = '\n'.join([
                 'Available commands:',
-                '/examples — list Rayaan’s scripted demo questions',
+                '/examples — list scripted example questions',
                 '/ex N — ask demo question N',
                 '/prompt — show the prompt built for the previous question',
                 '/cite on|off — toggle experimental inline citation instructions',
@@ -266,13 +266,13 @@ class ChatRuntime:
             return self._command_response(request, text, command.name), request
         if command.name == 'examples':
             examples = load_examples()
-            text = 'Rayaan’s scripted demo questions:\n\n' + '\n\n'.join(
+            text = 'Scripted example questions:\n\n' + '\n\n'.join(
                 f"{index}. {example['question']}\n   {example['shows'].strip()}\n"
                 f"   From: {example['from']}"
                 for index, example in enumerate(examples, start=1))
             return self._command_response(request, text, command.name), request
         if command.name in ('quit', 'exit'):
-            text = ('This command exits Rayaan’s terminal demo. In the web app, '
+            text = ('This command exits the terminal demo. In the web app, '
                     'close the tab or stop ./run_app.sh with Ctrl+C.')
             return self._command_response(request, text, command.name), request
         if command.name in ('cite', 'concise', 'router', 'rag'):
@@ -302,7 +302,7 @@ class ChatRuntime:
                 return self._command_response(request, text, 'ex', command.arg), request
             question = examples[command.arg - 1]['question']
             return None, request.model_copy(update={'message': question})
-        # Keep this exhaustive if Rayaan adds another command.
+        # Keep this exhaustive if another command is added.
         available = ', '.join(f'/{name}' for name in COMMANDS)
         return self._command_response(request, f'Unsupported command. Available: {available}', 'invalid'), request
 

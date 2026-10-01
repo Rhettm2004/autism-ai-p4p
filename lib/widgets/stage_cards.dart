@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../app.dart';
+import '../models/eaip_model_input.dart';
 import '../models/screening_models.dart';
 import '../services/questionnaire_scoring_service.dart';
 import '../state/screening_controller.dart';
@@ -1025,6 +1026,9 @@ class ReportCard extends StatelessWidget {
       questionnaireType: controller.questionnaireType!,
       answers: controller.behaviouralAnswers,
     );
+    final eaipInput = EaipModelInputPreview.fromSession(
+      controller.sessionSnapshot,
+    );
 
     return StageCardFrame(
       title: 'Screening report',
@@ -1092,6 +1096,56 @@ class ReportCard extends StatelessWidget {
           _SummaryRow(
             label: 'Threshold outcome',
             value: classicalResult.thresholdStatement,
+          ),
+          const SizedBox(height: 16),
+          Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF7ED),
+              border: Border.all(color: const Color(0xFFF7C89E)),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: ExpansionTile(
+              key: const Key('eaip-input-preview'),
+              title: const Text('EAIP model input preview'),
+              subtitle: const Text(
+                'Temporary integration data - Q1-Q10 encoding is awaiting confirmation.',
+              ),
+              childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              children: [
+                const _NoticeBox(
+                  icon: Icons.science_outlined,
+                  text: 'Original answers are preserved below. Numeric question values are deliberately left unassigned until the EAIP-DARV input encoding is confirmed.',
+                ),
+                const SizedBox(height: 10),
+                for (var index = 1; index <= 10; index++)
+                  _SummaryRow(
+                    label: 'Q$index',
+                    value:
+                        '${eaipInput.rawQuestionAnswers['Q$index']}\nModel value: Pending confirmation',
+                  ),
+                _SummaryRow(
+                  label: 'Age',
+                  value: '${eaipInput.age ?? '—'} (${eaipInput.ageUnit})',
+                ),
+                _SummaryRow(label: 'Sex', value: eaipInput.sex ?? '—'),
+                _SummaryRow(
+                  label: 'Ethnicity',
+                  value: eaipInput.ethnicity ?? '—',
+                ),
+                _SummaryRow(
+                  label: 'Jauntice',
+                  value: eaipInput.jauntice ?? '—',
+                ),
+                _SummaryRow(
+                  label: 'FamilyASDHistory',
+                  value: eaipInput.familyAsdHistory ?? '—',
+                ),
+                _SummaryRow(
+                  label: 'AutismAgeCategory',
+                  value: eaipInput.autismAgeCategory,
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           const _SectionTitle('Research validation'),
