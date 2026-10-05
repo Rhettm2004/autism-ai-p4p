@@ -10,8 +10,11 @@ LLAMA_MODEL_PATH="${LLAMA_MODEL_PATH:-$MODEL_DIR/Meta-Llama-3-8B-Instruct-Q4_K_M
 MISTRAL_URL="http://127.0.0.1:8080"
 LLAMA_URL="http://127.0.0.1:8081"
 BACKEND_URL="http://127.0.0.1:8000"
+EAIP_URL="http://127.0.0.1:8090"
+EAIP_PROJECT_DIR="${EAIP_PROJECT_DIR:-$BACKEND_DIR/.cache/eaip_project/EAIP ASD project}"
 MODEL_PID=""
 BACKEND_PID=""
+EAIP_PID=""
 
 usage() {
   cat <<'EOF'
@@ -25,7 +28,8 @@ Run Autism AI with one command:
 
 Running ./run_app.sh without an option displays a menu.
 
-The integrated modes require the prepared research corpus and backend environment.
+The integrated modes require the prepared research corpus, backend environment,
+and one-time EAIP-DARV setup with ./setup_eaip.sh.
 EOF
 }
 
@@ -35,6 +39,9 @@ cleanup() {
   fi
   if [[ -n "$MODEL_PID" ]] && kill -0 "$MODEL_PID" 2>/dev/null; then
     kill "$MODEL_PID" 2>/dev/null || true
+  fi
+  if [[ -n "$EAIP_PID" ]] && kill -0 "$EAIP_PID" 2>/dev/null; then
+    kill "$EAIP_PID" 2>/dev/null || true
   fi
 }
 
@@ -55,7 +62,7 @@ wait_for_url() {
   local process_pid="${4:-}"
 
   for ((attempt = 1; attempt <= attempts; attempt++)); do
-    if curl --silent --output /dev/null "$url"; then
+    if curl --silent --fail --output /dev/null "$url"; then
       return 0
     fi
     if [[ -n "$process_pid" ]] && ! kill -0 "$process_pid" 2>/dev/null; then
@@ -168,6 +175,33 @@ start_backend() {
   fi
 }
 
+start_eaip() {
+  local python="$BACKEND_DIR/.venv-eaip/bin/python"
+  if curl --silent --fail --output /dev/null "$EAIP_URL/health"; then
+    echo "Using the EAIP-DARV service already running on port 8090."
+    return
+  fi
+  if [[ ! -x "$python" || ! -d "$EAIP_PROJECT_DIR/model_artifacts" ]]; then
+    echo "EAIP-DARV runtime has not been prepared."
+    echo "Run ./setup_eaip.sh once, then retry this command."
+    exit 1
+  fi
+  mkdir -p "$BACKEND_DIR/logs"
+  echo "Starting EAIP-DARV. Its log is backend/logs/eaip-darv.log"
+  (
+    cd "$BACKEND_DIR"
+    EAIP_PROJECT_DIR="$EAIP_PROJECT_DIR" \
+      exec .venv-eaip/bin/python -m uvicorn eaip_service.app:app \
+      --host 127.0.0.1 --port 8090
+  ) >"$BACKEND_DIR/logs/eaip-darv.log" 2>&1 &
+  EAIP_PID=$!
+  if ! wait_for_url "$EAIP_URL/health" "EAIP-DARV" 120 "$EAIP_PID"; then
+    tail -n 50 "$BACKEND_DIR/logs/eaip-darv.log" || true
+    exit 1
+  fi
+  echo "EAIP-DARV is ready."
+}
+
 run_flutter() {
   need_command flutter "Install Flutter and ensure it is available on PATH."
   cd "$ROOT_DIR"
@@ -198,8 +232,10 @@ fi
 
 case "$MODE" in
   mock)
-    echo "Starting Flutter with mock chat."
-    run_flutter --dart-define=CHAT_PROVIDER=mock
+    echo "Starting Flutter with mock chat and mock screening prediction."
+    run_flutter \
+      --dart-define=CHAT_PROVIDER=mock \
+      --dart-define=SCREENING_PREDICTION_PROVIDER=mock
     ;;
   local)
     start_mistral
@@ -209,6 +245,7 @@ case "$MODE" in
       --dart-define=LOCAL_LLM_BASE_URL="$MISTRAL_URL"
     ;;
   mistral|backend|llama)
+    start_eaip
     if [[ "$MODE" == "llama" ]]; then
       model="llama"
       start_llama
@@ -236,7 +273,8 @@ case "$MODE" in
       --web-port 3000 \
       --dart-define=CHAT_PROVIDER=backend \
       --dart-define=AUTISM_AI_BACKEND_URL="$BACKEND_URL" \
-      --dart-define=AUTISM_AI_MODEL="$model"
+      --dart-define=AUTISM_AI_MODEL="$model" \
+      --dart-define=SCREENING_PREDICTION_PROVIDER=backend
     ;;
   *)
     usage

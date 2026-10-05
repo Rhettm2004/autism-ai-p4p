@@ -9,6 +9,7 @@ import '../services/chat_service_factory.dart';
 import '../services/report_download.dart';
 import '../services/report_service.dart';
 import '../services/screening_session_store.dart';
+import '../services/screening_prediction_service_factory.dart';
 import '../state/screening_controller.dart';
 import '../widgets/app_header.dart';
 import '../widgets/persistent_chat_panel.dart';
@@ -37,6 +38,7 @@ class _ScreeningPageState extends State<ScreeningPage> {
         widget.controller ??
         ScreeningController(
           chatService: createConfiguredChatService(),
+          predictionService: createConfiguredPredictionService(),
           sessionStore: SharedPreferencesScreeningSessionStore(),
         );
     unawaited(_controller.initializeSession());
@@ -228,6 +230,8 @@ class _ScreeningPageState extends State<ScreeningPage> {
       ),
       ScreeningStage.disclaimer => InlineDisclaimerCard(
         onContinue: _controller.acknowledgeDisclaimer,
+        isLoading: _controller.isCalculatingResult,
+        errorMessage: _controller.errorMessage,
       ),
       ScreeningStage.result => ResultCard(
         controller: _controller,
@@ -264,7 +268,7 @@ class _ScreeningPageState extends State<ScreeningPage> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'This prototype demonstrates the screening flow and persistent assistant interface. Chat uses the configured assistant service. The AI screening prediction remains mocked.',
+                'This prototype demonstrates the screening flow and persistent assistant interface. Chat uses the configured assistant service, and completed responses are sent to the EAIP-DARV screening model.',
               ),
               if (_controller.stage != ScreeningStage.welcome) ...[
                 const SizedBox(height: 18),
@@ -333,7 +337,7 @@ class _ScreeningPageState extends State<ScreeningPage> {
         ),
         ScreeningStage.result => (
           title: 'Screening result',
-          message: 'This prototype result is mocked and is not a clinical diagnosis. Discuss concerns with a health professional.',
+          message: 'This EAIP-DARV output is a screening result and is not a clinical diagnosis. Discuss concerns with a health professional.',
         ),
         ScreeningStage.validation => (
           title: 'Validation',

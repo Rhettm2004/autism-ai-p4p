@@ -143,7 +143,12 @@ class ChatRuntime:
             top_k=self.turn_settings.top_k,
             expand_neighbours=self.turn_settings.expand_neighbours,
         )
-        turn = prepare_turn(request.message, settings, self.condition,
+        condition = (
+            self.condition
+            if self.cfg['prompt_profile'] == 'rayaan_chat_exact'
+            else self.application['base_prompt']
+        )
+        turn = prepare_turn(request.message, settings, condition,
                             self.router, self.training_texts, self.retriever)
         if settings.use_rag and not turn.hits:
             raise ServiceError('retrieval_empty', 'Supporting evidence is unavailable.')

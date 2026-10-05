@@ -1,12 +1,9 @@
 import '../data/question_banks.dart';
 import 'screening_models.dart';
 import 'screening_session.dart';
+import '../services/questionnaire_response_encoder.dart';
 
-/// A transparent preview of the fields expected by the EAIP-DARV model bundle.
-///
-/// The deployment bundle does not document how each questionnaire response was
-/// converted to its numeric Q1-Q10 value. Until that mapping is confirmed, the
-/// original answer is retained and the corresponding model value stays null.
+/// The validated fields submitted to the EAIP-DARV model bundle.
 class EaipModelInputPreview {
   const EaipModelInputPreview({
     required this.questionnaireType,
@@ -44,10 +41,10 @@ class EaipModelInputPreview {
         for (var index = 0; index < questions.length; index++)
           'Q${index + 1}': session.behaviouralAnswers[questions[index].id]!,
       }),
-      questionValues: Map.unmodifiable({
-        for (var index = 0; index < questions.length; index++)
-          'Q${index + 1}': null,
-      }),
+      questionValues: const QuestionnaireResponseEncoder().encodeModelItems(
+        questionnaireType: questionnaireType,
+        answers: session.behaviouralAnswers,
+      ),
       age: session.age,
       ageUnit: session.ageUnit,
       sex: switch (session.gender?.trim().toLowerCase()) {
@@ -69,7 +66,7 @@ class EaipModelInputPreview {
 
   final QuestionnaireType questionnaireType;
   final Map<String, String> rawQuestionAnswers;
-  final Map<String, int?> questionValues;
+  final Map<String, int> questionValues;
   final int? age;
   final String ageUnit;
   final String? sex;
@@ -80,8 +77,7 @@ class EaipModelInputPreview {
   final String? familyAsdHistory;
   final String autismAgeCategory;
 
-  bool get questionEncodingConfirmed =>
-      questionValues.values.every((value) => value != null);
+  bool get questionEncodingConfirmed => questionValues.length == 10;
 
   Map<String, Object?> toModelPayload() => {
     ...questionValues,

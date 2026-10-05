@@ -1,6 +1,6 @@
-# A–G implementation status
+# Autism AI implementation status
 
-Last verified: 26 September 2026 (Pacific/Auckland).
+Last verified: 2 October 2026 (Pacific/Auckland).
 
 ## Implemented
 
@@ -17,10 +17,11 @@ Last verified: 26 September 2026 (Pacific/Auckland).
   `extended`), the original rule layer, prompt builders, TF-IDF retriever,
   source formatter, and five-passage RAG configuration. The active application
   profile uses `chat.py`'s default of neighbour expansion off.
-- The active `app_context_v1` profile preserves Rayaan's `prepare_turn()` system
-  prompt, then adds separately versioned application constraints, managed
-  conversation history, current screening state, and the active questionnaire
-  as read-only context. Rayaan's exact single-turn CLI remains unchanged.
+- The active `app_context_v1` profile reuses Rayaan's `prepare_turn()` assembly,
+  routing, grounding, and route guidance with a separately versioned neutral
+  application base prompt and constraints. It adds managed conversation history,
+  current screening state, and the active questionnaire as read-only context.
+  Rayaan's exact single-turn CLI profile remains unchanged.
 - Added one llama.cpp adapter for backend-controlled `mistral` and `llama`
   aliases. It rejects tool calls, empty replies, and visible reasoning markers.
 - Added `AutismAiBackendChatService`, typed replies/sources, explicit provider
@@ -38,14 +39,23 @@ Last verified: 26 September 2026 (Pacific/Auckland).
   to API answers. Uncited answers are returned without a rewrite, only cited
   sources are exposed to Flutter, and invalid source numbers are reported in
   response metadata.
-- Kept the screening stage flow, question banks, scoring, validation, report,
-  mock prediction, direct local chat provider, and mock chat provider in place.
+- Integrated the supplied three-module EAIP-DARV bundle behind typed
+  `/screening/health` and `/screening/predict` endpoints. It runs in an isolated
+  environment and never falls back to a mock.
+- Added deterministic mapping from each selected answer to binary `Q1`–`Q10`,
+  submission of all required EAIP fields, explicit loading/error states, result
+  persistence, and late-response protection.
+- Replaced the prototype result and report with EAIP-DARV output. The UI and PDF
+  show the screening flag, DARV probability, disagreement, confidence, per-module
+  values, original answers, and exact submitted model fields.
+- Kept explicit mock prediction and chat providers for tests and UI-only work,
+  plus the direct local chat provider.
 
 ## Verification completed
 
 - `flutter analyze`: clean.
-- `flutter test`: 53 passed.
-- New backend API/integration suite: 40 passed (one dependency deprecation warning).
+- `flutter test`: 55 passed.
+- Backend API/integration suite: 43 passed (one dependency deprecation warning).
 - Original research suites run successfully:
   - interactive chat: 21 passed;
   - retrieval expansion: 9 passed;
@@ -77,14 +87,43 @@ Last verified: 26 September 2026 (Pacific/Auckland).
 - The earlier exact-prompt comparison for `what is asd` remains recorded as a
   research-fidelity baseline. The active chat-first profile now intentionally
   adds application context and therefore is not byte-identical to that baseline.
-- `git diff --check`: clean. The temporary backend process was stopped; the
-  pre-existing local Mistral server was left running.
+- `git diff --check`: clean. The temporary EAIP-DARV verification service was
+  stopped after the live prediction check.
 
 The API tests use explicit fixture passages and fake generation. They verify
 orchestration, conversation context, questionnaire context, action validation,
 and failure behaviour but do not count as live corpus readiness or model-quality
 evaluation. Live generation with the new `app_context_v1` profile remains to be
 checked when a local model server is running.
+
+## EAIP-DARV integration notes
+
+- Supplied ZIP SHA-256:
+  `268c329a840ec70d283fce12b8a68785536bc8a878a3ff475b1d56ae39dbaadc`.
+- Supplied model hashes: Module 1
+  `01ea3b2275fab0874cf29176844d0cb871a86bae2a7d9852687d304943f5fa16`,
+  Module 2
+  `03ef054980458469d4c5eb0e3c7414287a8558db79b4387441862420f50227ba`,
+  and Module 3
+  `e995db8511ae9e7a62c7a6c65ce8b8cfe1a2c40b6da193d4cfdd894ee178bf3d`.
+- `setup_eaip.sh` extracts the supplied ZIP to ignored local cache and installs
+  its runtime separately from the chat backend.
+- The supplied contracts contain absolute Windows paths. The service rewrites
+  those paths in temporary runtime contracts without modifying the source ZIP.
+- The supplied Keras 2.13 files contain Windows-authored nested weight-group names
+  that macOS loaders cannot associate with layers automatically. The compatibility
+  loader rebuilds the exact architectures declared in the supplied training scripts
+  and maps the supplied tensors by layer. It does not retrain, substitute, or alter
+  model weights.
+- A live structured request loaded all three supplied modules and returned HTTP
+  200 with raw and calibrated probabilities, agreement, EAIP/DARV probability,
+  disagreement, confidence, thresholds, and classifications.
+- The supplied artifacts do not include an explicit document mapping the four
+  questionnaire answer scales to binary `Q1`–`Q10`. The integration applies the
+  established per-item scoring keys already implemented for those question banks.
+  This is deterministic and tested, but the model owner should confirm that it
+  matches the encoding used to train the bundle before research results are
+  interpreted or published.
 
 ## Research-fidelity limitations
 

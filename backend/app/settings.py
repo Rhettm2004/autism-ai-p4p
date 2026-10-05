@@ -15,6 +15,8 @@ class Settings:
     default_model: str = 'mistral'
     cors_origins: tuple[str, ...] = ('http://localhost:3000',)
     timeout_seconds: float = 60
+    eaip_url: str = 'http://127.0.0.1:8090'
+    eaip_timeout_seconds: float = 30
 
     @classmethod
     def load(cls):
@@ -25,7 +27,8 @@ class Settings:
         default = os.getenv('AUTISM_AI_DEFAULT_MODEL', 'mistral')
         if default not in urls:
             raise ValueError('Unsupported default model')
-        for url in urls.values():
+        eaip_url = os.getenv('AUTISM_AI_EAIP_URL', 'http://127.0.0.1:8090')
+        for url in [*urls.values(), eaip_url]:
             from urllib.parse import urlparse
             parsed = urlparse(url)
             if parsed.scheme not in ('http', 'https') or not parsed.hostname:
@@ -33,5 +36,6 @@ class Settings:
         return cls(model_urls=urls,
                    model_identities={n: v['identity'] for n, v in cfg['models'].items()},
                    default_model=default,
+                   eaip_url=eaip_url.rstrip('/'),
                    cors_origins=tuple(x.strip() for x in os.getenv(
                        'AUTISM_AI_CORS_ORIGINS', 'http://localhost:3000').split(',') if x.strip()))

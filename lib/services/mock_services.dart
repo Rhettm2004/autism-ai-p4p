@@ -119,15 +119,21 @@ class MockChatService extends ChatService {
 
 abstract class ScreeningPredictionService {
   Future<ScreeningResult> predict({
+    required String sessionId,
+    required QuestionnaireType questionnaireType,
     required RespondentDetails respondent,
     required BackgroundDetails background,
     required Map<String, String> answers,
   });
+
+  void dispose() {}
 }
 
 class MockScreeningPredictionService implements ScreeningPredictionService {
   @override
   Future<ScreeningResult> predict({
+    required String sessionId,
+    required QuestionnaireType questionnaireType,
     required RespondentDetails respondent,
     required BackgroundDetails background,
     required Map<String, String> answers,
@@ -140,4 +146,7 @@ class MockScreeningPredictionService implements ScreeningPredictionService {
       isMock: true,
     );
   }
+
+  @override
+  void dispose() {}
 }

@@ -218,7 +218,7 @@ void main() {
         messages.first['content'],
         allOf(
           contains('Screening stage: behaviouralQuestions'),
-          contains('Questionnaire: Q-CHAT-10'),
+          contains('Questionnaire: Toddler screening'),
           contains('Current question number: 3'),
           contains('Current question text: Example screening question?'),
           contains('prototype AI flag not raised'),

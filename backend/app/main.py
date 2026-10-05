@@ -5,9 +5,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.errors import ServiceError
-from app.schemas import ChatRequest, ChatResponse
+from app.schemas import (ChatRequest, ChatResponse, ScreeningPredictionRequest,
+                         ScreeningPredictionResponse)
 from app.settings import Settings
 from app.runtime import ChatRuntime
+from app.adapters.eaip_darv import EaipDarvClient
 
 MAX_BODY = 128 * 1024
 
@@ -40,9 +42,11 @@ class BodyLimitMiddleware:
         await self.app(scope, replay, send)
 
 
-def create_app(runtime=None, settings=None):
+def create_app(runtime=None, settings=None, screening_client=None):
     settings = settings or Settings.load()
     runtime = runtime or ChatRuntime(settings)
+    screening_client = screening_client or EaipDarvClient(
+        settings.eaip_url, settings.eaip_timeout_seconds)
 
     @asynccontextmanager
     async def lifespan(app):
@@ -51,9 +55,11 @@ def create_app(runtime=None, settings=None):
             yield
         finally:
             await runtime.close()
+            await screening_client.close()
 
     app = FastAPI(title='Autism AI', version='1', lifespan=lifespan)
     app.state.runtime = runtime
+    app.state.screening_client = screening_client
     app.add_middleware(BodyLimitMiddleware)
     app.add_middleware(CORSMiddleware, allow_origins=list(settings.cors_origins),
                        allow_methods=['GET', 'POST'], allow_headers=['Content-Type', 'Accept'])
@@ -85,6 +91,20 @@ def create_app(runtime=None, settings=None):
     async def chat(body: ChatRequest, request: Request):
         request.state.request_id = body.request_id
         return await runtime.chat(body)
+
+    @app.get('/screening/health')
+    async def screening_health():
+        ready = await screening_client.ready()
+        return JSONResponse(
+            {'status': 'ready' if ready else 'unavailable',
+             'model': 'eaip-darv'},
+            status_code=200 if ready else 503,
+        )
+
+    @app.post('/screening/predict', response_model=ScreeningPredictionResponse)
+    async def screening_predict(body: ScreeningPredictionRequest, request: Request):
+        request.state.request_id = body.request_id
+        return await screening_client.predict(body)
 
     return app
 

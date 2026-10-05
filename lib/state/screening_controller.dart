@@ -7,8 +7,8 @@ import '../models/chat_reply.dart';
 import '../models/screening_models.dart';
 import '../models/screening_session.dart';
 import '../services/chat_service.dart';
-import '../services/questionnaire_scoring_service.dart';
 import '../services/mock_services.dart';
+import '../services/eaip_screening_prediction_service.dart';
 import '../services/screening_session_store.dart';
 
 class ScreeningController extends ChangeNotifier {
@@ -49,6 +49,7 @@ class ScreeningController extends ChangeNotifier {
   int currentQuestionIndex = 0;
   bool editingFromReview = false;
   bool isSendingChat = false;
+  bool isCalculatingResult = false;
   bool isSessionLoading = false;
   String? errorMessage;
 
@@ -75,7 +76,6 @@ class ScreeningController extends ChangeNotifier {
     currentQuestionId: stage == ScreeningStage.behaviouralQuestions
         ? currentQuestion?.id
         : null,
-    classicalResult: _classicalContextResult,
     questionnaireType: questionnaireType,
     currentQuestionIndex: stage == ScreeningStage.behaviouralQuestions
         ? currentQuestionIndex
@@ -93,24 +93,6 @@ class ScreeningController extends ChangeNotifier {
     ],
     result: result,
   );
-
-  ChatClassicalResult? get _classicalContextResult {
-    if (result == null || questionnaireType == null) return null;
-    try {
-      final calculated = const QuestionnaireScoringService().calculate(
-        questionnaireType: questionnaireType!,
-        answers: behaviouralAnswers,
-      );
-      return ChatClassicalResult(
-        questionnaireType: calculated.questionnaireType,
-        score: calculated.score,
-        referralThreshold: calculated.referralThreshold,
-        thresholdMet: calculated.thresholdMet,
-      );
-    } on FormatException {
-      return null;
-    }
-  }
 
   String get stageLabel => switch (stage) {
     ScreeningStage.welcome => 'Welcome',
@@ -339,12 +321,31 @@ class ScreeningController extends ChangeNotifier {
   }
 
   Future<void> acknowledgeDisclaimer() async {
-    result = await _predictionService.predict(
-      respondent: respondent,
-      background: background,
-      answers: Map.unmodifiable(behaviouralAnswers),
-    );
-    _goTo(ScreeningStage.result);
+    if (isCalculatingResult || questionnaireType == null) return;
+    isCalculatingResult = true;
+    errorMessage = null;
+    _notify();
+    try {
+      result = await _predictionService.predict(
+        sessionId: sessionId,
+        questionnaireType: questionnaireType!,
+        respondent: respondent,
+        background: background,
+        answers: Map.unmodifiable(behaviouralAnswers),
+      );
+      _goTo(ScreeningStage.result);
+    } on ScreeningPredictionException catch (error) {
+      errorMessage = error.message;
+      _notify();
+    } catch (error, stackTrace) {
+      debugPrint('EAIP-DARV prediction failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      errorMessage = 'The EAIP-DARV screening result could not be calculated. Please try again.';
+      _notify();
+    } finally {
+      isCalculatingResult = false;
+      _notify();
+    }
   }
 
   void startValidation() {
@@ -460,6 +461,7 @@ class ScreeningController extends ChangeNotifier {
     currentQuestionIndex = 0;
     editingFromReview = false;
     isSendingChat = false;
+    isCalculatingResult = false;
     errorMessage = null;
     behaviouralAnswers.clear();
     chatMessages.clear();
@@ -627,6 +629,7 @@ class ScreeningController extends ChangeNotifier {
     _chatGeneration += 1;
     _saveTimer?.cancel();
     _chatService.dispose();
+    _predictionService.dispose();
     super.dispose();
   }
 }

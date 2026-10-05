@@ -24,7 +24,35 @@ class ScreeningSession {
     required this.diagnosticTechnique,
   });
 
-  static const int currentVersion = 2;
+  factory ScreeningSession.forPrediction({
+    required String sessionId,
+    required QuestionnaireType questionnaireType,
+    required RespondentDetails respondent,
+    required BackgroundDetails background,
+    required Map<String, String> behaviouralAnswers,
+  }) => ScreeningSession(
+    sessionId: sessionId,
+    startedAt: DateTime.now(),
+    stage: ScreeningStage.disclaimer,
+    isToddler: respondent.isToddler,
+    age: respondent.age,
+    ageUnit: respondent.ageUnit,
+    gender: respondent.gender,
+    ethnicity: respondent.ethnicity,
+    jaundice: background.jaundice,
+    familyAutismHistory: background.familyAutismHistory,
+    completedBy: background.completedBy,
+    questionnaireType: questionnaireType,
+    currentQuestionIndex: 9,
+    editingFromReview: false,
+    behaviouralAnswers: Map.unmodifiable(behaviouralAnswers),
+    chatMessages: const [],
+    result: null,
+    assessmentStatus: null,
+    diagnosticTechnique: null,
+  );
+
+  static const int currentVersion = 3;
 
   final String sessionId;
   final DateTime startedAt;
@@ -89,6 +117,13 @@ class ScreeningSession {
               'traitsDetected': result!.traitsDetected,
               'similarityPercentage': result!.similarityPercentage,
               'isMock': result!.isMock,
+              'disagreement': result!.disagreement,
+              'confidence': result!.confidence,
+              'perModuleRawProbability': result!.perModuleRawProbability,
+              'perModuleCalibratedProbability':
+                  result!.perModuleCalibratedProbability,
+              'agreementScores': result!.agreementScores,
+              'tunedThreshold': result!.tunedThreshold,
             },
       'validation': {
         'assessmentStatus': assessmentStatus,
@@ -98,7 +133,9 @@ class ScreeningSession {
   }
 
   factory ScreeningSession.fromJson(Map<String, dynamic> json) {
-    if (json['version'] != 1 && json['version'] != currentVersion) {
+    if (json['version'] != 1 &&
+        json['version'] != 2 &&
+        json['version'] != currentVersion) {
       throw const FormatException('Unsupported screening session version.');
     }
 
@@ -160,6 +197,14 @@ class ScreeningSession {
       traitsDetected: json['traitsDetected'] as bool,
       similarityPercentage: (json['similarityPercentage'] as num).toDouble(),
       isMock: json['isMock'] as bool? ?? true,
+      disagreement: (json['disagreement'] as num?)?.toDouble(),
+      confidence: (json['confidence'] as num?)?.toDouble(),
+      perModuleRawProbability: _doubleMap(json['perModuleRawProbability']),
+      perModuleCalibratedProbability: _doubleMap(
+        json['perModuleCalibratedProbability'],
+      ),
+      agreementScores: _doubleMap(json['agreementScores']),
+      tunedThreshold: (json['tunedThreshold'] as num?)?.toDouble(),
     );
   }
 }
@@ -171,6 +216,10 @@ Map<String, dynamic> _jsonMap(Object? value) {
   if (value is! Map) return const {};
   return value.map((key, entry) => MapEntry(key.toString(), entry));
 }
+
+Map<String, double> _doubleMap(Object? value) => Map.unmodifiable(
+  _jsonMap(value).map((key, entry) => MapEntry(key, (entry as num).toDouble())),
+);
 
 T _enumByName<T extends Enum>(List<T> values, Object? name, String fieldName) {
   final value = _nullableEnumByName(values, name);

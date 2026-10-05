@@ -1,130 +1,101 @@
 # Autism AI
 
-A local Flutter prototype of the Autism AI screening flow. The default interface
-is one persistent conversation: the assistant can start the screening from a
-clear user request, and each structured screening card appears inside the chat.
-The complete visible conversation and screening session are serialized locally
-so they can survive an app restart or browser refresh.
+A local Flutter research prototype combining a conversational screening flow,
+the preserved Python router/RAG system, and the supplied EAIP-DARV screening
+model. Structured screening cards appear inside the chat and the local session
+can be restored after a refresh.
 
-## Easiest way to run
+## First-time setup
 
-From the project root, run:
-
-```sh
-./run_app.sh
-```
-
-Choose **1** for the fastest UI test, **2** for the integrated Mistral pipeline,
-or **3** for the integrated Llama pipeline. The launcher stops any server it
-started when you quit Flutter with `Ctrl+C`.
-
-You can skip the menu with `./run_app.sh mock`, `./run_app.sh mistral`, or
-`./run_app.sh llama`. Both model commands run the Python prompts, RAG, router,
-and citations. `./run_app.sh backend` remains an alias for integrated Mistral;
-`./run_app.sh local` is the legacy direct-Mistral comparison without Python.
-
-## Included
-
-- Age-based routing for Q-CHAT-10, AQ-10 Child, AQ-10 Adolescent, and AQ-10 Adult
-- The official wording and answer options for all four 10-item questionnaires
-- Respondent and background setup, answer review/editing, and disclaimer
-- Deterministic mock screening result, research validation, and downloadable PDF report
-- Persistent chat through the Python research backend, with explicit local and mock alternatives
-- Continue-or-restart prompt when a saved local session is found
-- Natural-language screening start with a typed, Flutter-validated action
-- Full active questionnaire supplied to the assistant as read-only context
-- Managed conversation context for longer chats
-- Local validation and responsive, accessible Material UI
-
-Supported routing is 18 to under 36 months for Q-CHAT-10, 3–11 years for
-AQ-10 Child, 12–15 years for AQ-10 Adolescent, and 16–80 years for AQ-10 Adult.
-
-## Local LLM Models
-
-The Python backend talks to local llama.cpp servers. The legacy local chat provider can also connect directly. Each developer must download
-the expected GGUF model files separately and should store them in `~/Models/`:
-
-- `Mistral-7B-Instruct-v0.3-Q4_K_M.gguf`
-- `Meta-Llama-3-8B-Instruct-Q4_K_M.gguf`
-
-Start the local servers with:
+Set up the existing backend as described in
+[backend/DEVELOPMENT.md](backend/DEVELOPMENT.md), then prepare the supplied model
+bundle once:
 
 ```sh
-llama-server -m ~/Models/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf --port 8080
+EAIP_PROJECT_ZIP="/absolute/path/to/EAIP ASD project.zip" ./setup_eaip.sh
 ```
+
+The setup script extracts the external project into an ignored cache and creates
+an isolated Python environment. Model artifacts and weights are never committed.
+
+## Run
+
+For the complete app with Llama:
 
 ```sh
-llama-server -m ~/Models/Meta-Llama-3-8B-Instruct-Q4_K_M.gguf --port 8081
+LLAMA_MODEL_PATH="/absolute/path/to/Meta-Llama-3-8B-Instruct-Q4_K_M.gguf" ./run_app.sh llama
 ```
 
-Model weights are intentionally not stored in GitHub. Avoid committing `.gguf`
-files because they are several GB each; `.gitignore` excludes them.
-
-## Direct local Mistral comparison mode
-
-Start the llama.cpp OpenAI-compatible server on `http://localhost:8080`, then
-select the explicit direct-provider comparison mode. Override the URL at build time when needed:
+For Mistral:
 
 ```sh
-flutter run -d chrome \
-  --dart-define=CHAT_PROVIDER=local \
-  --dart-define=LOCAL_LLM_BASE_URL=http://localhost:8080
+MISTRAL_MODEL_PATH="/absolute/path/to/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf" ./run_app.sh mistral
 ```
 
-Switch back to deterministic mock chat without changing code:
+The launcher starts llama.cpp, FastAPI, the EAIP-DARV service, and Flutter, and
+stops the processes it started when you press `Ctrl+C`. Running `./run_app.sh`
+without an argument displays a menu.
 
-```sh
-flutter run -d chrome --dart-define=USE_MOCK_CHAT=true
-```
-
-For Flutter Web, the local server must allow the app's origin through CORS and
-support the browser's OPTIONS preflight request. An HTTPS-hosted app cannot call
-an HTTP model server, and `localhost` always refers to the browser user's
-device.
-
-The Python backend integrates Rayaan’s routing, prompts and RAG. No CNN, vector
-database, analytics, cloud storage, account system, or production data storage is
-implemented. The prediction result remains mock data; classical questionnaire
-scoring remains separate and local. Local shared preferences provide prototype session
-restoration and are not storage for critical or production health data.
-
-## Run and verify
+For the fastest UI-only check:
 
 ```sh
 ./run_app.sh mock
+```
+
+Mock mode is explicit and does not claim to be an EAIP-DARV result. Integrated
+modes never silently fall back to mock chat or prediction.
+
+## Current workflow
+
+- The assistant answers questions and starts screening only after clear consent.
+- Age selects one of four age-specific ten-question forms.
+- Respondent/background fields and answers remain structured Flutter state.
+- Users can go back and edit answers before submission.
+- Flutter converts each answer to the corresponding binary `Q1`–`Q10` model value.
+- The backend sends the complete structured record to the supplied three-module
+  EAIP-DARV pipeline.
+- The result shows the DARV screening flag, probability, disagreement, confidence,
+  and per-module values. It is presented as screening output, not a diagnosis.
+- The downloadable PDF contains the result, original responses, exact submitted
+  model fields, and research validation responses.
+
+The existing question-bank identifiers still contain historical questionnaire
+names internally for session compatibility. User-facing copy describes the forms
+as age-specific Autism AI screening questionnaires because the combined result is
+generated by EAIP-DARV.
+
+## Architecture
+
+- **Flutter:** conversation, screening state, official question wording/options,
+  validation, persistence, review/editing, and PDF reporting.
+- **FastAPI:** typed chat and screening APIs, readiness, model aliases, and error
+  handling.
+- **Research assistant pipeline:** preserved Router A, TF-IDF retrieval, prompts,
+  safety constraints, citations, and llama.cpp adapter.
+- **EAIP-DARV service:** isolated runtime for the supplied TensorFlow/PyTorch/scikit-
+  learn artifacts, three module predictions, calibration, agreement, EAIP vote,
+  and DARV disagreement-aware vote.
+
+The external bundle contains Windows-authored paths and Keras 2.13 weight-group
+names. The application launcher resolves the paths and maps the supplied weights
+into the unchanged published architectures on macOS; it does not retrain or
+replace the models.
+
+## Verify
+
+```sh
+cd backend
+.venv/bin/python -m pytest app_tests tests
+cd ..
 flutter analyze
 flutter test
 ```
 
-In mock mode, type `Yes please` into the opening chat. The age-pathway card
-should appear inside the conversation. For the integrated local models, use
-`./run_app.sh mistral` or `./run_app.sh llama`.
+For a live check, run an integrated mode and complete a screening. Confirm that a
+general question does not start screening, explicit agreement does, cards stay in
+the conversation, answers can be edited, the result is labelled EAIP-DARV, and the
+report contains both original answers and binary model inputs.
 
-During a manual check, confirm that a general question does not start the
-screening, `start the screening` does, the chat remains usable while a card is
-active, completed steps collapse above the active card, answers can be edited
-from review, the disclaimer/result/report remain inline, cited sources still
-open, and refreshing the browser offers to restore the same session.
-
-The previous split workspace remains available for comparison:
-
-```sh
-flutter run -d chrome \
-  --dart-define=CHAT_PROVIDER=mock \
-  --dart-define=CHAT_FIRST_SCREENING=false
-```
-
-## Integrated Python backend (A–G)
-
-The default chat provider is now the Python Autism AI backend. The screening UI,
-questionnaire scoring, validation and PDF flow remain local. Rayaan's original
-research code and artifacts are preserved under `backend/`.
-
-See [backend setup and exact run commands](backend/DEVELOPMENT.md),
-[research import provenance](backend/UPSTREAM.md), and
-[verification results and blockers](backend/IMPLEMENTATION_STATUS.md).
-
-Use `CHAT_PROVIDER=local` for the original direct llama.cpp comparison mode, or
-`USE_MOCK_CHAT=true` for deterministic mock chat. The backend never silently falls
-back when its corpus, router or model is unavailable. The CNN remains unimplemented
-and the prediction result remains explicitly mocked.
+Research import provenance is recorded in [backend/UPSTREAM.md](backend/UPSTREAM.md).
+Implementation notes and remaining fidelity limits are recorded in
+[backend/IMPLEMENTATION_STATUS.md](backend/IMPLEMENTATION_STATUS.md).

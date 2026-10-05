@@ -4,6 +4,7 @@ from typing_extensions import Annotated
 
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=4000)]
 Identifier = Annotated[str, StringConstraints(min_length=1, max_length=128, pattern=r'^[A-Za-z0-9_.:-]+$')]
+UnitFloat = Annotated[float, Field(ge=0, le=1)]
 ModelAlias = Literal['mistral', 'llama']
 Route = Literal['safety_deflect', 'misinformation_correction', 'screening_guidance',
                 'result_explanation', 'referral', 'general_knowledge', 'caregiver_support']
@@ -28,22 +29,16 @@ class QuestionnaireQuestion(StrictModel):
     number: int = Field(ge=1, le=10)
     text: Text
 
-class ClassicalResult(StrictModel):
-    questionnaire: Questionnaire
-    score: int = Field(ge=0, le=10)
-    referral_threshold: int = Field(ge=0, le=10)
-    threshold_met: bool
-
-    @model_validator(mode='after')
-    def consistent(self):
-        if self.threshold_met != (self.score >= self.referral_threshold):
-            raise ValueError('Inconsistent classical result')
-        return self
-
 class PredictionResult(StrictModel):
     traits_detected: bool
     similarity_percentage: float = Field(ge=0, le=100)
     is_mock: bool
+    disagreement: float | None = Field(default=None, ge=0, le=1)
+    confidence_pi: float | None = Field(default=None, ge=0, le=1)
+    tuned_threshold: float | None = Field(default=None, ge=0, le=1)
+    per_module_raw_probability: dict[str, UnitFloat] = Field(default_factory=dict)
+    per_module_calibrated_probability: dict[str, UnitFloat] = Field(default_factory=dict)
+    agreement_scores: dict[str, UnitFloat] = Field(default_factory=dict)
 
 class ScreeningContext(StrictModel):
     revision: int = Field(default=0, ge=0)
@@ -52,7 +47,6 @@ class ScreeningContext(StrictModel):
     questionnaire: Questionnaire | None = None
     current_question: CurrentQuestion | None = None
     questionnaire_questions: list[QuestionnaireQuestion] = Field(default_factory=list, max_length=10)
-    classical_result: ClassicalResult | None = None
     prediction_result: PredictionResult | None = None
 
     @model_validator(mode='after')
@@ -61,8 +55,6 @@ class ScreeningContext(StrictModel):
             self.stage != 'behaviouralQuestions' or self.questionnaire is None
         ):
             raise ValueError('Current question requires an active questionnaire stage')
-        if self.classical_result and self.classical_result.questionnaire != self.questionnaire:
-            raise ValueError('Result questionnaire does not match context')
         if self.questionnaire_questions and self.questionnaire is None:
             raise ValueError('Questionnaire questions require a selected questionnaire')
         if len({question.number for question in self.questionnaire_questions}) != len(self.questionnaire_questions):
@@ -130,3 +122,54 @@ class ChatResponse(StrictModel):
     command: CommandResult | None = None
     action: StartScreeningAction | None = None
     metadata: ChatMetadata
+
+class EaipFeatures(StrictModel):
+    q1: Literal[0, 1] = Field(alias='Q1')
+    q2: Literal[0, 1] = Field(alias='Q2')
+    q3: Literal[0, 1] = Field(alias='Q3')
+    q4: Literal[0, 1] = Field(alias='Q4')
+    q5: Literal[0, 1] = Field(alias='Q5')
+    q6: Literal[0, 1] = Field(alias='Q6')
+    q7: Literal[0, 1] = Field(alias='Q7')
+    q8: Literal[0, 1] = Field(alias='Q8')
+    q9: Literal[0, 1] = Field(alias='Q9')
+    q10: Literal[0, 1] = Field(alias='Q10')
+    age: int = Field(alias='Age', ge=1, le=120)
+    sex: Literal['m', 'f'] = Field(alias='Sex')
+    ethnicity: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=80)] = Field(alias='Ethnicity')
+    jauntice: Literal['yes', 'no'] = Field(alias='Jauntice')
+    family_asd_history: Literal['yes', 'no'] = Field(alias='FamilyASDHistory')
+    autism_age_category: Literal['chat', 'child', 'adolescent', 'adult'] = Field(alias='AutismAgeCategory')
+
+class ScreeningPredictionRequest(StrictModel):
+    api_version: Literal[1] = 1
+    request_id: Identifier
+    session_id: Identifier
+    features: EaipFeatures
+
+class EaipModuleValues(StrictModel):
+    M1_screening: float | None = Field(default=None, ge=0, le=1)
+    M2_ASSL: float | None = Field(default=None, ge=0, le=1)
+    M3_cluster: float | None = Field(default=None, ge=0, le=1)
+
+class EaipThresholds(StrictModel):
+    eaip: float = Field(ge=0, le=1)
+    darv_fixed: float = Field(ge=0, le=1)
+    darv_tuned: float = Field(ge=0, le=1)
+
+class ScreeningPredictionResponse(StrictModel):
+    api_version: Literal[1] = 1
+    request_id: str
+    session_id: str
+    model: Literal['eaip-darv'] = 'eaip-darv'
+    eaip_probability: float = Field(ge=0, le=1)
+    darv_probability: float = Field(ge=0, le=1)
+    classification_eaip: Literal[0, 1]
+    classification_darv_fixed: Literal[0, 1]
+    classification_darv_tuned: Literal[0, 1]
+    disagreement: float = Field(ge=0, le=1)
+    confidence_pi: float = Field(ge=0, le=1)
+    per_module_raw_probability: EaipModuleValues
+    per_module_calibrated_probability: EaipModuleValues
+    agreement_scores: EaipModuleValues
+    thresholds_used: EaipThresholds

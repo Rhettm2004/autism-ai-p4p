@@ -1,6 +1,6 @@
 # Integrated Autism AI backend (stages A–G)
 
-Flutter stays at the repository root. The question banks, scoring, validation
+Flutter stays at the repository root. The question banks, answer encoding, validation
 and PDF reporting remain local. Backend `/chat` cannot mutate screening state.
 It can propose the single allowlisted `start_screening` action; Flutter validates
 the stage and context revision before applying it.
@@ -14,6 +14,7 @@ python3.11 -m venv backend/.venv
 backend/.venv/bin/python -m pip install -r backend/requirements-runtime.txt -r backend/requirements-dev.txt
 cp backend/.env.app.example backend/.env
 flutter pub get
+EAIP_PROJECT_ZIP="/absolute/path/to/EAIP ASD project.zip" ./setup_eaip.sh
 ```
 
 The `.env.app.example` is new integration configuration. The original research
@@ -60,6 +61,23 @@ is not ready merely because the original builder exits successfully.
 
 ## Run locally
 
+The recommended command starts the selected local chat model, FastAPI, the
+EAIP-DARV service, and Flutter:
+
+```sh
+LLAMA_MODEL_PATH="/absolute/path/to/Meta-Llama-3-8B-Instruct-Q4_K_M.gguf" ./run_app.sh llama
+```
+
+For service-by-service debugging, start the EAIP-DARV service in an additional
+terminal before FastAPI:
+
+```sh
+cd backend
+EAIP_PROJECT_DIR="$PWD/.cache/eaip_project/EAIP ASD project" \
+  .venv-eaip/bin/python -m uvicorn eaip_service.app:app \
+  --host 127.0.0.1 --port 8090
+```
+
 Terminal 1, using the model location found on this machine:
 
 ```sh
@@ -80,7 +98,8 @@ Terminal 3, from the Flutter repository root:
 flutter run -d chrome --web-hostname localhost --web-port 3000 \
   --dart-define=CHAT_PROVIDER=backend \
   --dart-define=AUTISM_AI_BACKEND_URL=http://127.0.0.1:8000 \
-  --dart-define=AUTISM_AI_MODEL=mistral
+  --dart-define=AUTISM_AI_MODEL=mistral \
+  --dart-define=SCREENING_PREDICTION_PROVIDER=backend
 ```
 
 `GET http://127.0.0.1:8000/health` reports router, corpus, prompts, and default model
@@ -109,8 +128,9 @@ flutter run -d chrome --dart-define=USE_MOCK_CHAT=true
 ```
 
 Neither is an automatic fallback. Local mode retains the original Flutter prompt
-and bypasses the integrated research pipeline. Mock prediction stays mocked in all
-chat modes. URL changes for GPU hosting do not change the Flutter API; remote
+and bypasses the integrated research pipeline. Mock prediction is selected only
+with `SCREENING_PREDICTION_PROVIDER=mock` (the launcher does this in mock mode).
+URL changes for GPU hosting do not change the Flutter API; remote
 hosting/authentication is outside these stages.
 
 ## Runtime contract
@@ -119,8 +139,9 @@ hosting/authentication is outside these stages.
 most 4,000 characters, up to 60 managed user/assistant messages, model alias, and
 read-only screening context. Request bodies are limited to 128 KiB. The current
 message is not duplicated in history. Error bubbles are excluded from history.
-Results contain distinct classical and prediction fields; no answer map or identity
-fields are transmitted automatically.
+Completed EAIP-DARV results supplied by Flutter are read-only context so the
+assistant can explain them. Questionnaire answers and identity fields are not sent
+to `/chat`.
 
 Replies include text, route, model, sources and provenance hashes. `action` is
 normally null. At the welcome stage, clear consent or `/start` can return a typed
@@ -160,8 +181,9 @@ turn, including safety routes: five passages, Rayaan's `chat.py` default of
 neighbour expansion off, and the original soft per-source cap of two. No
 reranker, threshold, vector store or replacement router
 has been introduced. Expansion can exceed the per-source cap. The active
-`app_context_v1` profile preserves `prepare_turn().system_prompt`, then appends the
-separately versioned application contract. It supplies managed conversation history,
+`app_context_v1` profile preserves `prepare_turn()` assembly, routing, grounding,
+and route guidance while using a neutral, separately versioned application base
+prompt and contract. It supplies managed conversation history,
 the current screening stage, and the active questionnaire as read-only context.
 Rayaan's original `scripts/chat.py` and exact single-turn benchmark path remain
 unchanged. Concise mode

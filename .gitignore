@@ -52,6 +52,7 @@ app.*.map.json
 
 # Python integration and local inference artifacts
 .venv/
+.venv-eaip/
 venv/
 __pycache__/
 .pytest_cache/

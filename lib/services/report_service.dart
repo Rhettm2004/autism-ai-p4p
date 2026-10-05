@@ -8,7 +8,6 @@ import '../data/question_banks.dart';
 import '../models/eaip_model_input.dart';
 import '../models/screening_models.dart';
 import '../models/screening_session.dart';
-import 'questionnaire_scoring_service.dart';
 
 class ReportQuestionAnswer {
   const ReportQuestionAnswer({
@@ -36,7 +35,6 @@ class ScreeningReportData {
     required this.questionnaireType,
     required this.questionsAndAnswers,
     required this.aiResult,
-    required this.classicalResult,
     required this.assessmentStatus,
     required this.diagnosticTechnique,
     required this.eaipInput,
@@ -45,8 +43,6 @@ class ScreeningReportData {
   factory ScreeningReportData.fromSession(
     ScreeningSession session, {
     DateTime? generatedAt,
-    QuestionnaireScoringService scoringService =
-        const QuestionnaireScoringService(),
   }) {
     final questionnaireType = session.questionnaireType;
     final aiResult = session.result;
@@ -86,10 +82,6 @@ class ScreeningReportData {
       questionnaireType: questionnaireType,
       questionsAndAnswers: List.unmodifiable(questionsAndAnswers),
       aiResult: aiResult,
-      classicalResult: scoringService.calculate(
-        questionnaireType: questionnaireType,
-        answers: session.behaviouralAnswers,
-      ),
       assessmentStatus: session.assessmentStatus,
       diagnosticTechnique: session.diagnosticTechnique,
       eaipInput: EaipModelInputPreview.fromSession(session),
@@ -100,7 +92,7 @@ class ScreeningReportData {
       'This report summarises a screening result only. It is not a diagnosis and cannot confirm or rule out autism. If you have concerns, discuss them with a qualified health professional.';
 
   static const String finalDisclaimer =
-      'This prototype is intended for research and screening support. The AI result is mocked and is separate from the locally calculated conventional questionnaire score. Neither result replaces a formal clinical assessment.';
+      'This prototype is intended for research and screening support. The EAIP-DARV output is a screening result, not a diagnosis, and does not replace a formal clinical assessment.';
 
   final String sessionId;
   final DateTime generatedAt;
@@ -114,7 +106,6 @@ class ScreeningReportData {
   final QuestionnaireType questionnaireType;
   final List<ReportQuestionAnswer> questionsAndAnswers;
   final ScreeningResult aiResult;
-  final ClassicalScreeningResult classicalResult;
   final String? assessmentStatus;
   final String? diagnosticTechnique;
   final EaipModelInputPreview eaipInput;
@@ -141,12 +132,7 @@ class ScreeningReportData {
 
   String get ageText => age == null ? 'Not provided' : '$age $ageUnit';
 
-  String get questionnaireLabel => switch (questionnaireType) {
-    QuestionnaireType.qchat10 => 'Q-CHAT-10 (Toddler)',
-    QuestionnaireType.aq10Child => 'AQ-10 (Child)',
-    QuestionnaireType.aq10Adolescent => 'AQ-10 (Adolescent)',
-    QuestionnaireType.aq10Adult => 'AQ-10 (Adult)',
-  };
+  String get questionnaireLabel => questionnaireType.label;
 
   bool get includeDiagnosticTechnique =>
       diagnosticTechnique != null && diagnosticTechnique!.trim().isNotEmpty;
@@ -302,7 +288,7 @@ class ReportService {
                         borderRadius: pw.BorderRadius.circular(10),
                       ),
                       child: pw.Text(
-                        'MOCK AI OUTPUT',
+                        'EAIP-DARV OUTPUT',
                         style: boldStyle.copyWith(
                           color: PdfColors.white,
                           fontSize: 7.5,
@@ -314,18 +300,18 @@ class ReportService {
                 pw.SizedBox(height: 9),
                 pw.Text(
                   data.aiResult.traitsDetected
-                      ? 'The prototype AI screening flag was raised for the submitted responses.'
-                      : 'The prototype AI screening flag was not raised for the submitted responses.',
+                      ? 'The EAIP-DARV screening flag was raised for the submitted responses.'
+                      : 'The EAIP-DARV screening flag was not raised for the submitted responses.',
                   style: boldStyle.copyWith(fontSize: 12, color: navy),
                 ),
                 pw.SizedBox(height: 7),
                 pw.Text(
-                  'Mock similarity percentage: ${data.aiResult.similarityPercentage.toStringAsFixed(0)}%',
+                  'DARV screening probability: ${data.aiResult.similarityPercentage.toStringAsFixed(1)}%',
                   style: boldStyle.copyWith(color: blue),
                 ),
                 pw.SizedBox(height: 5),
                 pw.Text(
-                  'This mocked output is reserved for later replacement by the CNN model and is not used to calculate the conventional questionnaire score below.',
+                  'Model disagreement: ${((data.aiResult.disagreement ?? 0) * 100).toStringAsFixed(1)}% | confidence indicator: ${((data.aiResult.confidence ?? 0) * 100).toStringAsFixed(1)}%',
                   style: baseStyle.copyWith(fontSize: 9),
                 ),
               ],
@@ -375,41 +361,6 @@ class ReportService {
             ),
           ),
           pw.SizedBox(height: 18),
-          _sectionHeading('Classical Screening Result', orange, boldStyle),
-          pw.Container(
-            width: double.infinity,
-            padding: const pw.EdgeInsets.all(14),
-            decoration: pw.BoxDecoration(
-              color: paleOrange,
-              border: pw.Border.all(color: border),
-              borderRadius: pw.BorderRadius.circular(8),
-            ),
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text(
-                  '${data.classicalResult.questionnaireName} score: ${data.classicalResult.score} / 10',
-                  style: boldStyle.copyWith(fontSize: 12, color: navy),
-                ),
-                pw.SizedBox(height: 5),
-                pw.Text(
-                  'Referral threshold: ${data.classicalResult.referralThreshold}',
-                  style: boldStyle.copyWith(color: navy),
-                ),
-                pw.SizedBox(height: 5),
-                pw.Text(
-                  data.classicalResult.thresholdStatement,
-                  style: boldStyle.copyWith(color: orange),
-                ),
-                pw.SizedBox(height: 7),
-                pw.Text(
-                  'This score was calculated locally using the conventional scoring key for ${data.questionnaireLabel}. It is separate from the mock AI screening result.',
-                  style: baseStyle.copyWith(fontSize: 9),
-                ),
-              ],
-            ),
-          ),
-          pw.SizedBox(height: 18),
           _sectionHeading('Formal Assessment Response', blue, boldStyle),
           _detailsBox(
             rows: [
@@ -448,13 +399,9 @@ class ReportService {
             ],
           ),
           pw.SizedBox(height: 14),
-          _sectionHeading(
-            'EAIP Model Input Preview (Temporary)',
-            orange,
-            boldStyle,
-          ),
+          _sectionHeading('EAIP-DARV Model Input Record', orange, boldStyle),
           _noticeBox(
-            text: 'This appendix is included for integration testing. Q1-Q10 numeric encoding has not yet been confirmed from the supplied model documentation, so no numeric values have been guessed.',
+            text: 'This appendix records the exact structured values submitted to the EAIP-DARV screening service. The original selected answers are retained alongside their binary model values.',
             background: paleOrange,
             borderColor: orange,
             textStyle: baseStyle,
@@ -465,7 +412,7 @@ class ReportService {
               for (var index = 1; index <= 10; index++)
                 (
                   'Q$index',
-                  '${data.eaipInput.rawQuestionAnswers['Q$index']} | model value: pending confirmation',
+                  '${data.eaipInput.rawQuestionAnswers['Q$index']} | model value: ${data.eaipInput.questionValues['Q$index']}',
                 ),
               (
                 'Age',

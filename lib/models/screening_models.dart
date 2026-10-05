@@ -17,10 +17,10 @@ enum QuestionnaireType { qchat10, aq10Child, aq10Adolescent, aq10Adult }
 
 extension QuestionnaireTypeLabel on QuestionnaireType {
   String get label => switch (this) {
-    QuestionnaireType.qchat10 => 'Q-CHAT-10 — Toddler',
-    QuestionnaireType.aq10Child => 'AQ-10 — Child',
-    QuestionnaireType.aq10Adolescent => 'AQ-10 — Adolescent',
-    QuestionnaireType.aq10Adult => 'AQ-10 — Adult',
+    QuestionnaireType.qchat10 => 'Toddler screening — 18 to under 36 months',
+    QuestionnaireType.aq10Child => 'Child screening — 3 to 11 years',
+    QuestionnaireType.aq10Adolescent => 'Adolescent screening — 12 to 15 years',
+    QuestionnaireType.aq10Adult => 'Adult screening — 16 years and over',
   };
 }
 
@@ -61,25 +61,23 @@ class ScreeningResult {
     required this.traitsDetected,
     required this.similarityPercentage,
     required this.isMock,
+    this.disagreement,
+    this.confidence,
+    this.perModuleRawProbability = const {},
+    this.perModuleCalibratedProbability = const {},
+    this.agreementScores = const {},
+    this.tunedThreshold,
   });
 
   final bool traitsDetected;
   final double similarityPercentage;
   final bool isMock;
-}
-
-class ChatClassicalResult {
-  const ChatClassicalResult({
-    required this.questionnaireType,
-    required this.score,
-    required this.referralThreshold,
-    required this.thresholdMet,
-  });
-
-  final QuestionnaireType questionnaireType;
-  final int score;
-  final int referralThreshold;
-  final bool thresholdMet;
+  final double? disagreement;
+  final double? confidence;
+  final Map<String, double> perModuleRawProbability;
+  final Map<String, double> perModuleCalibratedProbability;
+  final Map<String, double> agreementScores;
+  final double? tunedThreshold;
 }
 
 class ChatMessage {
@@ -120,7 +118,6 @@ class ScreeningContext {
     this.sessionId = 'local',
     this.revision = 0,
     this.currentQuestionId,
-    this.classicalResult,
     this.questionnaireType,
     this.currentQuestionIndex,
     this.currentQuestionText,
@@ -132,7 +129,6 @@ class ScreeningContext {
   final String sessionId;
   final int revision;
   final String? currentQuestionId;
-  final ChatClassicalResult? classicalResult;
   final QuestionnaireType? questionnaireType;
   final int? currentQuestionIndex;
   final String? currentQuestionText;

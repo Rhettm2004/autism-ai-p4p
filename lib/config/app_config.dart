@@ -11,6 +11,10 @@ abstract final class AppConfig {
     'AUTISM_AI_MODEL',
     defaultValue: 'mistral',
   );
+  static const String predictionProvider = String.fromEnvironment(
+    'SCREENING_PREDICTION_PROVIDER',
+    defaultValue: 'backend',
+  );
 
   static const String localLlmBaseUrl = String.fromEnvironment(
     'LOCAL_LLM_BASE_URL',

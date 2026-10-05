@@ -52,7 +52,6 @@ class AutismAiBackendChatService extends ChatService {
       transcript.removeLast();
     }
     final managedHistory = _managedTranscript(transcript);
-    final classical = context.classicalResult;
     final prediction = context.result;
     final body = {
       'api_version': 1,
@@ -85,20 +84,20 @@ class AutismAiBackendChatService extends ChatService {
               },
             )
             .toList(),
-        'classical_result': classical == null
-            ? null
-            : {
-                'questionnaire': classical.questionnaireType.name,
-                'score': classical.score,
-                'referral_threshold': classical.referralThreshold,
-                'threshold_met': classical.thresholdMet,
-              },
         'prediction_result': prediction == null
             ? null
             : {
                 'traits_detected': prediction.traitsDetected,
                 'similarity_percentage': prediction.similarityPercentage,
                 'is_mock': prediction.isMock,
+                'disagreement': prediction.disagreement,
+                'confidence_pi': prediction.confidence,
+                'tuned_threshold': prediction.tunedThreshold,
+                'per_module_raw_probability':
+                    prediction.perModuleRawProbability,
+                'per_module_calibrated_probability':
+                    prediction.perModuleCalibratedProbability,
+                'agreement_scores': prediction.agreementScores,
               },
       },
     };

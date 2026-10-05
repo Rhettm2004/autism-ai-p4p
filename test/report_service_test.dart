@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:autism_ai/data/question_banks.dart';
 import 'package:autism_ai/models/screening_models.dart';
 import 'package:autism_ai/models/screening_session.dart';
-import 'package:autism_ai/services/questionnaire_scoring_service.dart';
+import 'package:autism_ai/services/questionnaire_response_encoder.dart';
 import 'package:autism_ai/services/report_service.dart';
 import 'package:autism_ai/state/screening_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,43 +11,37 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('classical questionnaire scoring', () {
-    test('applies the official Q-CHAT-10 key and threshold', () {
-      final result = const QuestionnaireScoringService().calculate(
+  group('EAIP questionnaire encoding', () {
+    test('maps all toddler items to binary model fields', () {
+      final result = const QuestionnaireResponseEncoder().encodeModelItems(
         questionnaireType: QuestionnaireType.qchat10,
         answers: _qchatAnswersForScoreFour(),
       );
 
-      expect(result.questionnaireName, 'Q-CHAT-10');
-      expect(result.score, 4);
-      expect(result.referralThreshold, 3);
-      expect(result.thresholdMet, isTrue);
-      expect(
-        result.thresholdStatement,
-        'The conventional screening threshold was met.',
-      );
+      expect(result.keys, [
+        for (var index = 1; index <= 10; index++) 'Q$index',
+      ]);
+      expect(result.values.reduce((total, value) => total + value), 4);
     });
 
-    test('applies each official AQ-10 version key and threshold', () {
+    test('applies the item key for each age-specific form', () {
       for (final type in [
         QuestionnaireType.aq10Child,
         QuestionnaireType.aq10Adolescent,
         QuestionnaireType.aq10Adult,
       ]) {
-        final result = const QuestionnaireScoringService().calculate(
+        final result = const QuestionnaireResponseEncoder().encodeModelItems(
           questionnaireType: type,
           answers: _aqAnswersScoringEveryItem(type),
         );
 
-        expect(result.score, 10, reason: type.name);
-        expect(result.referralThreshold, 6, reason: type.name);
-        expect(result.thresholdMet, isTrue, reason: type.name);
+        expect(result.values, everyElement(1), reason: type.name);
       }
     });
 
     test('rejects incomplete questionnaires', () {
       expect(
-        () => const QuestionnaireScoringService().calculate(
+        () => const QuestionnaireResponseEncoder().encodeModelItems(
           questionnaireType: QuestionnaireType.qchat10,
           answers: const {},
         ),
@@ -57,56 +51,60 @@ void main() {
   });
 
   group('screening report data', () {
-    test('includes respondent details, all answers, AI, classical, and validation data', () {
-      final session = _completedQchatSession(
-        assessmentStatus: assessmentStatuses.last,
-        diagnosticTechnique: diagnosticTechniques[2],
-      );
-      final report = ScreeningReportData.fromSession(
-        session,
-        generatedAt: DateTime(2026, 8, 28, 14, 30),
-      );
+    test(
+      'includes respondent details, answers, EAIP input, and validation data',
+      () {
+        final session = _completedQchatSession(
+          assessmentStatus: assessmentStatuses.last,
+          diagnosticTechnique: diagnosticTechniques[2],
+        );
+        final report = ScreeningReportData.fromSession(
+          session,
+          generatedAt: DateTime(2026, 8, 28, 14, 30),
+        );
 
-      expect(report.sessionId, '21303');
-      expect(report.formattedGenerationDate, '28 August 2026');
-      expect(report.filename, 'Autism_AI_Screening_Report_21303.pdf');
-      expect(report.ageText, '24 months');
-      expect(report.gender, 'Male');
-      expect(report.ethnicity, 'Asian');
-      expect(report.jaundice, isFalse);
-      expect(report.familyAutismHistory, isTrue);
-      expect(report.completedBy, 'Family Member');
-      expect(report.questionnaireLabel, 'Q-CHAT-10 (Toddler)');
+        expect(report.sessionId, '21303');
+        expect(report.formattedGenerationDate, '28 August 2026');
+        expect(report.filename, 'Autism_AI_Screening_Report_21303.pdf');
+        expect(report.ageText, '24 months');
+        expect(report.gender, 'Male');
+        expect(report.ethnicity, 'Asian');
+        expect(report.jaundice, isFalse);
+        expect(report.familyAutismHistory, isTrue);
+        expect(report.completedBy, 'Family Member');
+        expect(
+          report.questionnaireLabel,
+          'Toddler screening — 18 to under 36 months',
+        );
 
-      expect(report.questionsAndAnswers, hasLength(10));
-      for (var index = 0; index < qchat10Questions.length; index++) {
-        final item = report.questionsAndAnswers[index];
-        final sourceQuestion = qchat10Questions[index];
-        expect(item.number, index + 1);
-        expect(item.question, sourceQuestion.text);
-        expect(item.answer, session.behaviouralAnswers[sourceQuestion.id]);
-      }
+        expect(report.questionsAndAnswers, hasLength(10));
+        for (var index = 0; index < qchat10Questions.length; index++) {
+          final item = report.questionsAndAnswers[index];
+          final sourceQuestion = qchat10Questions[index];
+          expect(item.number, index + 1);
+          expect(item.question, sourceQuestion.text);
+          expect(item.answer, session.behaviouralAnswers[sourceQuestion.id]);
+        }
 
-      expect(report.aiResult.isMock, isTrue);
-      expect(report.aiResult.traitsDetected, isFalse);
-      expect(report.aiResult.similarityPercentage, 24);
-      expect(report.classicalResult.score, 4);
-      expect(report.classicalResult.referralThreshold, 3);
-      expect(report.classicalResult.thresholdMet, isTrue);
-      expect(report.assessmentStatus, assessmentStatuses.last);
-      expect(report.includeDiagnosticTechnique, isTrue);
-      expect(report.diagnosticTechnique, diagnosticTechniques[2]);
-      expect(report.eaipInput.rawQuestionAnswers, hasLength(10));
-      expect(report.eaipInput.questionEncodingConfirmed, isFalse);
-      expect(report.eaipInput.age, 24);
-      expect(report.eaipInput.ageUnit, 'months');
-      expect(report.eaipInput.sex, 'm');
-      expect(report.eaipInput.ethnicity, 'Asian');
-      expect(report.eaipInput.jauntice, 'no');
-      expect(report.eaipInput.familyAsdHistory, 'yes');
-      expect(report.eaipInput.autismAgeCategory, 'chat');
-      expect(report.eaipInput.toModelPayload(), containsPair('Q1', null));
-    });
+        expect(report.aiResult.isMock, isFalse);
+        expect(report.aiResult.traitsDetected, isFalse);
+        expect(report.aiResult.similarityPercentage, 24);
+        expect(report.assessmentStatus, assessmentStatuses.last);
+        expect(report.includeDiagnosticTechnique, isTrue);
+        expect(report.diagnosticTechnique, diagnosticTechniques[2]);
+        expect(report.eaipInput.rawQuestionAnswers, hasLength(10));
+        expect(report.eaipInput.questionEncodingConfirmed, isTrue);
+        expect(report.eaipInput.age, 24);
+        expect(report.eaipInput.ageUnit, 'months');
+        expect(report.eaipInput.sex, 'm');
+        expect(report.eaipInput.ethnicity, 'Asian');
+        expect(report.eaipInput.jauntice, 'no');
+        expect(report.eaipInput.familyAsdHistory, 'yes');
+        expect(report.eaipInput.autismAgeCategory, 'chat');
+        expect(report.eaipInput.toModelPayload(), containsPair('Q1', 1));
+        expect(report.eaipInput.toModelPayload(), containsPair('Q10', 1));
+      },
+    );
 
     test('omits diagnostic technique when it is not applicable', () {
       final report = ScreeningReportData.fromSession(
@@ -188,7 +186,10 @@ ScreeningSession _completedQchatSession({
     result: const ScreeningResult(
       traitsDetected: false,
       similarityPercentage: 24,
-      isMock: true,
+      isMock: false,
+      disagreement: 0.08,
+      confidence: 0.92,
+      tunedThreshold: 0.52,
     ),
     assessmentStatus: assessmentStatus,
     diagnosticTechnique: diagnosticTechnique,

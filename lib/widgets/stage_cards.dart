@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import '../app.dart';
 import '../models/eaip_model_input.dart';
 import '../models/screening_models.dart';
-import '../services/questionnaire_scoring_service.dart';
 import '../state/screening_controller.dart';
 
 const List<String> ethnicityOptions = [
@@ -812,9 +811,16 @@ class DisclaimerOverlay extends StatelessWidget {
 }
 
 class InlineDisclaimerCard extends StatelessWidget {
-  const InlineDisclaimerCard({super.key, required this.onContinue});
+  const InlineDisclaimerCard({
+    super.key,
+    required this.onContinue,
+    required this.isLoading,
+    this.errorMessage,
+  });
 
   final Future<void> Function() onContinue;
+  final bool isLoading;
+  final String? errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -833,11 +839,20 @@ class InlineDisclaimerCard extends StatelessWidget {
             'This app is a screening tool for research purposes. It is not a diagnosis of autism. If you have concerns, please discuss them with a qualified health professional. Anonymised data may be used for research where applicable.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
+          if (errorMessage != null) ...[
+            const SizedBox(height: 14),
+            _InlineError(errorMessage!),
+          ],
           const SizedBox(height: 18),
           FilledButton(
             key: const Key('accept-disclaimer'),
-            onPressed: onContinue,
-            child: const Text('I Understand & Continue'),
+            onPressed: isLoading ? null : onContinue,
+            child: isLoading
+                ? const SizedBox.square(
+                    dimension: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Text('I Understand & View Result'),
           ),
         ],
       ),
@@ -859,12 +874,12 @@ class ResultCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final result = controller.result!;
     final traitsText = result.traitsDetected
-        ? 'The prototype AI screening flag was raised for these responses.'
-        : 'The prototype AI screening flag was not raised for these responses.';
+        ? 'The EAIP-DARV screening flag was raised for these responses.'
+        : 'The EAIP-DARV screening flag was not raised for these responses.';
 
     return StageCardFrame(
       title: 'AI screening result',
-      subtitle: 'Prototype output for interface testing only.',
+      subtitle: 'EAIP-DARV screening output — not a diagnosis.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -891,7 +906,7 @@ class ResultCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Mock similarity: ${result.similarityPercentage.toStringAsFixed(0)}%',
+                  'Screening probability: ${result.similarityPercentage.toStringAsFixed(1)}%',
                   style: Theme.of(context).textTheme.bodyMedium
                       ?.copyWith(color: const Color(0xFF155E34)),
                 ),
@@ -928,9 +943,14 @@ class ResultCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 18),
+          Text(
+            'Next: answer the short research-validation question, then view and download the full report with the EAIP-DARV input fields.',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 10),
           FilledButton(
             onPressed: controller.startValidation,
-            child: const Text('Continue'),
+            child: const Text('Continue to Validation & Report'),
           ),
         ],
       ),
@@ -1022,10 +1042,6 @@ class ReportCard extends StatelessWidget {
     final background = controller.background;
     final validation = controller.validation;
     final result = controller.result!;
-    final classicalResult = const QuestionnaireScoringService().calculate(
-      questionnaireType: controller.questionnaireType!,
-      answers: controller.behaviouralAnswers,
-    );
     final eaipInput = EaipModelInputPreview.fromSession(
       controller.sessionSnapshot,
     );
@@ -1076,27 +1092,23 @@ class ReportCard extends StatelessWidget {
           const SizedBox(height: 16),
           const _SectionTitle('AI Screening Result'),
           _SummaryRow(
-            label: 'Prototype AI flag',
+            label: 'EAIP-DARV screening flag',
             value: result.traitsDetected ? 'Raised' : 'Not raised',
           ),
           _SummaryRow(
-            label: 'Mock similarity',
-            value: '${result.similarityPercentage.toStringAsFixed(0)}%',
+            label: 'DARV screening probability',
+            value: '${result.similarityPercentage.toStringAsFixed(1)}%',
           ),
-          const SizedBox(height: 16),
-          const _SectionTitle('Classical Screening Result'),
-          _SummaryRow(
-            label: '${classicalResult.questionnaireName} score',
-            value: '${classicalResult.score} / 10',
-          ),
-          _SummaryRow(
-            label: 'Referral threshold',
-            value: '${classicalResult.referralThreshold}',
-          ),
-          _SummaryRow(
-            label: 'Threshold outcome',
-            value: classicalResult.thresholdStatement,
-          ),
+          if (result.disagreement != null)
+            _SummaryRow(
+              label: 'Model disagreement',
+              value: '${(result.disagreement! * 100).toStringAsFixed(1)}%',
+            ),
+          if (result.confidence != null)
+            _SummaryRow(
+              label: 'Confidence indicator',
+              value: '${(result.confidence! * 100).toStringAsFixed(1)}%',
+            ),
           const SizedBox(height: 16),
           Container(
             decoration: BoxDecoration(
@@ -1106,22 +1118,23 @@ class ReportCard extends StatelessWidget {
             ),
             child: ExpansionTile(
               key: const Key('eaip-input-preview'),
-              title: const Text('EAIP model input preview'),
+              initiallyExpanded: true,
+              title: const Text('EAIP-DARV model input record'),
               subtitle: const Text(
-                'Temporary integration data - Q1-Q10 encoding is awaiting confirmation.',
+                'The exact structured fields submitted for this result.',
               ),
               childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               children: [
                 const _NoticeBox(
                   icon: Icons.science_outlined,
-                  text: 'Original answers are preserved below. Numeric question values are deliberately left unassigned until the EAIP-DARV input encoding is confirmed.',
+                  text: 'Original answers are preserved beside the binary Q1-Q10 values submitted to EAIP-DARV.',
                 ),
                 const SizedBox(height: 10),
                 for (var index = 1; index <= 10; index++)
                   _SummaryRow(
                     label: 'Q$index',
                     value:
-                        '${eaipInput.rawQuestionAnswers['Q$index']}\nModel value: Pending confirmation',
+                        '${eaipInput.rawQuestionAnswers['Q$index']}\nModel value: ${eaipInput.questionValues['Q$index']}',
                   ),
                 _SummaryRow(
                   label: 'Age',

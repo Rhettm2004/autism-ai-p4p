@@ -46,6 +46,35 @@ class FakeAdapter:
     async def close(self): pass
 
 
+class FakeScreeningClient:
+    def __init__(self):
+        self.requests = []
+        self.available = True
+    async def ready(self): return self.available
+    async def predict(self, request):
+        from app.schemas import ScreeningPredictionResponse
+        self.requests.append(request)
+        return ScreeningPredictionResponse(
+            request_id=request.request_id,
+            session_id=request.session_id,
+            eaip_probability=0.71,
+            darv_probability=0.73,
+            classification_eaip=1,
+            classification_darv_fixed=1,
+            classification_darv_tuned=1,
+            disagreement=0.08,
+            confidence_pi=0.92,
+            per_module_raw_probability={
+                'M1_screening': 0.7, 'M2_ASSL': 0.8, 'M3_cluster': 0.75},
+            per_module_calibrated_probability={
+                'M1_screening': 0.68, 'M2_ASSL': 0.79, 'M3_cluster': 0.74},
+            agreement_scores={
+                'M1_screening': 0.9, 'M2_ASSL': 0.88, 'M3_cluster': 0.91},
+            thresholds_used={'eaip': 0.5, 'darv_fixed': 0.5, 'darv_tuned': 0.52},
+        )
+    async def close(self): pass
+
+
 class FixtureRuntime(ChatRuntime):
     async def initialize(self):
         self.router = FixtureRouter()
@@ -69,7 +98,9 @@ class FixtureRuntime(ChatRuntime):
 @pytest.fixture
 def client_runtime():
     runtime = FixtureRuntime(Settings(), adapter=FakeAdapter())
-    with TestClient(create_app(runtime=runtime, settings=Settings())) as client:
+    screening_client = FakeScreeningClient()
+    with TestClient(create_app(runtime=runtime, settings=Settings(),
+                               screening_client=screening_client)) as client:
         yield client, runtime
 
 
@@ -184,11 +215,57 @@ def test_application_profile_includes_history_context_and_questionnaire(client_r
     assert 'The conversational AI guides the user' in messages[0]['content']
     assert 'Do not describe this application as using Q-CHAT' in messages[0]['content']
     assert 'age-specific ten-question' in messages[0]['content']
-    assert 'EAIP-DARV prediction service is not yet connected' in messages[0]['content']
-    assert 'It does not upload answers' in messages[0]['content']
+    assert 'EAIP-DARV prediction service' in messages[0]['content']
+    assert 'It does not train a model' in messages[0]['content']
     assert 'default to two to four short sentences' in messages[0]['content']
     assert 'postpones screening without asking another question' in messages[0]['content']
-    assert response.json()['metadata']['application_prompt_version'] == 6
+    assert 'do\nnot assume the user is a caregiver' in messages[0]['content']
+    assert response.json()['metadata']['application_prompt_version'] == 9
+
+
+def prediction_payload(**updates):
+    features = {
+        **{f'Q{index}': index % 2 for index in range(1, 11)},
+        'Age': 9,
+        'Sex': 'f',
+        'Ethnicity': 'Asian',
+        'Jauntice': 'no',
+        'FamilyASDHistory': 'yes',
+        'AutismAgeCategory': 'child',
+    }
+    body = dict(api_version=1, request_id='prediction-1',
+                session_id='session-1', features=features)
+    body.update(updates)
+    return body
+
+
+def test_screening_prediction_is_typed_and_proxied(client_runtime):
+    client, _ = client_runtime
+    screening_client = client.app.state.screening_client
+    response = client.post('/screening/predict', json=prediction_payload())
+    assert response.status_code == 200, response.text
+    assert response.json()['model'] == 'eaip-darv'
+    assert response.json()['darv_probability'] == 0.73
+    assert response.json()['classification_darv_tuned'] == 1
+    sent = screening_client.requests[0].features.model_dump(by_alias=True)
+    assert sent['Q1'] == 1 and sent['AutismAgeCategory'] == 'child'
+
+
+def test_screening_prediction_rejects_missing_or_unencoded_items(client_runtime):
+    client, _ = client_runtime
+    missing = prediction_payload()
+    del missing['features']['Q4']
+    assert client.post('/screening/predict', json=missing).status_code == 422
+    invalid = prediction_payload()
+    invalid['features']['Q4'] = 2
+    assert client.post('/screening/predict', json=invalid).status_code == 422
+
+
+def test_screening_health_is_independent_of_chat_health(client_runtime):
+    client, _ = client_runtime
+    assert client.get('/screening/health').status_code == 200
+    client.app.state.screening_client.available = False
+    assert client.get('/screening/health').status_code == 503
 
 
 def test_clear_welcome_consent_proposes_start_without_model_generation(client_runtime):
