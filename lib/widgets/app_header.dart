@@ -9,12 +9,14 @@ class AppHeader extends StatelessWidget {
     required this.progress,
     required this.onMenuPressed,
     required this.onInfoPressed,
+    required this.onNewScreening,
   });
 
   final String stageLabel;
   final double progress;
   final VoidCallback onMenuPressed;
   final VoidCallback onInfoPressed;
+  final VoidCallback onNewScreening;
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +65,21 @@ class AppHeader extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
+                if (MediaQuery.sizeOf(context).width >= 700)
+                  TextButton.icon(
+                    key: const Key('new-screening-header'),
+                    onPressed: onNewScreening,
+                    icon: const Icon(Icons.add_circle_outline),
+                    label: const Text('Start new screening'),
+                  )
+                else
+                  IconButton(
+                    key: const Key('new-screening-header'),
+                    onPressed: onNewScreening,
+                    tooltip: 'Start new screening',
+                    icon: const Icon(Icons.add_circle_outline),
+                  ),
+                const SizedBox(width: 12),
                 Flexible(
                   child: Text(
                     stageLabel,
@@ -74,7 +91,6 @@ class AppHeader extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
                 IconButton(
                   onPressed: onInfoPressed,
                   tooltip: 'Information about this stage',

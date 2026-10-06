@@ -124,6 +124,9 @@ class ScreeningSession {
                   result!.perModuleCalibratedProbability,
               'agreementScores': result!.agreementScores,
               'tunedThreshold': result!.tunedThreshold,
+              'submission': result!.submission,
+              'modelResponse': result!.modelResponse,
+              'submittedAt': result!.submittedAt?.toIso8601String(),
             },
       'validation': {
         'assessmentStatus': assessmentStatus,
@@ -205,6 +208,9 @@ class ScreeningSession {
       ),
       agreementScores: _doubleMap(json['agreementScores']),
       tunedThreshold: (json['tunedThreshold'] as num?)?.toDouble(),
+      submission: Map.unmodifiable(_jsonMap(json['submission'])),
+      modelResponse: Map.unmodifiable(_jsonMap(json['modelResponse'])),
+      submittedAt: DateTime.tryParse(json['submittedAt'] as String? ?? ''),
     );
   }
 }

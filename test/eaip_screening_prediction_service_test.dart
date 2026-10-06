@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:autism_ai/data/question_banks.dart';
 import 'package:autism_ai/models/screening_models.dart';
+import 'package:autism_ai/models/screening_session.dart';
 import 'package:autism_ai/services/eaip_screening_prediction_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -13,6 +14,22 @@ void main() {
     () async {
       late Map<String, dynamic> requestBody;
       final client = MockClient((request) async {
+        if (request.method == 'GET') {
+          return http.Response(
+            jsonEncode({
+              'expected_raw_columns': [
+                for (var i = 1; i <= 10; i++) 'Q$i',
+                'Age',
+                'Sex',
+                'Ethnicity',
+                'Jauntice',
+                'FamilyASDHistory',
+                'AutismAgeCategory',
+              ],
+            }),
+            200,
+          );
+        }
         expect(
           request.url.toString(),
           'http://localhost:8000/screening/predict',
@@ -93,6 +110,22 @@ void main() {
       expect(result.disagreement, 0.08);
       expect(result.confidence, 0.92);
       expect(result.tunedThreshold, 0.52);
+      expect(result.submission['features'], features);
+      expect(result.modelResponse['eaip_probability'], 0.71);
+      final restored = ScreeningSession.fromJson({
+        ...result.submission['session_snapshot'] as Map<String, dynamic>,
+        'result': {
+          'traitsDetected': result.traitsDetected,
+          'similarityPercentage': result.similarityPercentage,
+          'isMock': false,
+          'submission': result.submission,
+          'modelResponse': result.modelResponse,
+        },
+      });
+      expect(restored.result!.submission['features'], features);
+      expect(restored.result!.modelResponse['classification_darv_fixed'], 1);
+      respondent.age = 80;
+      expect((result.submission['features'] as Map)['Age'], 9);
     },
   );
 

@@ -101,6 +101,10 @@ def create_app(runtime=None, settings=None, screening_client=None):
             status_code=200 if ready else 503,
         )
 
+    @app.get('/screening/schema')
+    async def screening_schema():
+        return await screening_client.schema()
+
     @app.post('/screening/predict', response_model=ScreeningPredictionResponse)
     async def screening_predict(body: ScreeningPredictionRequest, request: Request):
         request.state.request_id = body.request_id

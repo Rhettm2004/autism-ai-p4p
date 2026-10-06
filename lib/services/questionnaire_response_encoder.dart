@@ -7,6 +7,10 @@ class QuestionnaireResponseEncoder {
   /// Converts each answer to the binary Q1-Q10 values expected by EAIP-DARV.
   /// The mapping follows the established item keys for the source question bank;
   /// no conventional total or threshold is calculated by the application.
+  /// AQ keys: https://docs.autismresearchcentre.com/tests/AQ10.pdf
+  /// https://docs.autismresearchcentre.com/tests/AQ10-Child.pdf
+  /// https://docs.autismresearchcentre.com/tests/AQ10-Adolescent.pdf
+  /// Agreement is scored only on the designated items; other items reverse it.
   Map<String, int> encodeModelItems({
     required QuestionnaireType questionnaireType,
     required Map<String, String> answers,

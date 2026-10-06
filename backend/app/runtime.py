@@ -21,7 +21,9 @@ class ChatRuntime:
     _affirmatives = {
         'yes', 'yes please', 'yeah', 'yep', 'sure', 'okay', 'ok',
         'lets start', "let's start", 'lets get started', "let's get started",
-        'ready', "i'm ready", 'im ready', 'i am ready',
+        'start', 'begin', 'please start', 'please begin', 'start please',
+        'begin please', 'lets begin', "let's begin", 'ready', "i'm ready",
+        'im ready', 'i am ready',
     }
     _ready_to_start = re.compile(
         r"\b(?:i\s+am|i['’]?m|im|we\s+are|we['’]?re)?\s*ready\b.{0,32}"
@@ -235,7 +237,7 @@ class ChatRuntime:
             request_id=request.request_id,
             session_id=request.session_id,
             context_revision=request.screening_context.revision,
-            response='Of course. Let’s begin with a few details to select the appropriate questionnaire.',
+            response='Great. First, choose the age pathway below so I can show the right questions.',
             route='screening_guidance',
             model=request.model,
             sources=[],

@@ -67,6 +67,9 @@ class ScreeningResult {
     this.perModuleCalibratedProbability = const {},
     this.agreementScores = const {},
     this.tunedThreshold,
+    this.submission = const {},
+    this.modelResponse = const {},
+    this.submittedAt,
   });
 
   final bool traitsDetected;
@@ -78,6 +81,9 @@ class ScreeningResult {
   final Map<String, double> perModuleCalibratedProbability;
   final Map<String, double> agreementScores;
   final double? tunedThreshold;
+  final Map<String, dynamic> submission;
+  final Map<String, dynamic> modelResponse;
+  final DateTime? submittedAt;
 }
 
 class ChatMessage {

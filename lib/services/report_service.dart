@@ -44,6 +44,15 @@ class ScreeningReportData {
     ScreeningSession session, {
     DateTime? generatedAt,
   }) {
+    final saved = session.result?.submission['session_snapshot'];
+    if (saved is Map) {
+      final current = session.toJson();
+      session = ScreeningSession.fromJson({
+        ...Map<String, dynamic>.from(saved),
+        'result': current['result'],
+        'validation': current['validation'],
+      });
+    }
     final questionnaireType = session.questionnaireType;
     final aiResult = session.result;
     if (questionnaireType == null || aiResult == null) {
@@ -92,7 +101,7 @@ class ScreeningReportData {
       'This report summarises a screening result only. It is not a diagnosis and cannot confirm or rule out autism. If you have concerns, discuss them with a qualified health professional.';
 
   static const String finalDisclaimer =
-      'This prototype is intended for research and screening support. The EAIP-DARV output is a screening result, not a diagnosis, and does not replace a formal clinical assessment.';
+      'This prototype is intended for research and screening support. The output is a screening result, not a diagnosis, and does not replace a formal clinical assessment.';
 
   final String sessionId;
   final DateTime generatedAt;
@@ -109,6 +118,10 @@ class ScreeningReportData {
   final String? assessmentStatus;
   final String? diagnosticTechnique;
   final EaipModelInputPreview eaipInput;
+
+  String get resultMeaning => aiResult.traitsDetected
+      ? 'Your responses reached the screening threshold. This may indicate that further assessment would be helpful. It does not confirm autism.'
+      : 'Your responses did not reach the screening threshold. This does not rule out autism. If you have concerns, you can still discuss them with a qualified health professional.';
 
   String get filename => 'Autism_AI_Screening_Report_$sessionId.pdf';
 
@@ -288,7 +301,7 @@ class ReportService {
                         borderRadius: pw.BorderRadius.circular(10),
                       ),
                       child: pw.Text(
-                        'EAIP-DARV OUTPUT',
+                        'SCREENING SUMMARY',
                         style: boldStyle.copyWith(
                           color: PdfColors.white,
                           fontSize: 7.5,
@@ -299,23 +312,21 @@ class ReportService {
                 ),
                 pw.SizedBox(height: 9),
                 pw.Text(
-                  data.aiResult.traitsDetected
-                      ? 'The EAIP-DARV screening flag was raised for the submitted responses.'
-                      : 'The EAIP-DARV screening flag was not raised for the submitted responses.',
+                  data.resultMeaning,
                   style: boldStyle.copyWith(fontSize: 12, color: navy),
                 ),
                 pw.SizedBox(height: 7),
                 pw.Text(
-                  'DARV screening probability: ${data.aiResult.similarityPercentage.toStringAsFixed(1)}%',
+                  'Screening score: ${data.aiResult.similarityPercentage.toStringAsFixed(1)}%',
                   style: boldStyle.copyWith(color: blue),
-                ),
-                pw.SizedBox(height: 5),
-                pw.Text(
-                  'Model disagreement: ${((data.aiResult.disagreement ?? 0) * 100).toStringAsFixed(1)}% | confidence indicator: ${((data.aiResult.confidence ?? 0) * 100).toStringAsFixed(1)}%',
-                  style: baseStyle.copyWith(fontSize: 9),
                 ),
               ],
             ),
+          ),
+          pw.SizedBox(height: 12),
+          pw.Text(
+            'The screening score is generated from your answers. It is not a diagnosis or a percentage certainty of autism.',
+            style: baseStyle,
           ),
           pw.SizedBox(height: 18),
           _sectionHeading('Respondent and Session Details', blue, boldStyle),
@@ -327,7 +338,7 @@ class ReportService {
               ('Jaundice', _yesNo(data.jaundice)),
               ('Family autism history', _yesNo(data.familyAutismHistory)),
               ('Test completed by', data.completedBy ?? 'Not provided'),
-              ('Questionnaire used internally', data.questionnaireLabel),
+              ('Questionnaire', data.questionnaireLabel),
             ],
             baseStyle: baseStyle,
             boldStyle: boldStyle,
@@ -335,6 +346,7 @@ class ReportService {
             labelColor: muted,
           ),
           pw.SizedBox(height: 18),
+          pw.NewPage(),
           _sectionHeading('Behavioural Questions and Answers', blue, boldStyle),
           ...data.questionsAndAnswers.map(
             (item) => pw.Container(
@@ -361,76 +373,12 @@ class ReportService {
             ),
           ),
           pw.SizedBox(height: 18),
-          _sectionHeading('Formal Assessment Response', blue, boldStyle),
-          _detailsBox(
-            rows: [
-              (
-                'Assessment/diagnosis response',
-                data.assessmentStatus ?? 'Not provided',
-              ),
-              if (data.includeDiagnosticTechnique)
-                ('Diagnostic technique', data.diagnosticTechnique!),
-            ],
-            baseStyle: baseStyle,
-            boldStyle: boldStyle,
-            borderColor: border,
-            labelColor: muted,
-          ),
-          pw.SizedBox(height: 18),
           _sectionHeading('Final Disclaimer', blue, boldStyle),
           _noticeBox(
             text: ScreeningReportData.finalDisclaimer,
             background: paleBlue,
             borderColor: blue,
             textStyle: baseStyle,
-          ),
-          pw.NewPage(),
-          pw.Row(
-            children: [
-              pw.Text(
-                'Autism AI - integration appendix',
-                style: boldStyle.copyWith(fontSize: 9, color: navy),
-              ),
-              pw.Spacer(),
-              pw.Text(
-                'Session ID: ${data.sessionId}',
-                style: baseStyle.copyWith(fontSize: 8, color: muted),
-              ),
-            ],
-          ),
-          pw.SizedBox(height: 14),
-          _sectionHeading('EAIP-DARV Model Input Record', orange, boldStyle),
-          _noticeBox(
-            text: 'This appendix records the exact structured values submitted to the EAIP-DARV screening service. The original selected answers are retained alongside their binary model values.',
-            background: paleOrange,
-            borderColor: orange,
-            textStyle: baseStyle,
-          ),
-          pw.SizedBox(height: 8),
-          _detailsBox(
-            rows: [
-              for (var index = 1; index <= 10; index++)
-                (
-                  'Q$index',
-                  '${data.eaipInput.rawQuestionAnswers['Q$index']} | model value: ${data.eaipInput.questionValues['Q$index']}',
-                ),
-              (
-                'Age',
-                '${data.eaipInput.age ?? 'Not provided'} (${data.eaipInput.ageUnit})',
-              ),
-              ('Sex', data.eaipInput.sex ?? 'Not provided'),
-              ('Ethnicity', data.eaipInput.ethnicity ?? 'Not provided'),
-              ('Jauntice', data.eaipInput.jauntice ?? 'Not provided'),
-              (
-                'FamilyASDHistory',
-                data.eaipInput.familyAsdHistory ?? 'Not provided',
-              ),
-              ('AutismAgeCategory', data.eaipInput.autismAgeCategory),
-            ],
-            baseStyle: baseStyle.copyWith(fontSize: 8.5),
-            boldStyle: boldStyle.copyWith(fontSize: 8.5),
-            borderColor: border,
-            labelColor: muted,
           ),
         ],
       ),

@@ -1,8 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../app.dart';
-import '../models/eaip_model_input.dart';
+import '../services/report_service.dart';
 import '../models/screening_models.dart';
 import '../state/screening_controller.dart';
 
@@ -865,50 +867,70 @@ class ResultCard extends StatelessWidget {
     super.key,
     required this.controller,
     required this.onViewAnswers,
+    required this.onViewReport,
   });
 
   final ScreeningController controller;
   final VoidCallback onViewAnswers;
+  final VoidCallback onViewReport;
 
   @override
   Widget build(BuildContext context) {
     final result = controller.result!;
     final traitsText = result.traitsDetected
-        ? 'The EAIP-DARV screening flag was raised for these responses.'
-        : 'The EAIP-DARV screening flag was not raised for these responses.';
+        ? 'Your responses reached the screening threshold.'
+        : 'Your responses did not reach the screening threshold.';
 
     return StageCardFrame(
-      title: 'AI screening result',
-      subtitle: 'EAIP-DARV screening output — not a diagnosis.',
+      title: 'Your screening result',
+      subtitle: result.isMock
+          ? 'Mock result for UI testing — no EAIP model was called.'
+          : 'Based on your answers — not a diagnosis.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: const Color(0xFFEAF8F0),
-              border: Border.all(color: const Color(0xFF9BD6B4)),
+              color: result.traitsDetected
+                  ? const Color(0xFFFFF7ED)
+                  : const Color(0xFFEAF8F0),
+              border: Border.all(
+                color: result.traitsDetected
+                    ? const Color(0xFFF7C89E)
+                    : const Color(0xFF9BD6B4),
+              ),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Column(
               children: [
-                const Icon(
-                  Icons.check_circle_outline_rounded,
-                  color: AppColors.success,
+                Icon(
+                  result.traitsDetected
+                      ? Icons.info_outline
+                      : Icons.check_circle_outline_rounded,
+                  color: result.traitsDetected
+                      ? AppColors.orange
+                      : AppColors.success,
                   size: 44,
                 ),
                 const SizedBox(height: 10),
                 Text(
                   traitsText,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium
-                      ?.copyWith(color: const Color(0xFF155E34)),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: result.traitsDetected
+                        ? const Color(0xFF92400E)
+                        : const Color(0xFF155E34),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Screening probability: ${result.similarityPercentage.toStringAsFixed(1)}%',
-                  style: Theme.of(context).textTheme.bodyMedium
-                      ?.copyWith(color: const Color(0xFF155E34)),
+                  'Model screening score: ${result.similarityPercentage.toStringAsFixed(1)}%',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: result.traitsDetected
+                        ? const Color(0xFF92400E)
+                        : const Color(0xFF155E34),
+                  ),
                 ),
               ],
             ),
@@ -924,33 +946,23 @@ class ResultCard extends StatelessWidget {
             runSpacing: 10,
             children: [
               OutlinedButton.icon(
-                onPressed: () =>
-                    controller.sendChatMessage('Can you explain my result?'),
-                icon: const Icon(Icons.chat_bubble_outline_rounded),
-                label: const Text('Explain my result'),
-              ),
-              OutlinedButton.icon(
-                onPressed: () =>
-                    controller.sendChatMessage('What should I do next?'),
-                icon: const Icon(Icons.route_outlined),
-                label: const Text('What should I do next?'),
-              ),
-              OutlinedButton.icon(
                 onPressed: onViewAnswers,
-                icon: const Icon(Icons.fact_check_outlined),
-                label: const Text('View my answers'),
+                icon: const Icon(Icons.data_object),
+                label: const Text('View EAIP inputs'),
+              ),
+              OutlinedButton.icon(
+                onPressed: onViewReport,
+                icon: const Icon(Icons.description_outlined),
+                label: const Text('View / download report'),
+              ),
+              OutlinedButton.icon(
+                onPressed: () => controller.sendChatMessage(
+                  'Explain my completed screening result and what I should do next.',
+                ),
+                icon: const Icon(Icons.route_outlined),
+                label: const Text('Next steps'),
               ),
             ],
-          ),
-          const SizedBox(height: 18),
-          Text(
-            'Next: answer the short research-validation question, then view and download the full report with the EAIP-DARV input fields.',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          const SizedBox(height: 10),
-          FilledButton(
-            onPressed: controller.startValidation,
-            child: const Text('Continue to Validation & Report'),
           ),
         ],
       ),
@@ -1028,219 +1040,75 @@ class ReportCard extends StatelessWidget {
     required this.controller,
     required this.onDownload,
     required this.isDownloading,
-    required this.onContinueConversation,
   });
-
   final ScreeningController controller;
   final Future<void> Function() onDownload;
   final bool isDownloading;
-  final VoidCallback onContinueConversation;
-
   @override
   Widget build(BuildContext context) {
-    final respondent = controller.respondent;
-    final background = controller.background;
-    final validation = controller.validation;
-    final result = controller.result!;
-    final eaipInput = EaipModelInputPreview.fromSession(
-      controller.sessionSnapshot,
-    );
-
+    final data = ScreeningReportData.fromSession(controller.sessionSnapshot);
     return StageCardFrame(
-      title: 'Screening report',
-      subtitle: 'Local screening summary - not a clinical report or diagnosis.',
+      title: 'Your screening report',
+      subtitle: 'Your answers and what your result means.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          const _SectionTitle('Screening result'),
+          Text(data.resultMeaning),
+          const SizedBox(height: 12),
+          _SummaryRow(
+            label: 'Screening score',
+            value: '${data.aiResult.similarityPercentage.toStringAsFixed(1)}%',
+          ),
+          const Text(
+            'This is a model score based on your answers. It is not a diagnosis or a percentage certainty of autism.',
+          ),
+          const SizedBox(height: 16),
           const _SectionTitle('Respondent'),
-          _SummaryRow(
-            label: 'Age',
-            value: '${respondent.age} ${respondent.ageUnit}',
-          ),
-          _SummaryRow(label: 'Gender', value: respondent.gender ?? '—'),
-          _SummaryRow(label: 'Ethnicity', value: respondent.ethnicity ?? '—'),
-          _SummaryRow(
-            label: 'Questionnaire',
-            value: controller.questionnaireType?.label ?? '—',
-          ),
+          _SummaryRow(label: 'Age', value: data.ageText),
+          _SummaryRow(label: 'Gender', value: data.gender ?? '—'),
+          _SummaryRow(label: 'Ethnicity', value: data.ethnicity ?? '—'),
+          _SummaryRow(label: 'Questionnaire', value: data.questionnaireLabel),
           const SizedBox(height: 16),
           const _SectionTitle('Background'),
           _SummaryRow(
             label: 'Born with jaundice',
-            value: background.jaundice == true ? 'Yes' : 'No',
+            value: data.jaundice == true ? 'Yes' : 'No',
           ),
           _SummaryRow(
-            label: 'Immediate family autism history',
-            value: background.familyAutismHistory == true ? 'Yes' : 'No',
+            label: 'Family autism history',
+            value: data.familyAutismHistory == true ? 'Yes' : 'No',
           ),
-          _SummaryRow(
-            label: 'Completed by',
-            value: background.completedBy ?? '—',
-          ),
+          _SummaryRow(label: 'Completed by', value: data.completedBy ?? '—'),
           const SizedBox(height: 16),
-          const _SectionTitle('Questions and answers'),
-          for (var index = 0; index < controller.questions.length; index++)
-            _ReportAnswerRow(
-              number: index + 1,
-              question: controller.questions[index],
-              answer:
-                  controller.behaviouralAnswers[controller
-                      .questions[index]
-                      .id] ??
-                  '—',
-            ),
-          const SizedBox(height: 16),
-          const _SectionTitle('AI Screening Result'),
-          _SummaryRow(
-            label: 'EAIP-DARV screening flag',
-            value: result.traitsDetected ? 'Raised' : 'Not raised',
-          ),
-          _SummaryRow(
-            label: 'DARV screening probability',
-            value: '${result.similarityPercentage.toStringAsFixed(1)}%',
-          ),
-          if (result.disagreement != null)
-            _SummaryRow(
-              label: 'Model disagreement',
-              value: '${(result.disagreement! * 100).toStringAsFixed(1)}%',
-            ),
-          if (result.confidence != null)
-            _SummaryRow(
-              label: 'Confidence indicator',
-              value: '${(result.confidence! * 100).toStringAsFixed(1)}%',
-            ),
-          const SizedBox(height: 16),
-          Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF7ED),
-              border: Border.all(color: const Color(0xFFF7C89E)),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: ExpansionTile(
-              key: const Key('eaip-input-preview'),
-              initiallyExpanded: true,
-              title: const Text('EAIP-DARV model input record'),
-              subtitle: const Text(
-                'The exact structured fields submitted for this result.',
-              ),
-              childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              children: [
-                const _NoticeBox(
-                  icon: Icons.science_outlined,
-                  text: 'Original answers are preserved beside the binary Q1-Q10 values submitted to EAIP-DARV.',
-                ),
-                const SizedBox(height: 10),
-                for (var index = 1; index <= 10; index++)
-                  _SummaryRow(
-                    label: 'Q$index',
-                    value:
-                        '${eaipInput.rawQuestionAnswers['Q$index']}\nModel value: ${eaipInput.questionValues['Q$index']}',
+          const _SectionTitle('Your answers'),
+          for (final item in data.questionsAndAnswers)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Q${item.number}. ${item.question}',
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
-                _SummaryRow(
-                  label: 'Age',
-                  value: '${eaipInput.age ?? '—'} (${eaipInput.ageUnit})',
-                ),
-                _SummaryRow(label: 'Sex', value: eaipInput.sex ?? '—'),
-                _SummaryRow(
-                  label: 'Ethnicity',
-                  value: eaipInput.ethnicity ?? '—',
-                ),
-                _SummaryRow(
-                  label: 'Jauntice',
-                  value: eaipInput.jauntice ?? '—',
-                ),
-                _SummaryRow(
-                  label: 'FamilyASDHistory',
-                  value: eaipInput.familyAsdHistory ?? '—',
-                ),
-                _SummaryRow(
-                  label: 'AutismAgeCategory',
-                  value: eaipInput.autismAgeCategory,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          const _SectionTitle('Research validation'),
-          _SummaryRow(
-            label: 'Formal assessment',
-            value: validation.assessmentStatus ?? '—',
-          ),
-          if (validation.diagnosticTechnique != null)
-            _SummaryRow(
-              label: 'Diagnostic technique',
-              value: validation.diagnosticTechnique!,
+                  Text(item.answer),
+                ],
+              ),
             ),
           const SizedBox(height: 16),
           const _NoticeBox(
             icon: Icons.health_and_safety_outlined,
-            text: 'This screening tool is not a diagnosis. Users with concerns should speak with a qualified health professional. Anonymised data may be used for research where applicable.',
+            text: ScreeningReportData.screeningDisclaimer,
           ),
-          const SizedBox(height: 18),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: [
-              OutlinedButton.icon(
-                key: const Key('download-report'),
-                onPressed: isDownloading ? null : onDownload,
-                icon: isDownloading
-                    ? const SizedBox.square(
-                        dimension: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.download_outlined),
-                label: Text(
-                  isDownloading ? 'Generating PDF...' : 'Download Report',
-                ),
-              ),
-              OutlinedButton.icon(
-                onPressed: onContinueConversation,
-                icon: const Icon(Icons.chat_bubble_outline_rounded),
-                label: const Text('Continue Conversation'),
-              ),
-              FilledButton.icon(
-                key: const Key('restart-screening'),
-                onPressed: controller.restart,
-                icon: const Icon(Icons.refresh_rounded),
-                label: const Text('Start New Screening'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ReportAnswerRow extends StatelessWidget {
-  const _ReportAnswerRow({
-    required this.number,
-    required this.question,
-    required this.answer,
-  });
-
-  final int number;
-  final ScreeningQuestion question;
-  final String answer;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Q$number. ${question.text}',
-            style: Theme.of(context).textTheme.bodyMedium
-                ?.copyWith(color: AppColors.navy, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 3),
-          Text(
-            answer,
-            style: Theme.of(context).textTheme.bodyMedium
-                ?.copyWith(color: AppColors.blue, fontWeight: FontWeight.w700),
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            key: const Key('download-report'),
+            onPressed: isDownloading ? null : onDownload,
+            icon: const Icon(Icons.download_outlined),
+            label: Text(
+              isDownloading ? 'Generating PDF...' : 'Download report',
+            ),
           ),
         ],
       ),
@@ -1544,6 +1412,57 @@ class _NoticeBox extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class ModelCalculationDetails extends StatelessWidget {
+  const ModelCalculationDetails({super.key, required this.result});
+  final ScreeningResult result;
+  @override
+  Widget build(BuildContext context) {
+    String percent(Object? value) =>
+        value is num ? '${(value * 100).toStringAsFixed(1)}%' : 'Unavailable';
+    final response = result.modelResponse;
+    return ExpansionTile(
+      title: const Text('Model calculation details'),
+      childrenPadding: const EdgeInsets.all(12),
+      children: [
+        const Text(
+          'All three modules run. Saved calibration adjusts their predictions; EAIP weights them by agreement. DARV moves the score toward 50% when they disagree. The agreement weight is not accuracy or certainty of autism.',
+        ),
+        for (final module in result.perModuleRawProbability.keys)
+          ListTile(
+            title: Text(module),
+            subtitle: Text(
+              'Raw: ${percent(result.perModuleRawProbability[module])} · Calibrated: ${percent(result.perModuleCalibratedProbability[module])} · Agreement: ${percent(result.agreementScores[module])}',
+            ),
+          ),
+        ListTile(
+          title: const Text('EAIP combined score'),
+          trailing: Text(percent(response['eaip_probability'])),
+        ),
+        ListTile(
+          title: const Text('DARV final score'),
+          trailing: Text('${result.similarityPercentage.toStringAsFixed(1)}%'),
+        ),
+        ListTile(
+          title: const Text('Model disagreement'),
+          trailing: Text(percent(result.disagreement)),
+        ),
+        ListTile(
+          title: const Text('DARV agreement weight'),
+          trailing: Text(percent(result.confidence)),
+        ),
+        ListTile(
+          title: const Text('Tuned classification threshold'),
+          trailing: Text(percent(result.tunedThreshold)),
+        ),
+        if (response.isNotEmpty) ...[
+          const Text('Full model response (testing)'),
+          SelectableText(const JsonEncoder.withIndent('  ').convert(response)),
+        ],
+      ],
     );
   }
 }

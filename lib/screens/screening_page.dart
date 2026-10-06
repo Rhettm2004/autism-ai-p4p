@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -71,6 +72,7 @@ class _ScreeningPageState extends State<ScreeningPage> {
                           progress: _controller.overallProgress,
                           onMenuPressed: _showMenu,
                           onInfoPressed: _showInfo,
+                          onNewScreening: _confirmRestart,
                         ),
                         Expanded(
                           child: LayoutBuilder(
@@ -236,19 +238,15 @@ class _ScreeningPageState extends State<ScreeningPage> {
       ScreeningStage.result => ResultCard(
         controller: _controller,
         onViewAnswers: _showAnswers,
+        onViewReport: _showReport,
       ),
       ScreeningStage.validation => ValidationCard(controller: _controller),
-      ScreeningStage.report => ReportCard(
+      ScreeningStage.report => ResultCard(
         controller: _controller,
-        onDownload: _downloadReport,
-        isDownloading: _isDownloadingReport,
-        onContinueConversation: _focusChat,
+        onViewAnswers: _showAnswers,
+        onViewReport: _showReport,
       ),
     };
-  }
-
-  void _focusChat() {
-    _chatFocusNode.requestFocus();
   }
 
   void _showMenu() {
@@ -349,62 +347,124 @@ class _ScreeningPageState extends State<ScreeningPage> {
         ),
       };
 
-  void _showAnswers() {
-    showModalBottomSheet<void>(
+  void _showPopup(String title, Widget child) {
+    showDialog<void>(
       context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: FractionallySizedBox(
-          heightFactor: 0.8,
+      builder: (context) => Dialog(
+        insetPadding: const EdgeInsets.all(16),
+        child: SizedBox(
+          width: 760,
+          height: MediaQuery.sizeOf(context).height * 0.85,
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Your answers',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+                padding: const EdgeInsets.fromLTRB(20, 8, 8, 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'Close',
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
                 ),
               ),
               const Divider(height: 1),
               Expanded(
-                child: ListView.separated(
-                  padding: const EdgeInsets.all(20),
-                  itemCount: _controller.questions.length,
-                  separatorBuilder: (_, _) => const Divider(height: 24),
-                  itemBuilder: (context, index) {
-                    final question = _controller.questions[index];
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Q${index + 1}. ${question.text}',
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: AppColors.navy,
-                                fontWeight: FontWeight.w700,
-                              ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          _controller.behaviouralAnswers[question.id] ?? '—',
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: AppColors.blue,
-                                fontWeight: FontWeight.w700,
-                              ),
-                        ),
-                      ],
-                    );
-                  },
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: child,
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showReport() {
+    _showPopup(
+      'Screening report',
+      StatefulBuilder(
+        builder: (context, update) => ReportCard(
+          controller: _controller,
+          isDownloading: _isDownloadingReport,
+          onDownload: () async {
+            final future = _downloadReport();
+            update(() {});
+            await future;
+            if (context.mounted) update(() {});
+          },
+        ),
+      ),
+    );
+  }
+
+  void _showAnswers() {
+    final result = _controller.result!;
+    final features = result.submission['features'] as Map?;
+    final answers = result.submission['answers'] as List? ?? const [];
+    _showPopup(
+      'EAIP inputs and calculation details',
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (features == null)
+            const Text(
+              'No captured submission is available for this older or mock result.',
+            )
+          else ...[
+            Text('Submitted: ${result.submittedAt?.toLocal()}'),
+            const SizedBox(height: 12),
+            const Text(
+              'A value of 1 represents the scored response for that question. Agreement is not always scored: some questions describe abilities and others describe difficulties. The question-specific key determines the value.',
+            ),
+            for (var i = 0; i < answers.length; i++)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text('Q${i + 1}. ${(answers[i] as Map)['question']}'),
+                subtitle: Text('Selected: ${(answers[i] as Map)['answer']}'),
+                trailing: Text('Value: ${features['Q${i + 1}']}'),
+              ),
+            const Divider(),
+            for (final entry in features.entries.where(
+              (entry) => !RegExp(r'^Q\d+$').hasMatch(entry.key.toString()),
+            ))
+              ListTile(
+                title: Text(entry.key.toString()),
+                trailing: Text(entry.value.toString()),
+            ),
+            const Text('Exact classifier request'),
+            SelectableText(
+              const JsonEncoder.withIndent('  ').convert({
+                'features': <String, Object?>{
+                  for (
+                    var questionNumber = 1;
+                    questionNumber <= 10;
+                    questionNumber++
+                  )
+                    if (features.containsKey('Q$questionNumber'))
+                      'Q$questionNumber': features['Q$questionNumber'],
+                  for (final entry in features.entries)
+                    if (!RegExp(r'^Q\d+$').hasMatch(entry.key.toString()))
+                      entry.key.toString(): entry.value,
+                },
+              }),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Module 1 receives Sex as f=0 / m=1 and yes/no fields as 1/0. Modules 2 and 3 receive the submitted categories. Each then applies its saved preprocessing.',
+            ),
+          ],
+          ModelCalculationDetails(result: result),
+        ],
       ),
     );
   }

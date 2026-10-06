@@ -99,3 +99,23 @@ report contains both original answers and binary model inputs.
 Research import provenance is recorded in [backend/UPSTREAM.md](backend/UPSTREAM.md).
 Implementation notes and remaining fidelity limits are recorded in
 [backend/IMPLEMENTATION_STATUS.md](backend/IMPLEMENTATION_STATUS.md).
+
+## EAIP inspection and results
+
+Completed screenings retain three actions: view EAIP inputs, view/download the
+report, and next steps. Inputs and reports open closable dialogs without replacing
+the result. Start new screening is always available in the header. The user report
+contains the original answers and a plain-language explanation; technical inputs
+and calculations remain in the inspection dialog.
+
+Each successful prediction saves its submission snapshot, timestamp, and full
+response locally. Older and mock results explicitly have no captured submission.
+Flutter and the backend validate against the live model schema before prediction.
+Unknown required fields stop prediction and are never filled by an LLM.
+
+AQ-10 uses question-specific reverse scoring, not agreement=1 for every item.
+The published adult key scores agreement on 1, 7, 8 and 10, and disagreement on
+2, 3, 4, 5, 6 and 9: https://docs.autismresearchcentre.com/tests/AQ10.pdf.
+This confirms the questionnaire scoring direction, not the supplied model's
+training encoding. Age units and the model feature contract still require
+comparison with the model owner's reference records and outputs.

@@ -348,6 +348,10 @@ class ScreeningController extends ChangeNotifier {
     }
   }
 
+  void viewReport() {
+    if (result != null) _goTo(ScreeningStage.report);
+  }
+
   void startValidation() {
     _goTo(ScreeningStage.validation);
   }

@@ -39,6 +39,23 @@ void main() {
       }
     });
 
+    test('adult agreement follows the published reverse-scored item key', () {
+      // https://docs.autismresearchcentre.com/tests/AQ10.pdf
+      final questions = questionBanks[QuestionnaireType.aq10Adult]!;
+      for (var option = 0; option < 4; option++) {
+        final values = const QuestionnaireResponseEncoder().encodeModelItems(
+          questionnaireType: QuestionnaireType.aq10Adult,
+          answers: {for (final q in questions) q.id: q.options[option]},
+        );
+        expect(
+          values.values.toList(),
+          option < 2
+              ? [1, 0, 0, 0, 0, 0, 1, 1, 0, 1]
+              : [0, 1, 1, 1, 1, 1, 0, 0, 1, 0],
+        );
+      }
+    });
+
     test('rejects incomplete questionnaires', () {
       expect(
         () => const QuestionnaireResponseEncoder().encodeModelItems(

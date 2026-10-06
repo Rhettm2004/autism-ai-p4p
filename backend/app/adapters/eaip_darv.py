@@ -23,7 +23,23 @@ class EaipDarvClient:
         except (httpx.HTTPError, ValueError):
             return False
 
+    async def schema(self):
+        try:
+            response = await self.client.get(f'{self.base_url}/schema')
+            response.raise_for_status()
+            body = response.json()
+            keys = body.get('expected_raw_columns')
+            if not isinstance(keys, list) or not keys or not all(isinstance(key, str) for key in keys):
+                raise ValueError('Invalid schema')
+            return {'expected_raw_columns': keys}
+        except (httpx.HTTPError, ValueError) as exc:
+            raise ServiceError('screening_schema_unavailable', 'The EAIP input schema is unavailable.', 503) from exc
+
     async def predict(self, request: ScreeningPredictionRequest) -> ScreeningPredictionResponse:
+        schema = await self.schema()
+        features = request.features.model_dump(by_alias=True)
+        if set(features) != set(schema['expected_raw_columns']):
+            raise ServiceError('screening_schema_mismatch', 'The model input schema has changed. Update the app before screening.', 409, False)
         try:
             response = await self.client.post(
                 f'{self.base_url}/predict',

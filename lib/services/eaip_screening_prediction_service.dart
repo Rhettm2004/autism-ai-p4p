@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../models/eaip_model_input.dart';
+import '../data/question_banks.dart';
 import '../models/screening_models.dart';
 import '../models/screening_session.dart';
 import 'mock_services.dart';
@@ -40,6 +41,56 @@ class EaipScreeningPredictionService implements ScreeningPredictionService {
       behaviouralAnswers: answers,
     );
     final input = EaipModelInputPreview.fromSession(session);
+    final submittedAt = DateTime.now();
+    late http.Response schemaResponse;
+    try {
+      schemaResponse = await _client
+          .get(Uri.parse('$_baseUrl/screening/schema'))
+          .timeout(const Duration(seconds: 15));
+    } catch (_) {
+      throw const ScreeningPredictionException(
+        'The EAIP input schema is unavailable. Check the model service and try again.',
+      );
+    }
+    if (schemaResponse.statusCode != 200) {
+      throw const ScreeningPredictionException(
+        'The EAIP input schema is unavailable. Please try again.',
+      );
+    }
+    late List<String> keys;
+    try {
+      final schema = jsonDecode(schemaResponse.body) as Map<String, dynamic>;
+      keys = (schema['expected_raw_columns'] as List).cast<String>().toList();
+    } catch (_) {
+      throw const ScreeningPredictionException(
+        'The EAIP service returned an invalid input schema.',
+      );
+    }
+    final available = input.toModelPayload();
+    if (keys.isEmpty ||
+        keys.toSet().length != keys.length ||
+        keys.any(
+          (key) => !available.containsKey(key) || available[key] == null,
+        )) {
+      throw const ScreeningPredictionException(
+        'The EAIP input schema is incompatible with this app. Check the required fields and selected values.',
+      );
+    }
+    final submission = Map<String, dynamic>.unmodifiable({
+      'features': Map<String, Object?>.unmodifiable({
+        for (final key in keys) key: available[key],
+      }),
+      'session_snapshot': session.toJson(),
+      'questionnaire': questionnaireType.name,
+      'age_unit': respondent.ageUnit,
+      'answers': List.unmodifiable([
+        for (final question in questionBanks[questionnaireType]!)
+          Map<String, String>.unmodifiable({
+            'question': question.text,
+            'answer': answers[question.id]!,
+          }),
+      ]),
+    });
     http.Response response;
     try {
       response = await _client
@@ -51,7 +102,7 @@ class EaipScreeningPredictionService implements ScreeningPredictionService {
               'request_id':
                   'prediction-${DateTime.now().microsecondsSinceEpoch}',
               'session_id': sessionId,
-              'features': input.toModelPayload(),
+              'features': submission['features'],
             }),
           )
           .timeout(const Duration(seconds: 35));
@@ -82,6 +133,9 @@ class EaipScreeningPredictionService implements ScreeningPredictionService {
     try {
       final probability = (body['darv_probability'] as num).toDouble();
       return ScreeningResult(
+        submission: submission,
+        modelResponse: Map.unmodifiable(body),
+        submittedAt: submittedAt,
         traitsDetected: body['classification_darv_tuned'] == 1,
         similarityPercentage: probability * 100,
         isMock: false,
