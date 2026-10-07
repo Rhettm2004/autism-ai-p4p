@@ -63,6 +63,8 @@ class AutismAiBackendChatService extends ChatService {
       'history': managedHistory,
       'screening_context': {
         'revision': context.revision,
+        'respondent_details': context.respondentDetails,
+        'background_details': context.backgroundDetails,
         'stage': context.stage.name,
         'screening_active':
             context.stage != ScreeningStage.welcome &&

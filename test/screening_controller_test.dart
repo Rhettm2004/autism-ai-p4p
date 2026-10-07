@@ -4,6 +4,23 @@ import 'package:autism_ai/state/screening_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  test('chat context snapshots form details and follows later edits', () {
+    final controller = ScreeningController();
+    addTearDown(controller.dispose);
+    controller.respondent.isToddler = false;
+    controller.respondent.age = 22;
+    controller.background.completedBy = 'Self';
+    final snapshot = controller.context;
+    expect(snapshot.respondentDetails['age'], 22);
+    expect(snapshot.respondentDetails['age_unit'], 'years');
+    expect(snapshot.backgroundDetails['completed_by'], 'Self');
+    controller.respondent.age = 23;
+    expect(snapshot.respondentDetails['age'], 22);
+    expect(controller.context.respondentDetails['age'], 23);
+    controller.respondent.isToddler = true;
+    expect(controller.context.respondentDetails['age_unit'], 'months');
+  });
+
   group('official questionnaire data', () {
     test('contains four complete 10-question banks', () {
       expect(questionBanks.length, 4);

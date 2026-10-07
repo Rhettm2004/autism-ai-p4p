@@ -220,7 +220,7 @@ def test_application_profile_includes_history_context_and_questionnaire(client_r
     assert 'default to two to four short sentences' in messages[0]['content']
     assert 'postpones screening without asking another question' in messages[0]['content']
     assert 'do\nnot assume the user is a caregiver' in messages[0]['content']
-    assert response.json()['metadata']['application_prompt_version'] == 9
+    assert response.json()['metadata']['application_prompt_version'] == 15
 
 
 def prediction_payload(**updates):
@@ -281,6 +281,9 @@ def test_clear_welcome_consent_proposes_start_without_model_generation(client_ru
 
 
 @pytest.mark.parametrize('message', [
+    'yes please start',
+    'Yes please start!',
+    'please begin',
     'ok im ready to get started',
     "I'm ready to start screening",
     "Let's get started",
@@ -309,6 +312,8 @@ def test_natural_welcome_consent_starts_after_an_explanatory_turn(
     "I'm not ready to start screening",
     "No, don't start the screening",
     'Please dont start screening yet',
+    'yes but not yet',
+    'please start later',
 ])
 def test_negative_welcome_language_does_not_start(client_runtime, message):
     client, runtime = client_runtime
@@ -513,3 +518,110 @@ def test_llama_adapter_contract_and_errors():
                 await LlamaCppAdapter({'mistral': 'http://m'}, client=client).generate([], 'mistral')
             assert error.value.status == 504
     asyncio.run(run())
+
+
+@pytest.mark.parametrize('age,unit', [(22, 'years'), (22, 'months')])
+def test_form_age_reaches_model_context(client_runtime, age, unit):
+    client, runtime = client_runtime
+    runtime.cfg = {'prompt_profile': 'app_context_v1'}
+    context = dict(revision=2, stage='backgroundQuestions', screening_active=True,
+        respondent_details=dict(age=age, age_unit=unit, is_toddler=unit == 'months'),
+        background_details=dict(completed_by='Self'))
+    response = client.post('/chat', json=payload(message='What is my age?',
+        screening_context=context))
+    assert response.status_code == 200
+    messages, _ = runtime.adapter.calls[0]
+    assert '"age": 22' in messages[-1]['content']
+    assert f'"age_unit": "{unit}"' in messages[-1]['content']
+    assert '"completed_by": "Self"' in messages[-1]['content']
+    assert 'Current form details take precedence' in messages[0]['content']
+
+
+@pytest.mark.parametrize('positive', [True, False])
+@pytest.mark.parametrize('model', ['mistral', 'llama'])
+def test_next_steps_calls_llm_with_saved_result_and_assessment_guidance(client_runtime, positive, model):
+    client, runtime = client_runtime
+    runtime.cfg = {'prompt_profile': 'app_context_v1'}
+    runtime.adapter.text = 'This is the generated next-steps answer.'
+    context = dict(revision=5, stage='result', screening_active=True,
+        prediction_result=dict(traits_detected=positive,
+            similarity_percentage=53.4, is_mock=False))
+    response = client.post('/chat', json=payload(model=model,
+        message='Explain my completed screening result and what I should do next.',
+        screening_context=context))
+    assert response.status_code == 200
+    data = response.json()
+    assert data['response'] == runtime.adapter.text
+    assert data['context_revision'] == 5
+    assert len(runtime.adapter.calls) == 1
+    messages, alias = runtime.adapter.calls[0]
+    assert alias == model
+    system = messages[0]['content']
+    assert ('POSITIVE:' if positive else 'NEGATIVE:') in system
+    assert '53.4%' in system
+    assert 'NEXT-STEPS RESPONSE GUIDANCE' in system
+    if positive:
+        assert 'POSITIVE-RESULT NEXT STEPS' in system
+        assert 'short numbered list of practical actions' in system
+        assert 'explicitly recommend seeking a formal autism' in system
+        assert 'GP or primary care clinician' in system
+        assert 'NEGATIVE-RESULT NEXT STEPS' not in system
+    else:
+        assert 'NEGATIVE-RESULT NEXT STEPS' in system
+        assert 'No further action' in system
+        assert 'POSITIVE-RESULT NEXT STEPS' not in system
+        assert 'Book an appointment with a GP' not in system
+        assert 'explicitly recommend seeking a formal autism' not in system
+    assert f'"traits_detected": {str(positive).lower()}' in messages[-1]['content']
+    assert 'Explain my completed screening result' in messages[-1]['content']
+
+
+@pytest.mark.parametrize('positive', [True, False])
+def test_saved_result_is_explicit_in_model_system_prompt(client_runtime, positive):
+    client, runtime = client_runtime
+    runtime.cfg = {'prompt_profile': 'app_context_v1'}
+    context = dict(revision=5, stage='result', screening_active=True,
+        prediction_result=dict(traits_detected=positive,
+            similarity_percentage=53.4, is_mock=False))
+    response = client.post('/chat', json=payload(
+        message='Can you explain confidence and disagreement?', screening_context=context))
+    assert response.status_code == 200
+    messages, _ = runtime.adapter.calls[0]
+    assert ('POSITIVE:' if positive else 'NEGATIVE:') in messages[0]['content']
+    assert '53.4%' in messages[0]['content']
+    assert 'do not recalculate' in messages[0]['content']
+    assert f'"traits_detected": {str(positive).lower()}' in messages[-1]['content']
+
+
+@pytest.mark.parametrize('message, expected', [
+    ('What are my next steps?', True),
+    ('What should I do now?', True),
+    ('Explain my completed screening result and what I should do next.', True),
+    ('What happens after screening?', True),
+    ('Can you explain question three?', False),
+])
+def test_next_steps_prompt_is_selected_for_relevant_requests(client_runtime, message, expected):
+    client, runtime = client_runtime
+    runtime.cfg = {'prompt_profile': 'app_context_v1'}
+    response = client.post('/chat', json=payload(message=message))
+    assert response.status_code == 200
+    messages, _ = runtime.adapter.calls[0]
+    assert ('NEXT-STEPS RESPONSE GUIDANCE' in messages[0]['content']) == expected
+    assert response.json()['response'] == runtime.adapter.text
+
+
+@pytest.mark.parametrize('prediction, branch', [
+    (None, 'NO COMPLETED RESULT'),
+    (dict(traits_detected=True, similarity_percentage=70, is_mock=True), 'MOCK RESULT'),
+])
+def test_next_steps_missing_and_mock_do_not_select_referral_guidance(client_runtime, prediction, branch):
+    client, runtime = client_runtime
+    runtime.cfg = {'prompt_profile': 'app_context_v1'}
+    response = client.post('/chat', json=payload(message='What are my next steps?',
+        screening_context=dict(revision=3, stage='result', screening_active=True,
+                               prediction_result=prediction)))
+    assert response.status_code == 200
+    messages, _ = runtime.adapter.calls[0]
+    assert branch in messages[0]['content']
+    assert 'POSITIVE-RESULT NEXT STEPS' not in messages[0]['content']
+    assert response.json()['response'] == runtime.adapter.text

@@ -12,48 +12,45 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('EAIP questionnaire encoding', () {
-    test('maps all toddler items to binary model fields', () {
-      final result = const QuestionnaireResponseEncoder().encodeModelItems(
-        questionnaireType: QuestionnaireType.qchat10,
-        answers: _qchatAnswersForScoreFour(),
-      );
-
-      expect(result.keys, [
-        for (var index = 1; index <= 10; index++) 'Q$index',
-      ]);
-      expect(result.values.reduce((total, value) => total + value), 4);
-    });
-
-    test('applies the item key for each age-specific form', () {
+    test('encodes agreement uniformly for every age-specific AQ item', () {
       for (final type in [
         QuestionnaireType.aq10Child,
         QuestionnaireType.aq10Adolescent,
         QuestionnaireType.aq10Adult,
       ]) {
-        final result = const QuestionnaireResponseEncoder().encodeModelItems(
-          questionnaireType: type,
-          answers: _aqAnswersScoringEveryItem(type),
-        );
-
-        expect(result.values, everyElement(1), reason: type.name);
+        final questions = questionBanks[type]!;
+        for (var option = 0; option < aq10Options.length; option++) {
+          final result = const QuestionnaireResponseEncoder().encodeModelItems(
+            questionnaireType: type,
+            answers: {for (final q in questions) q.id: q.options[option]},
+          );
+          expect(result.keys, [for (var i = 1; i <= 10; i++) 'Q$i']);
+          expect(
+            result.values,
+            everyElement(option < 2 ? 1 : 0),
+            reason: '${type.name}: ${aq10Options[option]}',
+          );
+        }
       }
     });
 
-    test('adult agreement follows the published reverse-scored item key', () {
-      // https://docs.autismresearchcentre.com/tests/AQ10.pdf
+    test('non-agreement toddler responses encode as zero', () {
+      final result = const QuestionnaireResponseEncoder().encodeModelItems(
+        questionnaireType: QuestionnaireType.qchat10,
+        answers: _qchatAnswersForScoreFour(),
+      );
+      expect(result.values, everyElement(0));
+    });
+
+    test('rejects responses outside the selected question options', () {
       final questions = questionBanks[QuestionnaireType.aq10Adult]!;
-      for (var option = 0; option < 4; option++) {
-        final values = const QuestionnaireResponseEncoder().encodeModelItems(
+      expect(
+        () => const QuestionnaireResponseEncoder().encodeModelItems(
           questionnaireType: QuestionnaireType.aq10Adult,
-          answers: {for (final q in questions) q.id: q.options[option]},
-        );
-        expect(
-          values.values.toList(),
-          option < 2
-              ? [1, 0, 0, 0, 0, 0, 1, 1, 0, 1]
-              : [0, 1, 1, 1, 1, 1, 0, 0, 1, 0],
-        );
-      }
+          answers: {for (final q in questions) q.id: 'Unknown'},
+        ),
+        throwsFormatException,
+      );
     });
 
     test('rejects incomplete questionnaires', () {
@@ -118,8 +115,8 @@ void main() {
         expect(report.eaipInput.jauntice, 'no');
         expect(report.eaipInput.familyAsdHistory, 'yes');
         expect(report.eaipInput.autismAgeCategory, 'chat');
-        expect(report.eaipInput.toModelPayload(), containsPair('Q1', 1));
-        expect(report.eaipInput.toModelPayload(), containsPair('Q10', 1));
+        expect(report.eaipInput.toModelPayload(), containsPair('Q1', 0));
+        expect(report.eaipInput.toModelPayload(), containsPair('Q10', 0));
       },
     );
 
@@ -160,22 +157,6 @@ Map<String, String> _qchatAnswersForScoreFour() {
         0 || 1 || 2 => qchat10Questions[index].options[2],
         _ => qchat10Questions[index].options.first,
       },
-  };
-}
-
-Map<String, String> _aqAnswersScoringEveryItem(QuestionnaireType type) {
-  final agreeScoredItems = switch (type) {
-    QuestionnaireType.aq10Child => const {1, 5, 7, 10},
-    QuestionnaireType.aq10Adolescent => const {1, 5, 8, 10},
-    QuestionnaireType.aq10Adult => const {1, 7, 8, 10},
-    QuestionnaireType.qchat10 => throw ArgumentError.value(type),
-  };
-  final questions = questionBanks[type]!;
-  return {
-    for (var index = 0; index < questions.length; index++)
-      questions[index].id: agreeScoredItems.contains(index + 1)
-          ? questions[index].options.first
-          : questions[index].options.last,
   };
 }
 

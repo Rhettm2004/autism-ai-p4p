@@ -221,6 +221,8 @@ class LocalLlmChatService extends ChatService {
     final lines = <String>[
       'Current application context (read-only):',
       '- Screening stage: ${context.stage.name}',
+      '- Person being screened (form details): ${jsonEncode(context.respondentDetails)}',
+      '- Background form details: ${jsonEncode(context.backgroundDetails)}',
       '- Questionnaire: ${context.questionnaireType?.label ?? 'not selected'}',
     ];
 
@@ -269,6 +271,10 @@ class LocalLlmChatService extends ChatService {
       "don't want",
       'dont want',
       'do not want',
+      'not yet',
+      'later',
+      'do not begin',
+      "don't begin",
     ].any(text.contains)) {
       return false;
     }
@@ -283,6 +289,17 @@ class LocalLlmChatService extends ChatService {
     if (!const {
       'yes',
       'yes please',
+      'yes please start',
+      'yes start',
+      'yes please begin',
+      'sure lets start',
+      "sure let's start",
+      'please start',
+      'start please',
+      'begin',
+      'please begin',
+      'begin please',
+      'start',
       'yeah',
       'yep',
       'sure',

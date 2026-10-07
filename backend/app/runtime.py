@@ -23,7 +23,8 @@ class ChatRuntime:
         'lets start', "let's start", 'lets get started', "let's get started",
         'start', 'begin', 'please start', 'please begin', 'start please',
         'begin please', 'lets begin', "let's begin", 'ready', "i'm ready",
-        'im ready', 'i am ready',
+        'im ready', 'i am ready', 'yes please start', 'yes start',
+        'yes please begin', 'sure lets start', "sure let's start",
     }
     _ready_to_start = re.compile(
         r"\b(?:i\s+am|i['’]?m|im|we\s+are|we['’]?re)?\s*ready\b.{0,32}"
@@ -164,12 +165,54 @@ class ChatRuntime:
         else:
             system = (turn.system_prompt + '\n\n' + self.application['contract']
                       + '\n\n' + self.application['process_guide'])
+            if self._is_next_steps_request(request):
+                system += '\n\n' + self._next_steps_guidance(request)
+            system += '\n\n' + self._screening_result_summary(request)
             context = json.dumps(request.screening_context.model_dump(), ensure_ascii=False)
             messages = [{'role': 'system', 'content': system}]
             current_user = ('<read_only_screening_context>\n' + context +
                 '\n</read_only_screening_context>\n\nUser message:\n' + request.message)
             messages.extend(self._conversation_messages(request, current_user))
         return turn, messages
+
+    def _next_steps_guidance(self, request):
+        prediction = request.screening_context.prediction_result
+        if prediction is None:
+            branch = 'missing'
+        elif prediction.is_mock:
+            branch = 'mock'
+        else:
+            branch = 'positive' if prediction.traits_detected else 'negative'
+        return (self.application['next_steps_prompt'] + '\n\n'
+                + self.application[f'next_steps_{branch}_prompt'])
+
+    @staticmethod
+    def _is_next_steps_request(request):
+        return bool(re.search(
+            r"\bnext\s+steps?\b|\bwhat\s+(?:i|we|they)\s+should\s+do\s+next\b|"
+            r"\bwhat\s+should\s+(?:i|we|they)\s+do\s+(?:next|now)\b|"
+            r"\b(?:after|following)\s+(?:my\s+|the\s+)?screening\b",
+            request.message, re.IGNORECASE))
+
+    @staticmethod
+    def _screening_result_summary(request):
+        prediction = request.screening_context.prediction_result
+        if prediction is None:
+            return ('AUTHORITATIVE CURRENT SCREENING RESULT: unavailable. '
+                    'Do not invent a positive or negative result.')
+        outcome = ('POSITIVE: the screening threshold was reached'
+                   if prediction.traits_detected else
+                   'NEGATIVE: the screening threshold was not reached')
+        return (
+            f'AUTHORITATIVE CURRENT SCREENING RESULT: {outcome}. '
+            f'EAIP-DARV model screening score: {prediction.similarity_percentage:.1f}%. '
+            f'Mock output: {prediction.is_mock}. '
+            'The traits_detected flag is the saved classification; do not recalculate it '
+            'from the score or assume a 50% threshold. This is not a diagnosis. '
+            'Use this outcome when explaining results or next steps. Retrieved passages '
+            'describe other people and instruments; their positive/negative examples '
+            'are not this person’s result. This result overrides older assistant claims. '
+            'Do not infer a caregiver relationship or a child from retrieved passages.')
 
     def _metadata(self, request, turn=None, finish_reason=None, invalid_citations=None):
         route_info = turn.route_info if turn is not None else None
@@ -211,6 +254,7 @@ class ChatRuntime:
             return True
         if any(phrase in normalized for phrase in (
             "don't start", 'dont start', 'do not start', 'not ready',
+            'not yet', 'later', 'do not begin', "don't begin",
             'no screening', "don't want", 'dont want', 'do not want',
         )):
             return False

@@ -47,6 +47,8 @@ const context = ScreeningContext(
   stage: ScreeningStage.behaviouralQuestions,
   sessionId: 'session-1',
   revision: 5,
+  respondentDetails: {'age': 22, 'age_unit': 'years'},
+  backgroundDetails: {'completed_by': 'Self'},
   questionnaireType: QuestionnaireType.qchat10,
   currentQuestionId: 'qchat10_q4',
   currentQuestionIndex: 3,
@@ -92,6 +94,15 @@ void main() {
           isFalse,
         );
         expect(captured['model'], model);
+        expect(captured['screening_context']['respondent_details']['age'], 22);
+        expect(
+          captured['screening_context']['respondent_details']['age_unit'],
+          'years',
+        );
+        expect(
+          captured['screening_context']['background_details']['completed_by'],
+          'Self',
+        );
         expect(captured['options'], {
           'router': true,
           'rag': true,

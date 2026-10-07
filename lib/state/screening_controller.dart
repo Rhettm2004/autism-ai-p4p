@@ -92,6 +92,18 @@ class ScreeningController extends ChangeNotifier {
         ),
     ],
     result: result,
+    respondentDetails: Map.unmodifiable({
+      'is_toddler': respondent.isToddler,
+      'age': respondent.age,
+      'age_unit': respondent.ageUnit,
+      'gender': respondent.gender,
+      'ethnicity': respondent.ethnicity,
+    }),
+    backgroundDetails: Map.unmodifiable({
+      'jaundice': background.jaundice,
+      'family_autism_history': background.familyAutismHistory,
+      'completed_by': background.completedBy,
+    }),
   );
 
   String get stageLabel => switch (stage) {

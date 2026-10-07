@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="820" viewBox="0 0 1600 820"><defs><linearGradient id="grey" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#ddd"/></linearGradient><marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto-start-reverse"><path d="M0 0L9 4.5L0 9Z" fill="#555"/></marker></defs><rect width="100%" height="100%" fill="white"/><g font-family="Arial,Helvetica,sans-serif" fill="#222">
+<text x="800" y="52" text-anchor="middle" font-size="32" font-weight="bold">Autism AI system architecture</text>
+<rect x="590" y="100" width="945" height="570" rx="20" fill="#fafafa" stroke="#999" stroke-dasharray="8 6"/>
+<text x="1060" y="136" text-anchor="middle" font-size="22" font-weight="bold">Local backend and model services</text>
+<g stroke="#444" stroke-width="3" fill="url(#grey)"><circle cx="115" cy="320" r="24"/><path d="M88 354 Q115 341 142 354 L153 413 L137 417 L132 390 L132 468 L117 468 L115 420 L111 468 L96 468 L96 390 L91 417 L76 413Z"/></g>
+<text x="115" y="510" text-anchor="middle" font-size="24" font-weight="bold">User</text>
+<g stroke="#444" stroke-width="3"><rect x="325" y="300" width="100" height="175" rx="14" fill="url(#grey)"/><rect x="335" y="326" width="80" height="117" fill="white"/><path d="M359 313H391"/><circle cx="375" cy="459" r="5" fill="white"/></g>
+<text x="375" y="510" text-anchor="middle" font-size="24" font-weight="bold">Flutter app</text>
+<text x="375" y="542" text-anchor="middle" font-size="19">Chat + screening</text>
+<g stroke="#444" stroke-width="3" fill="url(#grey)"><rect x="640" y="308" width="115" height="159" rx="8"/><path d="M655 338H740M655 365H740M655 392H740"/><circle cx="726" cy="444" r="5" fill="#777"/></g>
+<text x="698" y="510" text-anchor="middle" font-size="24" font-weight="bold">FastAPI</text>
+<text x="698" y="542" text-anchor="middle" font-size="19">HTTP / JSON gateway</text>
+<polyline points="158,386 325,386" fill="none" stroke="#666" stroke-width="2" marker-end="url(#a)" marker-start="url(#a)"/>
+<polyline points="425,386 640,386" fill="none" stroke="#666" stroke-width="2" marker-end="url(#a)" marker-start="url(#a)"/>
+<g stroke="#444" stroke-width="2" fill="url(#grey)"><path d="M323 135V216 C323 240 427 240 427 216V135Z"/><ellipse cx="375" cy="135" rx="52" ry="15"/></g>
+<text x="375" y="270" text-anchor="middle" font-size="20" font-weight="bold">Local session storage</text>
+<polyline points="375,300 375,283" fill="none" stroke="#666" stroke-width="2" marker-end="url(#a)" marker-start="url(#a)"/>
+<rect x="880" y="180" width="260" height="140" rx="12" fill="#eee" stroke="#555" stroke-width="1.6"/>
+<text x="1010.0" y="232.0" text-anchor="middle" font-size="21">Intent router</text>
+<text x="1010.0" y="257.0" text-anchor="middle" font-size="21">Safety + TF-IDF retrieval</text>
+<text x="1010.0" y="282.0" text-anchor="middle" font-size="21">Grounded prompt</text>
+<rect x="1230" y="180" width="260" height="140" rx="12" fill="#eee" stroke="#555" stroke-width="1.6"/>
+<text x="1360.0" y="232.0" text-anchor="middle" font-size="21">Local LLM</text>
+<text x="1360.0" y="257.0" text-anchor="middle" font-size="21">Mistral 7B / Llama 3 8B</text>
+<text x="1360.0" y="282.0" text-anchor="middle" font-size="21">via llama.cpp</text>
+<rect x="880" y="420" width="260" height="150" rx="12" fill="#eee" stroke="#555" stroke-width="1.6"/>
+<text x="1010.0" y="477.0" text-anchor="middle" font-size="21">EAIP-DARV service</text>
+<text x="1010.0" y="502.0" text-anchor="middle" font-size="21">Three model modules</text>
+<text x="1010.0" y="527.0" text-anchor="middle" font-size="21">Calibration + voting</text>
+<rect x="1230" y="420" width="260" height="150" rx="12" fill="#eee" stroke="#555" stroke-width="1.6"/>
+<text x="1360.0" y="477.0" text-anchor="middle" font-size="21">Screening output</text>
+<text x="1360.0" y="502.0" text-anchor="middle" font-size="21">Probability + flag</text>
+<text x="1360.0" y="527.0" text-anchor="middle" font-size="21">Confidence + disagreement</text>
+<polyline points="755,350 810,350 810,250 880,250" fill="none" stroke="#666" stroke-width="2" marker-end="url(#a)" marker-start="url(#a)"/>
+<polyline points="1140,250 1230,250" fill="none" stroke="#666" stroke-width="2" marker-end="url(#a)" marker-start="url(#a)"/>
+<polyline points="755,430 810,430 810,495 880,495" fill="none" stroke="#666" stroke-width="2" marker-end="url(#a)" marker-start="url(#a)"/>
+<polyline points="1140,495 1230,495" fill="none" stroke="#666" stroke-width="2" marker-end="url(#a)"/>
+<text x="1070" y="626" text-anchor="middle" font-size="19">Responses and predictions return through FastAPI to the app</text>
+<rect x="230" y="620" width="290" height="95" rx="12" fill="#eee" stroke="#555" stroke-width="1.6"/>
+<text x="375.0" y="662.0" text-anchor="middle" font-size="21">Result view + PDF report</text>
+<text x="375.0" y="687.0" text-anchor="middle" font-size="21">Responses and next steps</text>
+<polyline points="375,550 375,620" fill="none" stroke="#666" stroke-width="2" marker-end="url(#a)"/>
+<text x="800" y="779" text-anchor="middle" font-size="24">Fig. 1. Current local architecture of the Autism AI research prototype.</text>
+</g></svg>

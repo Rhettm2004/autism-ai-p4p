@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1120" viewBox="0 0 1800 1120"><defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="#526579"/></marker></defs><rect width="1800" height="1120" fill="white"/><style>text{font-family:Arial,Helvetica,sans-serif;fill:#183247}.title{font-size:38px;font-weight:700}.heading{font-size:24px;font-weight:700}.body{font-size:21px}.label{font-size:18px;fill:#526579}.section{font-size:22px;font-weight:700;letter-spacing:1px}</style>
+<text x="70" y="66" class="title" text-anchor="start">Autism AI | System architecture</text>
+<text x="70" y="103" class="body" text-anchor="start">Current integrated prototype • Local AI services • Structured screening</text>
+<rect x="60" y="155" width="330" height="110" rx="16" fill="#edf5fb" stroke="#b8cbd8" stroke-width="2"/>
+<text x="225.0" y="191" class="heading" text-anchor="middle">User / respondent</text>
+<text x="225.0" y="225" class="body" text-anchor="middle">Ask questions • Complete screening</text>
+<rect x="60" y="300" width="330" height="245" rx="16" fill="#edf5fb" stroke="#b8cbd8" stroke-width="2"/>
+<text x="225.0" y="336" class="heading" text-anchor="middle">Flutter application</text>
+<text x="225.0" y="370" class="body" text-anchor="middle">Chat + inline screening cards</text>
+<text x="225.0" y="399" class="body" text-anchor="middle">Consent and age pathway</text>
+<text x="225.0" y="428" class="body" text-anchor="middle">10 age-specific questions</text>
+<text x="225.0" y="457" class="body" text-anchor="middle">Review and edit responses</text>
+<text x="225.0" y="486" class="body" text-anchor="middle">Deterministic Q1–Q10 encoding</text>
+<polyline points="225,265 225,300" fill="none" stroke="#526579" stroke-width="3" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<rect x="60" y="620" width="330" height="130" rx="16" fill="#edf5fb" stroke="#b8cbd8" stroke-width="2"/>
+<text x="225.0" y="656" class="heading" text-anchor="middle">Local session storage</text>
+<text x="225.0" y="690" class="body" text-anchor="middle">SharedPreferences</text>
+<text x="225.0" y="719" class="body" text-anchor="middle">Conversation, answers and results</text>
+<polyline points="225,545 225,620" fill="none" stroke="#526579" stroke-width="3" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<rect x="60" y="820" width="330" height="180" rx="16" fill="#edf5fb" stroke="#b8cbd8" stroke-width="2"/>
+<text x="225.0" y="856" class="heading" text-anchor="middle">Results and PDF report</text>
+<text x="225.0" y="890" class="body" text-anchor="middle">Screening flag and probability</text>
+<text x="225.0" y="919" class="body" text-anchor="middle">Confidence and disagreement</text>
+<text x="225.0" y="948" class="body" text-anchor="middle">Original responses • Next steps</text>
+<text x="225.0" y="977" class="body" text-anchor="middle">EAIP input inspection</text>
+<polyline points="390,425 465,425 465,910 390,910" fill="none" stroke="#526579" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="477" y="1055" class="label" text-anchor="middle">Results / responses</text>
+<rect x="520" y="145" width="1210" height="885" rx="24" fill="#fafcfd" stroke="#b8cbd8" stroke-width="2" stroke-dasharray="9 7"/>
+<text x="550" y="181" class="section" text-anchor="start">LOCAL PYTHON BACKEND + MODEL SERVICES</text>
+<rect x="555" y="215" width="1135" height="95" rx="16" fill="#e8eef9" stroke="#b8cbd8" stroke-width="2"/>
+<text x="1122.5" y="251" class="heading" text-anchor="middle">FastAPI gateway</text>
+<text x="1122.5" y="285" class="body" text-anchor="middle">Typed HTTP/JSON APIs • Chat context • Screening schema validation</text>
+<polyline points="390,355 490,355 490,263 555,263" fill="none" stroke="#526579" stroke-width="3" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<text x="438" y="245" class="label" text-anchor="middle">HTTP / JSON</text>
+<text x="560" y="356" class="section" text-anchor="start">CONVERSATIONAL ASSISTANT</text>
+<text x="1150" y="356" class="section" text-anchor="start">SCREENING PREDICTION</text>
+<rect x="555" y="390" width="530" height="120" rx="16" fill="#edf5fb" stroke="#b8cbd8" stroke-width="2"/>
+<text x="820.0" y="426" class="heading" text-anchor="middle">Intent routing + prompt assembly</text>
+<text x="820.0" y="460" class="body" text-anchor="middle">Router A • Safety rules • Route guidance</text>
+<text x="820.0" y="489" class="body" text-anchor="middle">Conversation + read-only screening context</text>
+<rect x="555" y="570" width="530" height="120" rx="16" fill="#edf5fb" stroke="#b8cbd8" stroke-width="2"/>
+<text x="820.0" y="606" class="heading" text-anchor="middle">Retrieval-augmented generation (RAG)</text>
+<text x="820.0" y="640" class="body" text-anchor="middle">TF-IDF retrieval from prepared source corpus</text>
+<text x="820.0" y="669" class="body" text-anchor="middle">Relevant passages ground the response</text>
+<rect x="555" y="750" width="530" height="135" rx="16" fill="#edf5fb" stroke="#b8cbd8" stroke-width="2"/>
+<text x="820.0" y="786" class="heading" text-anchor="middle">Local language model</text>
+<text x="820.0" y="820" class="body" text-anchor="middle">llama.cpp inference server</text>
+<text x="820.0" y="849" class="body" text-anchor="middle">Mistral 7B or Llama 3 8B</text>
+<text x="820.0" y="878" class="body" text-anchor="middle">Assistant response + supporting citations</text>
+<polyline points="820,310 820,390" fill="none" stroke="#526579" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="820,510 820,570" fill="none" stroke="#526579" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="820,690 820,750" fill="none" stroke="#526579" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="1140" y="390" width="550" height="120" rx="16" fill="#edf7f1" stroke="#b8cbd8" stroke-width="2"/>
+<text x="1415.0" y="426" class="heading" text-anchor="middle">EAIP-DARV prediction service</text>
+<text x="1415.0" y="460" class="body" text-anchor="middle">Validated Q1–Q10 + respondent/background</text>
+<text x="1415.0" y="489" class="body" text-anchor="middle">Isolated runtime • Supplied model artifacts</text>
+<polyline points="1415,310 1415,390" fill="none" stroke="#526579" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="1140" y="565" width="170" height="125" rx="16" fill="#edf7f1" stroke="#b8cbd8" stroke-width="2"/>
+<text x="1225.0" y="601" class="heading" text-anchor="middle">Module 1</text>
+<text x="1225.0" y="635" class="body" text-anchor="middle">Screening</text>
+<text x="1225.0" y="664" class="body" text-anchor="middle">CNN</text>
+<rect x="1330" y="565" width="170" height="125" rx="16" fill="#edf7f1" stroke="#b8cbd8" stroke-width="2"/>
+<text x="1415.0" y="601" class="heading" text-anchor="middle">Module 2</text>
+<text x="1415.0" y="635" class="body" text-anchor="middle">ASSL</text>
+<text x="1415.0" y="664" class="body" text-anchor="middle">pipeline</text>
+<rect x="1520" y="565" width="170" height="125" rx="16" fill="#edf7f1" stroke="#b8cbd8" stroke-width="2"/>
+<text x="1605.0" y="601" class="heading" text-anchor="middle">Module 3</text>
+<text x="1605.0" y="635" class="body" text-anchor="middle">Cluster-based</text>
+<text x="1605.0" y="664" class="body" text-anchor="middle">pipeline</text>
+<polyline points="1415,510 1415,539 1225,539 1225,565" fill="none" stroke="#526579" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="1415,510 1415,565" fill="none" stroke="#526579" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="1415,539 1605,539 1605,565" fill="none" stroke="#526579" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="1140" y="750" width="550" height="135" rx="16" fill="#edf7f1" stroke="#b8cbd8" stroke-width="2"/>
+<text x="1415.0" y="786" class="heading" text-anchor="middle">Calibration + ensemble voting</text>
+<text x="1415.0" y="820" class="body" text-anchor="middle">Calibrate module probabilities</text>
+<text x="1415.0" y="849" class="body" text-anchor="middle">Agreement scores • EAIP vote</text>
+<text x="1415.0" y="878" class="body" text-anchor="middle">DARV disagreement-aware vote</text>
+<polyline points="1225,690 1225,720 1415,720 1415,750" fill="none" stroke="#526579" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="1415,690 1415,750" fill="none" stroke="#526579" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="1605,690 1605,720 1415,720" fill="none" stroke="#526579" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="820" y="929" class="label" text-anchor="middle">Replies return via FastAPI to Flutter</text>
+<text x="1415" y="929" class="label" text-anchor="middle">Prediction metrics return via FastAPI to Flutter</text>
+<text x="70" y="1090" class="body" text-anchor="start">Screening output supports further assessment; it is not a clinical diagnosis.</text>
+</svg>

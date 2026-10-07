@@ -424,7 +424,7 @@ class _ScreeningPageState extends State<ScreeningPage> {
             Text('Submitted: ${result.submittedAt?.toLocal()}'),
             const SizedBox(height: 12),
             const Text(
-              'A value of 1 represents the scored response for that question. Agreement is not always scored: some questions describe abilities and others describe difficulties. The question-specific key determines the value.',
+              'Definitely Agree (strong agreement) and Slightly Agree are encoded as 1 for every question. All other responses are encoded as 0. No question-specific reverse scoring is applied.',
             ),
             for (var i = 0; i < answers.length; i++)
               ListTile(
@@ -440,7 +440,7 @@ class _ScreeningPageState extends State<ScreeningPage> {
               ListTile(
                 title: Text(entry.key.toString()),
                 trailing: Text(entry.value.toString()),
-            ),
+              ),
             const Text('Exact classifier request'),
             SelectableText(
               const JsonEncoder.withIndent('  ').convert({

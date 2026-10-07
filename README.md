@@ -113,9 +113,9 @@ response locally. Older and mock results explicitly have no captured submission.
 Flutter and the backend validate against the live model schema before prediction.
 Unknown required fields stop prediction and are never filled by an LLM.
 
-AQ-10 uses question-specific reverse scoring, not agreement=1 for every item.
-The published adult key scores agreement on 1, 7, 8 and 10, and disagreement on
-2, 3, 4, 5, 6 and 9: https://docs.autismresearchcentre.com/tests/AQ10.pdf.
-This confirms the questionnaire scoring direction, not the supplied model's
-training encoding. Age units and the model feature contract still require
-comparison with the model owner's reference records and outputs.
+Model inputs encode Definitely Agree (strong agreement) and Slightly Agree as 1
+for every question; all other responses are 0. No questionnaire reverse scoring
+is applied. Toddler forms retain their existing response options, which do not
+include agreement responses and therefore encode as 0 under this mapping.
+Age units and the model feature contract still require comparison with the
+model owner's reference records and outputs.

@@ -40,6 +40,18 @@ class PredictionResult(StrictModel):
     per_module_calibrated_probability: dict[str, UnitFloat] = Field(default_factory=dict)
     agreement_scores: dict[str, UnitFloat] = Field(default_factory=dict)
 
+class RespondentDetails(StrictModel):
+    is_toddler: bool | None = None
+    age: int | None = Field(default=None, ge=0, le=120)
+    age_unit: Literal['months', 'years'] | None = None
+    gender: Text | None = None
+    ethnicity: Text | None = None
+
+class BackgroundDetails(StrictModel):
+    jaundice: bool | None = None
+    family_autism_history: bool | None = None
+    completed_by: Text | None = None
+
 class ScreeningContext(StrictModel):
     revision: int = Field(default=0, ge=0)
     stage: Stage
@@ -48,6 +60,8 @@ class ScreeningContext(StrictModel):
     current_question: CurrentQuestion | None = None
     questionnaire_questions: list[QuestionnaireQuestion] = Field(default_factory=list, max_length=10)
     prediction_result: PredictionResult | None = None
+    respondent_details: RespondentDetails = Field(default_factory=RespondentDetails)
+    background_details: BackgroundDetails = Field(default_factory=BackgroundDetails)
 
     @model_validator(mode='after')
     def consistent(self):

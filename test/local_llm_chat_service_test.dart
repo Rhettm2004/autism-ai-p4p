@@ -83,6 +83,9 @@ void main() {
         ];
 
         for (final phrase in [
+          'yes please start',
+          'Yes please start!',
+          'please begin',
           'ok im ready to get started',
           "I'm ready to start screening",
           "Let's get started",

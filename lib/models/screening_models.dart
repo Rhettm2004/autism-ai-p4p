@@ -129,6 +129,8 @@ class ScreeningContext {
     this.currentQuestionText,
     this.questionnaireQuestions = const [],
     this.result,
+    this.respondentDetails = const {},
+    this.backgroundDetails = const {},
   });
 
   final ScreeningStage stage;
@@ -140,4 +142,6 @@ class ScreeningContext {
   final String? currentQuestionText;
   final List<ScreeningQuestionContext> questionnaireQuestions;
   final ScreeningResult? result;
+  final Map<String, Object?> respondentDetails;
+  final Map<String, Object?> backgroundDetails;
 }

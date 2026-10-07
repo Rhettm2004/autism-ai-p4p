@@ -1,0 +1,18 @@
+flowchart LR
+ U[User / respondent] <--> F[Flutter: chat and structured screening]
+ F <--> S[(Local session storage)]
+ F -->|HTTP / JSON| API[FastAPI gateway]
+ API --> R[Intent router and safety rules]
+ R --> G[TF-IDF retrieval and grounded prompt]
+ C[(Prepared source corpus)] --> G
+ G --> L[llama.cpp: Mistral 7B or Llama 3 8B]
+ L -->|Response and citations via API| F
+ API -->|Validated binary Q1–Q10 and background fields| E[EAIP-DARV service]
+ E --> M1[Module 1: screening CNN]
+ E --> M2[Module 2: ASSL]
+ E --> M3[Module 3: cluster-based]
+ M1 --> V[Calibration, agreement, EAIP and DARV voting]
+ M2 --> V
+ M3 --> V
+ V -->|Screening result via API| F
+ F --> P[Result, next steps and downloadable PDF]
