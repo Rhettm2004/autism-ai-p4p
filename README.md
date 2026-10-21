@@ -119,3 +119,15 @@ is applied. Toddler forms retain their existing response options, which do not
 include agreement responses and therefore encode as 0 under this mapping.
 Age units and the model feature contract still require comparison with the
 model owner's reference records and outputs.
+
+## Research compendium
+
+See [COMPENDIUM.md](COMPENDIUM.md) for the archive contents, external assets,
+reproduction steps, and limitations. Create a clean submission ZIP with:
+
+```sh
+python3 scripts/package_compendium.py
+```
+
+The ZIP is written to `dist/autism_ai_research_compendium.zip`. Do not ZIP the
+working directory directly: it contains local environments and model caches.

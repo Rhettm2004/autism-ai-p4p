@@ -66,3 +66,6 @@ backend/logs/
 backend/data/corpus/readiness.json
 backend/requirements-runtime.lock
 !backend/.env.app.example
+
+# Research compendium exports
+/dist/
